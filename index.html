@@ -135,7 +135,29 @@
       <li><a href="posts/he-wei-xin-si-xiang.html">何为新思想</a></li>
     </ul>
 
-    <div class="join-section">
+    <div class="<div class="join-section">
+  <img src="1000015381.jpg" class="logo" alt="社徽">
+  <div class="join-text">
+    <h3>781624977</h3>
+    <p>1087621159：<span id="groupNum">这里填你QQ群号</span></p>
+  </div>
+  <div class="btn-group">
+    <a href="https://qun.qq.com/#!/search?k=这里填你QQ群号" class="join-btn">查询QQ群号</a>
+    <button onclick="copyGroupNum()" class="copy-btn">复制群号</button>
+  </div>
+</div>
+
+<script>
+function copyGroupNum() {
+  const groupNum = document.getElementById('groupNum').textContent;
+  navigator.clipboard.writeText(groupNum).then(() => {
+    alert('群号已复制，可直接去QQ搜索添加');
+  }).catch(err => {
+    alert('复制失败，请手动复制群号：' + groupNum);
+  });
+}
+</script>
+">
       <img src="1000015381.jpg" class="logo" alt="社徽">
       <div class="join-text">
         <h3>781624977</h3>
