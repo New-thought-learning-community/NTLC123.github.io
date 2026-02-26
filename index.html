@@ -1,43 +1,86 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新思想学习社 - 线上投稿平台</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #c8102e; /* 用红色背景兜底，防止图片加载失败 */
-            background-image: url('https://raw.githubusercontent.com/New-thought-learning-community/NTLC123.github.io/main/1000015381.jpg');
-            background-size: cover;
-            background-position: center top;
-            background-attachment: fixed;
-            font-family: "Microsoft Yahei", sans-serif;
-            color: #fff;
-        }
-        .content {
-            max-width: 800px;
-            margin: 100px auto 0;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 12px;
-        }
-        h1 {
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        p {
-            line-height: 1.8;
-            font-size: 18px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>新思想学习社 - 线上投稿平台</title>
+  <style>
+    body {
+      background-color: #c8102e;
+      color: #fff;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #3a0000;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h1 {
+      color: #ffd700;
+      text-align: center;
+    }
+    h2 {
+      color: #ffd700;
+    }
+    #postList {
+      list-style: none;
+      padding: 0;
+    }
+    #postList li {
+      margin: 10px 0;
+    }
+    #postList a {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 18px;
+    }
+    #postList a:hover {
+      text-decoration: underline;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #ffd700;
+    }
+  </style>
 </head>
 <body>
-    <div class="content">
-        <h1>新思想学习社（New Thought Learning Community）</h1>
-        <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供学习平台。</p>
-    </div>
+  <div class="container">
+    <h1>新思想学习社（New Thought Learning Community）</h1>
+    <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供学习平台。</p>
+
+    <h2>最新文章</h2>
+    <ul id="postList">
+      <!-- 文章列表会自动生成在这里 -->
+    </ul>
+  </div>
+
+  <footer>
+    <p>©2024新思想学习社 版权所有</p>
+  </footer>
+
+  <script>
+    // 自动读取 posts 文件夹里的文章并生成列表
+    fetch('posts/')
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = doc.querySelectorAll('a[href$=".html"]');
+        const list = document.getElementById('postList');
+        links.forEach(link => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `posts/${link.getAttribute('href')}`;
+          a.textContent = link.textContent.replace('.html', '');
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      })
+      .catch(err => console.log('暂无文章或读取失败', err));
+  </script>
 </body>
 </html>
