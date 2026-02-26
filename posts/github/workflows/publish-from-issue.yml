@@ -1,0 +1,58 @@
+name: Publish Post from Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'publish')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Create post file
+        run: |
+          # 用 Issue 标题作为文件名，替换掉特殊字符
+          FILENAME=$(echo "${{ github.event.issue.title }}" | tr ' ' '-' | tr -cd '[:alnum:]-.' | tr '[:upper:]' '[:lower:]')
+          DATE=$(date +%Y-%m-%d)
+          FILE="posts/${DATE}-${FILENAME}.html"
+          
+          # 创建文章模板，把 Issue 内容填进去
+          cat > $FILE << EOF
+          <!DOCTYPE html>
+          <html lang="zh-CN">
+          <head>
+            <meta charset="UTF-8">
+            <title>${{ github.event.issue.title }}</title>
+            <style>
+              body { max-width: 800px; margin: 0 auto; padding: 20px; font-family: sans-serif; }
+              .back-home { margin: 20px 0; }
+              .back-home a { color: #007bff; text-decoration: none; }
+            </style>
+          </head>
+          <body>
+            <h1>${{ github.event.issue.title }}</h1>
+            <div class="post-content">
+              ${{ github.event.issue.body }}
+            </div>
+            <div class="back-home">
+              <a href="../index.html">返回首页</a>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add posts/
+          git commit -m "Auto-publish post: ${{ github.event.issue.title }}"
+          git push
