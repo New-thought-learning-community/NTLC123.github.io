@@ -15,7 +15,6 @@
       color: #fff;
       font-family: sans-serif;
       margin: 0;
-      padding: 15px;
       line-height: 1.6;
     }
     /* 淡社徽水印背景 */
@@ -30,14 +29,50 @@
       pointer-events: none;
       z-index: -1;
     }
+    /* 顶部导航栏 */
+    .navbar {
+      background-color: rgba(58, 0, 0, 0.95);
+      padding: 12px 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .navbar-logo {
+      color: #ffd700;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .nav-links a:hover {
+      background-color: rgba(255,215,0,0.2);
+    }
+    /* 主内容区 */
     .container {
-      max-width: 100%;
-      margin: 0 auto;
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .hero {
       background-color: rgba(58, 0, 0, 0.92);
-      padding: 20px;
+      padding: 25px;
       border-radius: 12px;
-      position: relative;
-      z-index: 1;
+      margin-bottom: 20px;
     }
     h1 {
       color: #ffd700;
@@ -69,7 +104,7 @@
     #postList a:hover {
       text-decoration: underline;
     }
-    /* 加入审核群模块（手机端优化） */
+    /* 加入审核群模块 */
     .join-section {
       display: flex;
       flex-direction: column;
@@ -98,75 +133,89 @@
       margin: 0;
       font-size: 14px;
     }
-    .join-btn {
-      display: block;
+    /* 按钮组 */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       width: 100%;
       max-width: 280px;
-      background: linear-gradient(135deg, #0084ff, #00aaff);
-      color: #fff;
+    }
+    .join-btn, .copy-btn {
+      display: block;
+      width: 100%;
       padding: 12px 0;
       border-radius: 25px;
       text-decoration: none;
       font-weight: bold;
       font-size: 16px;
       text-align: center;
-      box-shadow: 0 3px 10px rgba(0,132,255,0.25);
       transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
     }
-    .join-btn:active {
+    .join-btn {
+      background: linear-gradient(135deg, #0084ff, #00aaff);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(0,132,255,0.25);
+    }
+    .copy-btn {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(40,167,69,0.25);
+    }
+    .join-btn:active, .copy-btn:active {
       transform: translateY(1px);
-      box-shadow: 0 1px 5px rgba(0,132,255,0.25);
     }
     footer {
       text-align: center;
-      margin-top: 25px;
+      margin: 25px 0;
       color: #ffd700;
       font-size: 12px;
+    }
+    /* 响应式适配手机 */
+    @media (max-width: 480px) {
+      .navbar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- 顶部导航栏 -->
+  <nav class="navbar">
+    <a href="#" class="navbar-logo">新思想学习社</a>
+    <div class="nav-links">
+      <a href="#latest">最新文章</a>
+      <a href="#join">加入我们</a>
+      <a href="https://github.com/NTLC123/NTLC123.github.io/issues">我要投稿</a>
+    </div>
+  </nav>
+
   <div class="container">
-    <h1>新思想学习社（New Thought Learning Community）</h1>
-    <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供学习平台。</p>
+    <div class="hero">
+      <h1>新思想学习社（New Thought Learning Community）</h1>
+      <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供学习平台。</p>
+    </div>
 
-    <h2>最新文章</h2>
-    <ul id="postList">
-      <li><a href="posts/he-wei-xin-si-xiang.html">何为新思想</a></li>
-    </ul>
+    <div id="latest">
+      <h2>最新文章</h2>
+      <ul id="postList">
+        <li><a href="posts/he-wei-xin-si-xiang.html">何为新思想</a></li>
+      </ul>
+    </div>
 
-    <div class="<div class="join-section">
-  <img src="1000015381.jpg" class="logo" alt="社徽">
-  <div class="join-text">
-    <h3>781624977</h3>
-    <p>1087621159：<span id="groupNum">这里填你QQ群号</span></p>
-  </div>
-  <div class="btn-group">
-    <a href="https://qun.qq.com/#!/search?k=这里填你QQ群号" class="join-btn">查询QQ群号</a>
-    <button onclick="copyGroupNum()" class="copy-btn">复制群号</button>
-  </div>
-</div>
-
-<script>
-function copyGroupNum() {
-  const groupNum = document.getElementById('groupNum').textContent;
-  navigator.clipboard.writeText(groupNum).then(() => {
-    alert('群号已复制，可直接去QQ搜索添加');
-  }).catch(err => {
-    alert('复制失败，请手动复制群号：' + groupNum);
-  });
-}
-</script>
-">
+    <div id="join" class="join-section">
       <img src="1000015381.jpg" class="logo" alt="社徽">
       <div class="join-text">
         <h3>781624977</h3>
-        <p>1087621159</p>
+        <p>QQ群号：<span id="groupNum">【1087621159】</span></p>
       </div>
-      <a href="https://qun.qq.com/#!/search?k=这里填你QQ群号" class="join-btn">查询QQ群号</a>
-    </div>
-  </div>
-
-  <footer>©2026 新思想学习社 版权所有</footer>
-</body>
-</html>
+      <div class="btn-group">
+        <a href="https://qun.qq.com/#!/search?k=【1087621159】" class="join-btn">查询QQ群号</a>
+        <button onclick="copyGro
