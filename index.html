@@ -54,33 +54,12 @@
 
     <h2>最新文章</h2>
     <ul id="postList">
-      <!-- 文章列表会自动生成在这里 -->
+      <li><a href="posts/he-wei-xin-si-xiang.html">何为新思想</a></li>
     </ul>
   </div>
 
   <footer>
     <p>©2024新思想学习社 版权所有</p>
   </footer>
-
-  <script>
-    // 自动读取 posts 文件夹里的文章并生成列表
-    fetch('posts/')
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = doc.querySelectorAll('a[href$=".html"]');
-        const list = document.getElementById('postList');
-        links.forEach(link => {
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          a.href = `posts/${link.getAttribute('href')}`;
-          a.textContent = link.textContent.replace('.html', '');
-          li.appendChild(a);
-          list.appendChild(li);
-        });
-      })
-      .catch(err => console.log('暂无文章或读取失败', err));
-  </script>
 </body>
 </html>
