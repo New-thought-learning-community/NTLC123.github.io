@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 核心优化：强制手机端以实际宽度显示，禁止用户缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>新思想学习社 - 线上投稿平台</title>
     <style>
         * {
@@ -11,13 +12,87 @@
             box-sizing: border-box;
         }
         body {
-            /* 把这里替换成你复制的图片直链 */
-            background-image: url('https://github.com/New-thought-learning-community/NTLC123.github.io/blob/main/1000015381.jpg?raw=true');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
-            font-family: "Microsoft Yahei", sans-serif;
-            color: #fff;
-            padding: 40px 20px;
+            /* 1. 背景图适配：contain 保证图片完整显示，不会被裁切 */
+            /* 2. no-repeat 防止图片重复 */
+            /* 3. 红色底色兜底，风格统一 */
+            background: #c8102e url('https://raw.githubusercontent.com/New-thought-learning-community/NTLC123.github.io/main/1000015381.jpg') no-repeat center top;
+            background-size: contain;
+            font-family: "Microsoft Yahei", "Heiti SC", sans-serif;
+            color: #333;
+            /* 给底部留出空间，避免内容被遮挡 */
+            padding-bottom: 50px;
         }
-        .container
+        /* 半透明容器：手机端全屏宽度，左右留小边距，更贴合手机屏幕 */
+        .container {
+            width: 94%;
+            margin: 10px auto 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 20px 15px;
+            /* 轻微阴影，增加立体感 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        /* 标题优化：字号适配手机，颜色更醒目 */
+        h1 {
+            color: #c8102e;
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #c8102e;
+        }
+        /* 二级标题优化 */
+        h2 {
+            color: #c8102e;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        /* 正文优化：行高加大，阅读更轻松 */
+        p, li {
+            line-height: 1.9;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        /* 列表缩进优化 */
+        ol, ul {
+            padding-left: 20px;
+        }
+        /* 底部说明 */
+        .notice {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 25px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>新思想学习社（New Thought Learning Community）</h1>
+        <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供优质的学习交流平台。</p>
+
+        <h2>📝 投稿须知</h2>
+        <ol>
+            <li><strong>投稿主题</strong>：围绕马克思主义基本原理、中国特色社会主义理论、党史国史、青年责任与时代使命等方向展开。</li>
+            <li><strong>稿件要求</strong>：内容积极健康，立场鲜明，逻辑清晰；字数建议 1500–5000 字，特殊题材可调整；格式为 Word 或纯文本，可配图。</li>
+            <li><strong>投稿方式</strong>：将稿件发送至社内指定邮箱或负责人微信，审核通过后统一发布。</li>
+            <li><strong>版权说明</strong>：投稿即授权本社非商业性使用，作者保留著作权。</li>
+        </ol>
+
+        <h2>📚 最新文章</h2>
+        <p>敬请期待，第一篇投稿即将上线！</p>
+
+        <h2>🔗 联系我们</h2>
+        <ul>
+            <li>社内交流群：[请填写群号]</li>
+            <li>投稿邮箱：[请填写邮箱]</li>
+            <li>负责人微信：[请填写微信号]</li>
+        </ul>
+
+        <p class="notice">本网站由新思想学习社管理员维护</p>
+    </div>
+</body>
+</html>
