@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>新思想学习社</title>
+<title>新思想学习社 · 多人会议</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;height:100%;}
+/* 启动动画 */
 .splash-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;animation:splashFade 2.5s ease forwards;animation-delay:3s;}
 .ntlc-logo{display:flex;gap:12px;font-size:80px;font-weight:900;margin-bottom:40px;}
 .ntlc-letter{opacity:0;transform:scale(0.5);animation:letterPop 0.6s ease forwards;}
@@ -17,15 +18,16 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 @keyframes letterPop{0%{opacity:0;transform:scale(0.5);}70%{opacity:1;transform:scale(1.1);}100%{opacity:1;transform:scale(1);}}
 @keyframes splashFade{0%{opacity:1;}100%{opacity:0;visibility:hidden;}}
 
-.auth-modal,.pwd-modal,.reject-modal,.api-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(80,0,0,0.8);z-index:999;display:none;align-items:center;justify-content:center;}
-.auth-box,.pwd-box,.reject-box,.api-box{background:#801010;padding:30px;border-radius:12px;width:90%;max-width:420px;}
+/* 模态框共用 */
+.auth-modal,.pwd-modal,.reject-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(80,0,0,0.8);z-index:999;display:none;align-items:center;justify-content:center;}
+.auth-box,.pwd-box,.reject-box{background:#801010;padding:30px;border-radius:12px;width:90%;max-width:420px;}
 .modal-close{position:absolute;top:15px;right:15px;font-size:24px;color:#ffd700;cursor:pointer;}
 .auth-tabs{display:flex;gap:10px;margin-bottom:20px;}
 .auth-tab{flex:1;padding:12px;text-align:center;background:rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;}
 .auth-tab.active{background:#ffd700;color:#5a0000;font-weight:bold;}
-.auth-input,.pwd-input,.reject-reason,.api-input{width:100%;padding:14px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,215,0,0.3);outline:none;}
+.auth-input,.pwd-input,.reject-reason{width:100%;padding:14px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,215,0,0.3);outline:none;}
 .reject-reason{height:100px;resize:none;}
-.auth-btn,.pwd-btn,.reject-btn,.api-btn{width:100%;padding:14px;border-radius:8px;background:#ffd700;color:#5a0000;font-weight:bold;border:none;cursor:pointer;}
+.auth-btn,.pwd-btn,.reject-btn{width:100%;padding:14px;border-radius:8px;background:#ffd700;color:#5a0000;font-weight:bold;border:none;cursor:pointer;}
 .cancel-login{width:100%;margin-top:10px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#ffd700;border:1px solid #ffd700;cursor:pointer;}
 
 .main-app{display:none;}
@@ -50,16 +52,14 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 .member-only{display:none;}
 .has-account .member-only{display:inline-block;}
 
+/* 文章/会议样式统一 */
 .article-item{padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px;}
 .article-title{color:#ffd700;font-weight:bold;}
 .article-meta{font-size:12px;color:#ccc;margin:4px 0;}
 .article-content{margin:8px 0;line-height:1.6;}
 
 .like-box{display:flex;align-items:center;gap:10px;margin:10px 0;}
-.like-btn,.ai-eval-btn{background:#ffd700;color:#801010;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
-.ai-result{margin-top:10px;padding:10px;background:rgba(255,215,0,0.1);border-radius:6px;border-left:3px solid #ffd700;}
-.eval-loading{color:#ffd700;font-style:italic;}
-
+.like-btn{background:#ffd700;color:#801010;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
 .comment-item{background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:14px;}
 .comment-user{color:#ffd700;font-weight:bold;font-size:12px;}
 .comment-text{color:#eee;margin-top:2px;}
@@ -71,4 +71,9 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 .btn-sm{padding:4px 8px;font-size:12px;}
 .btn-green{background:#28a050;color:#fff;}
 .btn-red{background:#c81010;color:#fff;}
-.bt
+.btn-yellow{background:#ffc107;color:#222;}
+
+.form-row{margin-bottom:12px;}
+.form-row label{display:block;margin-bottom:4px;color:#ffd700;font-weight:bold;}
+
+/* 会议专用网格 - 真正的多人会议布局 
