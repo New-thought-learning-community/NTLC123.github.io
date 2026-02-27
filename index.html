@@ -16,263 +16,87 @@
       font-family: sans-serif;
       line-height: 1.6;
     }
-    /* 顶部导航栏 */
+
+    /* 登录弹窗 */
+    .auth-modal {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.7); z-index:99999;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .auth-box {
+      background:#5a0000; padding:30px; border-radius:12px;
+      width:90%; max-width:420px;
+    }
+    .auth-tabs { display:flex; gap:10px; margin-bottom:20px; }
+    .auth-tab { flex:1; padding:10px; text-align:center; background:rgba(255,255,255,0.1); border-radius:6px; cursor:pointer; }
+    .auth-tab.active { background:#ffd700; color:#5a0000; font-weight:bold; }
+    .auth-input {
+      width:100%; padding:12px; margin-bottom:12px; border-radius:6px;
+      background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3);
+    }
+    .auth-btn {
+      width:100%; padding:12px; border-radius:6px; background:#ffd700;
+      color:#5a0000; font-weight:bold; border:none; cursor:pointer;
+    }
+    .auth-tip { font-size:14px; text-align:center; margin-top:10px; color:#ccc; }
+    .auth-tip span { color:#ffd700; cursor:pointer; }
+
+    /* 顶部用户栏 */
+    .user-bar {
+      background:#5a0000; padding:8px 15px; text-align:right; font-size:14px;
+    }
+    .user-info { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
+    .avatar { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+    .user-name { font-weight:bold; color:#ffd700; }
+    .user-link { color:#fff; margin-left:8px; cursor:pointer; font-size:13px; }
+    .user-link:hover { color:#ffd700; }
+    .badge { background:red; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px; margin-left:3px; }
+
+    /* 导航 */
     .navbar {
-      background-color: #5a0000;
-      padding: 15px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      text-align: center;
+      background:#5a0000; padding:15px; position:sticky; top:0; z-index:100; text-align:center;
     }
-    .navbar h1 {
-      color: #ffd700;
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-    .nav-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .nav-links a {
-      color: #fff;
-      text-decoration: none;
-      font-size: 16px;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .nav-links a:hover, .nav-links a.active {
-      color: #ffd700;
-      background-color: rgba(255,215,0,0.1);
-    }
-    /* 主内容区 */
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-    /* 通用卡片样式 */
-    .card {
-      background-color: #5a0000;
-      padding: 25px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-    .card h2 {
-      color: #ffd700;
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 15px;
-    }
-    .card h3 {
-      color: #ffd700;
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-    .card p {
-      font-size: 16px;
-      line-height: 1.8;
-      text-align: left;
-    }
-    .logo-section {
-      text-align: center;
-      margin: 20px 0 0;
-    }
-    .logo {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .section-title {
-      color: #ffd700;
-      font-size: 22px;
-      margin: 30px 0 15px;
-    }
-    #postList {
-      list-style: none;
-      padding: 0;
-    }
-    #postList li {
-      margin: 10px 0;
-    }
-    #postList a {
-      color: #0091ff;
-      text-decoration: none;
-      font-size: 18px;
-    }
-    #postList a:hover {
-      text-decoration: underline;
-    }
-    /* 群信息区 */
-    .group-info {
-      font-size: 24px;
-      color: #ffd700;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    /* 按钮组 */
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 300px;
-      margin: 0 auto;
-    }
-    .join-btn, .copy-btn {
-      display: block;
-      width: 100%;
-      padding: 14px 0;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 18px;
-      text-align: center;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-    .join-btn {
-      background: linear-gradient(135deg, #0084ff, #00aaff);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(0,132,255,0.3);
-    }
-    .copy-btn {
-      background: linear-gradient(135deg, #28a745, #20c997);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(40,167,69,0.3);
-    }
-    .join-btn:active, .copy-btn:active {
-      transform: translateY(1px);
-    }
-    footer {
-      text-align: center;
-      margin: 30px 0;
-      color: #ffd700;
-      font-size: 14px;
-    }
-    /* 页面内容切换 */
-    .page-content {
-      display: none;
-    }
-    .page-content.active {
-      display: block;
-    }
-    /* 响应式适配手机 */
-    @media (max-width: 480px) {
-      .nav-links {
-        gap: 10px;
-      }
-      .card h2 {
-        font-size: 22px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- 顶部导航栏 -->
-  <nav class="navbar">
-    <h1>新思想学习社</h1>
-    <div class="nav-links">
-      <a class="nav-link active" data-page="home">首页</a>
-      <a class="nav-link" data-page="latest">最新文章</a>
-      <a class="nav-link" data-page="join">加入我们</a>
-      <a class="nav-link" data-page="submit">我要投稿</a>
-    </div>
-  </nav>
+    .navbar h1 { color:#ffd700; font-size:22px; margin-bottom:10px; }
+    .nav-links { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+    .nav-links a { color:#fff; text-decoration:none; font-size:15px; padding:6px 8px; border-radius:4px; cursor:pointer; }
+    .nav-links a:hover,.nav-links a.active { color:#ffd700; background:rgba(255,215,0,0.1); }
 
-  <div class="container">
-    <!-- 首页介绍区 -->
-    <div id="home" class="page-content active">
-      <div class="card">
-        <h2>新思想学习社（New Thought Learning Community）</h2>
-        <p>欢迎来到新思想学习社的线上投稿平台。本社致力于组织社员深入学习马克思主义理论，通过理论研讨、征文投稿、实践分享等形式，为大家提供学习平台。</p>
-        <div class="logo-section">
-          <img src="1000015381.jpg" class="logo" alt="社徽">
-        </div>
-      </div>
-    </div>
+    .container { max-width:800px; margin:20px auto; padding:0 15px; }
+    .card { background:#5a0000; padding:20px; border-radius:12px; margin-bottom:20px; }
+    .card h2,.card h3 { color:#ffd700; text-align:center; margin-bottom:15px; }
+    .tip-text { color:#ffd700; font-size:14px; text-align:center; margin:8px 0; }
+    .search-bar { width:100%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3); margin-bottom:10px; }
 
-    <!-- 最新文章区 -->
-    <div id="latest" class="page-content">
-      <h2 class="section-title">最新文章</h2>
-      <ul id="postList">
-        <li><a href="posts/he-wei-xin-si-xiang.html">何为新思想</a></li>
-      </ul>
-    </div>
+    /* 通用按钮 */
+    .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .btn-primary { background:#ffd700; color:#5a0000; }
+    .btn-sm { padding:4px 8px; font-size:12px; }
+    .btn-red { background:#dc3545; color:#fff; }
+    .btn-green { background:#28a745; color:#fff; }
+    .btn-blue { background:#007bff; color:#fff; }
+    .btn-gray { background:#6c757d; color:#fff; }
 
-    <!-- 加入我们区（审核群） -->
-    <div id="join" class="page-content">
-      <div class="card">
-        <h3>加入我们的审核群</h3>
-        <div class="group-info">
-          <span id="reviewGroup">【781624977】</span>
-        </div>
-        <div class="btn-group">
-          <a href="https://qun.qq.com/#!/search?k=【781624977】" class="join-btn">查询QQ群号</a>
-          <button onclick="copyReviewGroup()" class="copy-btn">复制群号</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 我要投稿区（投稿群） -->
-    <div id="submit" class="page-content">
-      <div class="card">
-        <h3>加入我们的投稿群</h3>
-        <div class="group-info">
-          <span id="submitGroup">【1087621159】</span>
-        </div>
-        <div class="btn-group">
-          <a href="https://qun.qq.com/#!/search?k=【1087621159】" class="join-btn">查询QQ群号</a>
-          <button onclick="copySubmitGroup()" class="copy-btn">复制群号</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer>©2026 新思想学习社 版权所有</footer>
-
-  <script>
-    // 导航切换逻辑
-    const navLinks = document.querySelectorAll('.nav-link');
-    const pages = document.querySelectorAll('.page-content');
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        // 移除所有active类
-        navLinks.forEach(l => l.classList.remove('active'));
-        pages.forEach(p => p.classList.remove('active'));
-
-        // 给当前点击的和对应页面添加active
-        const targetPage = link.getAttribute('data-page');
-        link.classList.add('active');
-        document.getElementById(targetPage).classList.add('active');
-      });
-    });
-
-    // 复制审核群号
-    function copyReviewGroup() {
-      const groupNum = document.getElementById('reviewGroup').textContent;
-      navigator.clipboard.writeText(groupNum).then(() => {
-        alert('审核群号已复制，可直接去QQ搜索添加');
-      }).catch(err => {
-        alert('复制失败，请手动复制群号：' + groupNum);
-      });
+    /* 列表项 */
+    .user-item {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px; background:rgba(255,255,255,0.07); border-radius:8px; margin-bottom:8px;
     }
+    .user-left { display:flex; align-items:center; gap:10px; }
+    .user-item-name { font-weight:bold; color:#ffd700; }
+    .highlight { background:#ffd700; color:#5a0000; padding:2px 4px; border-radius:3px; }
 
-    // 复制投稿群号
-    function copySubmitGroup() {
-      const groupNum = document.getElementById('submitGroup').textContent;
-      navigator.clipboard.writeText(groupNum).then(() => {
-        alert('投稿群号已复制，可直接去QQ搜索添加');
-      }).catch(err => {
-        alert('复制失败，请手动复制群号：' + groupNum);
-      });
-    }
-  </script>
-</body>
-</html>
+    /* 私信聊天 */
+    .chat-container { height:400px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom:10px; }
+    .chat-message { margin-bottom:10px; max-width:75%; position:relative; }
+    .chat-me { margin-left:auto; background:#ffd700; color:#5a0000; padding:8px 12px; border-radius:12px 12px 4px 12px; }
+    .chat-other { margin-right:auto; background:rgba(255,255,255,0.1); color:#fff; padding:8px 12px; border-radius:12px 12px 12px 4px; }
+    .chat-time { font-size:10px; color:#ccc; text-align:right; margin-top:2px; }
+    .chat-withdraw { font-size:10px; color:#ff9999; cursor:pointer; margin-left:5px; }
+    .chat-img { max-width:150px; border-radius:8px; margin:5px 0; cursor:pointer; }
+    .chat-input { display:flex; gap:8px; align-items:center; }
+    .chat-input input { flex:1; padding:10px; border-radius:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3); }
+    .file-input { display:none; }
+
+    /* 语音房间（仿腾讯会议） */
+    .voice-room { background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; margin-bottom:15px; }
+    .voice-mem
