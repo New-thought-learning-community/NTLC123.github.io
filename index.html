@@ -10,93 +10,450 @@
       margin: 0;
       padding: 0;
     }
-    body {
-      background-color: #c8102e;
+    /* 统一全局背景：全程只有一种红色系，绝不白/黑乱跳 */
+    html, body {
+      background-color: #b81c1c;
+      min-height: 100vh;
       color: #fff;
       font-family: sans-serif;
       line-height: 1.6;
     }
 
-    /* 登录弹窗 */
+    /* 登录弹窗：半透明暗红，不是纯黑，不刺眼 */
     .auth-modal {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.7); z-index:99999;
-      display:flex; align-items:center; justify-content:center;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(100, 0, 0, 0.7);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .auth-box {
-      background:#5a0000; padding:30px; border-radius:12px;
-      width:90%; max-width:420px;
+      background: #801010;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
     }
-    .auth-tabs { display:flex; gap:10px; margin-bottom:20px; }
-    .auth-tab { flex:1; padding:10px; text-align:center; background:rgba(255,255,255,0.1); border-radius:6px; cursor:pointer; }
-    .auth-tab.active { background:#ffd700; color:#5a0000; font-weight:bold; }
+    .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .auth-tab { flex: 1; padding: 10px; text-align: center; background: rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer; }
+    .auth-tab.active { background: #ffd700; color: #5a0000; font-weight: bold; }
     .auth-input {
-      width:100%; padding:12px; margin-bottom:12px; border-radius:6px;
-      background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3);
+      width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 6px;
+      background: rgba(255,255,255,0.1); color: #fff;
+      border: 1px solid rgba(255,215,0,0.3);
     }
     .auth-btn {
-      width:100%; padding:12px; border-radius:6px; background:#ffd700;
-      color:#5a0000; font-weight:bold; border:none; cursor:pointer;
+      width: 100%; padding: 12px; border-radius: 6px;
+      background: #ffd700; color: #5a0000;
+      font-weight: bold; border: none; cursor: pointer;
     }
-    .auth-tip { font-size:14px; text-align:center; margin-top:10px; color:#ccc; }
-    .auth-tip span { color:#ffd700; cursor:pointer; }
+    .auth-tip { font-size: 14px; text-align: center; margin-top: 10px; color: #ccc; }
+    .auth-tip span { color: #ffd700; cursor: pointer; }
 
-    /* 顶部用户栏 */
+    /* 顶部栏统一色系，不突兀 */
     .user-bar {
-      background:#5a0000; padding:8px 15px; text-align:right; font-size:14px;
+      background: #801010;
+      padding: 8px 15px;
+      text-align: right;
+      font-size: 14px;
     }
-    .user-info { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
-    .avatar { width:32px; height:32px; border-radius:50%; object-fit:cover; }
-    .user-name { font-weight:bold; color:#ffd700; }
-    .user-link { color:#fff; margin-left:8px; cursor:pointer; font-size:13px; }
-    .user-link:hover { color:#ffd700; }
-    .badge { background:red; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px; margin-left:3px; }
+    .user-info { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .user-name { font-weight: bold; color: #ffd700; }
+    .user-link { color: #fff; margin-left: 8px; cursor: pointer; font-size: 13px; }
+    .user-link:hover { color: #ffd700; }
+    .badge { background: #c81010; color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 10px; margin-left: 3px; }
 
-    /* 导航 */
     .navbar {
-      background:#5a0000; padding:15px; position:sticky; top:0; z-index:100; text-align:center;
+      background: #801010;
+      padding: 15px;
+      position: sticky; top: 0; z-index: 100;
+      text-align: center;
     }
-    .navbar h1 { color:#ffd700; font-size:22px; margin-bottom:10px; }
-    .nav-links { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
-    .nav-links a { color:#fff; text-decoration:none; font-size:15px; padding:6px 8px; border-radius:4px; cursor:pointer; }
-    .nav-links a:hover,.nav-links a.active { color:#ffd700; background:rgba(255,215,0,0.1); }
+    .navbar h1 { color: #ffd700; font-size: 22px; margin-bottom: 10px; }
+    .nav-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .nav-links a { color: #fff; text-decoration: none; font-size: 15px; padding: 6px 8px; border-radius: 4px; cursor: pointer; }
+    .nav-links a:hover,.nav-links a.active { color: #ffd700; background: rgba(255,215,0,0.1); }
 
-    .container { max-width:800px; margin:20px auto; padding:0 15px; }
-    .card { background:#5a0000; padding:20px; border-radius:12px; margin-bottom:20px; }
-    .card h2,.card h3 { color:#ffd700; text-align:center; margin-bottom:15px; }
-    .tip-text { color:#ffd700; font-size:14px; text-align:center; margin:8px 0; }
-    .search-bar { width:100%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3); margin-bottom:10px; }
+    .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+    /* 卡片同色系，不出现白色块 */
+    .card {
+      background: #801010;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .card h2,.card h3 { color: #ffd700; text-align: center; margin-bottom: 15px; }
+    .tip-text { color: #ffd700; font-size: 14px; text-align: center; margin: 8px 0; }
+    .search-bar {
+      width: 100%; padding: 10px; border-radius: 8px;
+      background: rgba(255,255,255,0.1); color: #fff;
+      border: 1px solid rgba(255,215,0,0.3);
+      margin-bottom: 10px;
+    }
 
-    /* 通用按钮 */
-    .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
-    .btn-primary { background:#ffd700; color:#5a0000; }
-    .btn-sm { padding:4px 8px; font-size:12px; }
-    .btn-red { background:#dc3545; color:#fff; }
-    .btn-green { background:#28a745; color:#fff; }
-    .btn-blue { background:#007bff; color:#fff; }
-    .btn-gray { background:#6c757d; color:#fff; }
+    /* 按钮统一 */
+    .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .btn-primary { background: #ffd700; color: #5a0000; }
+    .btn-sm { padding: 4px 8px; font-size: 12px; }
+    .btn-red { background: #c81010; color: #fff; }
+    .btn-green { background: #28a050; color: #fff; }
+    .btn-blue { background: #1a73e8; color: #fff; }
+    .btn-gray { background: #666; color: #fff; }
 
-    /* 列表项 */
     .user-item {
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px; background:rgba(255,255,255,0.07); border-radius:8px; margin-bottom:8px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px; background: rgba(255,255,255,0.07);
+      border-radius: 8px; margin-bottom: 8px;
     }
-    .user-left { display:flex; align-items:center; gap:10px; }
-    .user-item-name { font-weight:bold; color:#ffd700; }
-    .highlight { background:#ffd700; color:#5a0000; padding:2px 4px; border-radius:3px; }
+    .user-left { display: flex; align-items: center; gap: 10px; }
+    .user-item-name { font-weight: bold; color: #ffd700; }
+    .highlight { background: #ffd700; color: #5a0000; padding: 2px 4px; border-radius: 3px; }
 
-    /* 私信聊天 */
-    .chat-container { height:400px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px; margin-bottom:10px; }
-    .chat-message { margin-bottom:10px; max-width:75%; position:relative; }
-    .chat-me { margin-left:auto; background:#ffd700; color:#5a0000; padding:8px 12px; border-radius:12px 12px 4px 12px; }
-    .chat-other { margin-right:auto; background:rgba(255,255,255,0.1); color:#fff; padding:8px 12px; border-radius:12px 12px 12px 4px; }
-    .chat-time { font-size:10px; color:#ccc; text-align:right; margin-top:2px; }
-    .chat-withdraw { font-size:10px; color:#ff9999; cursor:pointer; margin-left:5px; }
-    .chat-img { max-width:150px; border-radius:8px; margin:5px 0; cursor:pointer; }
-    .chat-input { display:flex; gap:8px; align-items:center; }
-    .chat-input input { flex:1; padding:10px; border-radius:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,215,0,0.3); }
-    .file-input { display:none; }
+    /* 私信区域无纯白背景 */
+    .chat-container {
+      height: 400px; overflow-y: auto;
+      background: rgba(0,0,0,0.15);
+      padding: 10px; border-radius: 8px; margin-bottom: 10px;
+    }
+    .chat-message { margin-bottom: 10px; max-width: 75%; }
+    .chat-me { margin-left: auto; background: #ffd700; color: #5a0000; padding: 8px 12px; border-radius: 12px 12px 4px 12px; }
+    .chat-other { margin-right: auto; background: rgba(255,255,255,0.1); color: #fff; padding: 8px 12px; border-radius: 12px 12px 12px 4px; }
+    .chat-time { font-size: 10px; color: #ccc; text-align: right; margin-top: 2px; }
+    .chat-withdraw { font-size: 10px; color: #ff9999; cursor: pointer; margin-left: 5px; }
+    .chat-img { max-width: 150px; border-radius: 8px; margin: 5px 0; cursor: pointer; }
+    .chat-input { display: flex; gap: 8px; align-items: center; }
+    .chat-input input { flex: 1; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,215,0,0.3); }
+    .file-input { display: none; }
 
-    /* 语音房间（仿腾讯会议） */
-    .voice-room { background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; margin-bottom:15px; }
-    .voice-mem
+    .voice-room { background: rgba(0,0,0,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .voice-member { display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 6px; margin-bottom: 6px; }
+    .voice-controls { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
+    .mic-status { font-size: 12px; padding: 2px 6px; border-radius: 4px; }
+    .mic-on { background: #28a050; color: #fff; }
+    .mic-off { background: #c81010; color: #fff; }
+    .room-host-tag { background: #ffd700; color: #5a0000; font-size: 10px; padding: 2px 4px; border-radius: 3px; }
+
+    /* 页面切换：永远不会空白一片 */
+    .page-content { display: none; }
+    .page-content.active { display: block; }
+    .article-detail { display: none; }
+    .article-detail.active { display: block; }
+    .back-btn { background: #ffd700; color: #5a0000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; }
+    footer { text-align: center; margin: 30px 0; color: #ffd700; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div id="authModal" class="auth-modal">
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-mode="login">登录</div>
+      <div class="auth-tab" data-mode="register">注册</div>
+    </div>
+    <div id="loginForm">
+      <input class="auth-input" id="loginAccount" placeholder="手机号/QQ/微信">
+      <input class="auth-input" id="loginPwd" type="password" placeholder="密码">
+      <button class="auth-btn" onclick="doLogin()">登录</button>
+      <div class="auth-tip">没有账号？<span onclick="switchAuth('register')">注册</span></div>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <input class="auth-input" id="regAccount" placeholder="账号(手机号/QQ/微信)">
+      <input class="auth-input" id="regPwd" type="password" placeholder="密码">
+      <input class="auth-input" id="regNickname" placeholder="昵称">
+      <button class="auth-btn" onclick="doRegister()">注册</button>
+      <div class="auth-tip">已有账号？<span onclick="switchAuth('login')">登录</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="user-bar" id="userBar" style="display:none;">
+  <div class="user-info">
+    <img id="barAvatar" class="avatar" src="https://picsum.photos/64/64">
+    <span id="barName" class="user-name"></span>
+    <span class="user-link" onclick="goPage('profile')">个人中心</span>
+    <span class="user-link" onclick="goPage('userList')">用户列表</span>
+    <span class="user-link" onclick="goPage('chatList')">私信 <span id="chatUnread" class="badge" style="display:none;">●</span></span>
+    <span class="user-link" onclick="goPage('voice')">语音会议</span>
+    <span class="user-link" onclick="logout()">退出</span>
+  </div>
+</div>
+
+<nav class="navbar">
+  <h1>新思想学习社</h1>
+  <div class="nav-links">
+    <a class="nav-link active" onclick="goPage('home')">首页</a>
+    <a class="nav-link" onclick="goPage('latest')">文章</a>
+    <a class="nav-link" onclick="goPage('submit')">投稿</a>
+    <a class="nav-link" onclick="goPage('audit')">审核</a>
+    <a class="nav-link" onclick="goPage('adminManage')">管理员管理</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div id="home" class="page-content active">
+    <div class="card">
+      <h2>新思想学习社</h2>
+      <p>欢迎来到线上投稿平台。本社致力于理论学习、征文投稿、交流分享。</p>
+    </div>
+  </div>
+
+  <div id="latest" class="page-content">
+    <div class="card"><h3>最新已通过文章</h3><ul id="postList"></ul></div>
+  </div>
+
+  <div id="articleContainer" class="article-detail">
+    <div class="card">
+      <button class="back-btn" onclick="closeArticle()">← 返回</button>
+      <h2 id="articleTitle"></h2>
+      <div id="articleAuthor" style="color:#ccc; text-align:center; margin-bottom:10px;"></div>
+      <div class="article-content" id="articleContent"></div>
+      <div class="comment-section">
+        <h3 style="color:#ffd700; margin:15px 0;">评论</h3>
+        <textarea id="commentInput" style="width:100%; padding:10px; border-radius:6px; background:rgba(255,255,255,0.1); color:#fff;" rows="3" placeholder="文明发言"></textarea>
+        <button class="btn btn-primary" onclick="submitComment()" style="margin-top:8px;">发表</button>
+        <div id="commentList" style="margin-top:15px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="submit" class="page-content">
+    <div class="card">
+      <h3>我要投稿</h3>
+      <div class="tip-text">寒暑假随时可投，平时周五、周六</div>
+      <div class="tip-text" id="timeTip"></div>
+      <input id="newPostTitle" class="auth-input" placeholder="标题">
+      <textarea id="newPostContent" class="auth-input" rows="6" placeholder="内容"></textarea>
+      <button class="auth-btn" id="publishBtn" onclick="publishArticle()">提交投稿</button>
+    </div>
+    <div class="card"><h3>我的投稿记录</h3><div id="userPostList"></div></div>
+  </div>
+
+  <div id="audit" class="page-content">
+    <div class="card"><h3>文章审核</h3><div id="auditList"></div></div>
+  </div>
+
+  <div id="adminManage" class="page-content">
+    <div class="card"><h3>管理员管理（总管理员专属）</h3><div id="userListForAdmin"></div></div>
+  </div>
+
+  <div id="profile" class="page-content">
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+        <img id="profileAvatar" src="https://picsum.photos/80/80" style="width:80px; height:80px; border-radius:50%; border:3px solid #ffd700;">
+        <div>
+          <div style="font-size:22px; font-weight:bold; color:#ffd700;" id="profileName"></div>
+          <div style="color:#ccc;" id="profileRole"></div>
+          <div style="margin-top:5px;">
+            <span id="followCount" style="margin-right:10px;">关注：0</span>
+            <span id="followerCount">粉丝：0</span>
+          </div>
+        </div>
+      </div>
+      <input class="auth-input" id="editNick" placeholder="昵称">
+      <input class="auth-input" id="editAvatar" placeholder="头像链接">
+      <button class="auth-btn" onclick="saveProfile()">保存资料</button>
+    </div>
+  </div>
+
+  <div id="userList" class="page-content">
+    <div class="card">
+      <h3>全部用户</h3>
+      <input class="search-bar" id="userSearch" placeholder="搜索账号/昵称/UID" oninput="renderAllUsers()">
+      <div id="allUserList"></div>
+    </div>
+  </div>
+
+  <div id="chatList" class="page-content">
+    <div class="card"><h3>私信列表</h3><div id="chatUserList"></div></div>
+  </div>
+
+  <div id="chatWindow" class="page-content">
+    <div class="card">
+      <button class="back-btn" onclick="goPage('chatList')">← 返回私信列表</button>
+      <h3 id="chatTargetName"></h3>
+      <div class="chat-container" id="chatBox"></div>
+      <div class="chat-input">
+        <input type="file" id="chatImgFile" class="file-input" accept="image/*" onchange="sendChatImage()">
+        <button class="btn btn-sm btn-blue" onclick="document.getElementById('chatImgFile').click()">图片</button>
+        <input id="chatInput" placeholder="输入消息">
+        <button class="btn btn-primary" onclick="sendChat()">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="voice" class="page-content">
+    <div class="card">
+      <h3>语音会议房间</h3>
+      <input class="search-bar" id="roomSearch" placeholder="搜索房间名" oninput="renderRoomList()">
+      <div style="margin-bottom:15px;">
+        <input class="auth-input" id="roomName" placeholder="房间名" style="margin-bottom:8px;">
+        <button class="btn btn-primary" onclick="createRoom()">创建语音房间</button>
+      </div>
+      <div id="roomList"></div>
+    </div>
+
+    <div id="roomView" class="page-content">
+      <div class="card">
+        <button class="back-btn" onclick="leaveRoom()">← 离开会议</button>
+        <h3 id="currentRoomName"></h3>
+        <div class="voice-room">
+          <div><strong>房间成员（麦克风状态）：</strong></div>
+          <div id="roomMembers" style="margin-top:10px;"></div>
+          <div class="voice-controls">
+            <button class="btn btn-green" onclick="toggleMic()" id="micBtn">开启麦克风</button>
+            <button class="btn btn-blue" onclick="muteAll()" id="muteAllBtn" style="display:none;">全员静音</button>
+            <button class="btn btn-gray" onclick="unmuteAll()" id="unmuteAllBtn" style="display:none;">解除全员静音</button>
+            <button class="btn btn-red" onclick="dismissRoom()" id="dismissBtn" style="display:none;">结束会议（解散）</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>新思想学习社 © 2026</footer>
+
+<script>
+const SUPER_ADMIN = "admin";
+const LOCAL_KEYS = {
+  users: "nt_users", articles: "nt_articles", comments: "nt_comments",
+  admins: "nt_admins", current: "nt_current", follow: "nt_follow",
+  chat: "nt_chat", voiceRooms: "nt_voice",
+};
+
+function get(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } }
+function set(key, val) { localStorage.setItem(key, JSON.stringify(val || [])); }
+
+let users = get(LOCAL_KEYS.users);
+let articles = get(LOCAL_KEYS.articles);
+let comments = get(LOCAL_KEYS.comments);
+let admins = get(LOCAL_KEYS.admins);
+let currentUser = get(LOCAL_KEYS.current);
+
+let followData = get(LOCAL_KEYS.follow);
+let chatData = get(LOCAL_KEYS.chat);
+let voiceRooms = get(LOCAL_KEYS.voiceRooms);
+
+let currentChatUid = null;
+let currentRoomId = null;
+let currentArtId = null;
+let localStream = null;
+let micOn = false;
+
+function switchAuth(m) {
+  document.querySelectorAll(".auth-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelector(`[data-mode=${m}]`).classList.add("active");
+  document.getElementById("loginForm").style.display = m==="login"?"block":"none";
+  document.getElementById("registerForm").style.display = m==="register"?"block":"none";
+}
+
+function doRegister() {
+  const account = document.getElementById("regAccount").value.trim();
+  const pwd = document.getElementById("regPwd").value.trim();
+  const nick = document.getElementById("regNickname").value.trim();
+  if(!account||!pwd||!nick){alert("请完整填写");return;}
+  const exists = users.some(u=>u.account===account);
+  if(exists){alert("该账号已注册，禁止重复注册！");switchAuth("login");return;}
+  const user={uid:"u"+Date.now(),account,pwd,nick,avatar:"https://picsum.photos/80/80",role:account===SUPER_ADMIN?"super":"user"};
+  users.push(user);set(LOCAL_KEYS.users,users);alert("注册成功，请登录");switchAuth("login");
+}
+
+function doLogin() {
+  const account = document.getElementById("loginAccount").value.trim();
+  const pwd = document.getElementById("loginPwd").value.trim();
+  const u=users.find(x=>x.account===account&&x.pwd===pwd);
+  if(!u){alert("账号或密码错误");return;}
+  currentUser=u;set(LOCAL_KEYS.current,currentUser);
+  document.getElementById("authModal").style.display="none";
+  initAfterLogin();
+}
+
+function logout(){currentUser=null;set(LOCAL_KEYS.current,null);location.reload();}
+function isLogin(){return !!currentUser;}
+function isSuper(){return isLogin()&&currentUser.role==="super";}
+function isAdminUser(){if(!isLogin())return false;if(isSuper())return true;return admins.includes(currentUser.uid);}
+
+function goPage(id){
+  document.querySelectorAll(".page-content").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-link").forEach(n=>n.classList.remove("active"));
+  const t=document.getElementById(id);if(t)t.classList.add("active");
+  const nav=document.querySelector(`.nav-link[onclick="goPage('${id}')"]`);if(nav)nav.classList.add("active");
+  document.getElementById("articleContainer").classList.remove("active");
+  if(id==="home")return;
+  if(id==="chatList")renderChatList();
+  if(id==="userList")renderAllUsers();
+  if(id==="profile")loadProfile();
+  if(id==="adminManage")renderAdminManage();
+  if(id==="voice")renderRoomList();
+  if(id==="audit")renderAudit();
+  if(id==="latest")renderArticles();
+}
+
+function follow(uid){
+  if(!isLogin()||uid===currentUser.uid)return;
+  const e=followData.some(f=>f.from===currentUser.uid&&f.to===uid);
+  if(e){followData=followData.filter(f=>!(f.from===currentUser.uid&&f.to===uid));}
+  else{followData.push({from:currentUser.uid,to:uid});}
+  set(LOCAL_KEYS.follow,followData);renderAllUsers();loadProfile();
+}
+function getFollow(uid){return followData.filter(f=>f.from===uid).length;}
+function getFollower(uid){return followData.filter(f=>f.to===uid).length;}
+function isFollowing(uid){return followData.some(f=>f.from===currentUser.uid&&f.to===uid);}
+
+function renderAllUsers(){
+  const kw=(document.getElementById("userSearch")?.value||"").toLowerCase().trim();
+  const el=document.getElementById("allUserList");let html="";
+  users.forEach(u=>{
+    if(u.uid===currentUser?.uid)return;
+    const m=!kw||u.uid.toLowerCase().includes(kw)||u.nick.toLowerCase().includes(kw)||u.account.toLowerCase().includes(kw);
+    if(!m)return;
+    const fd=isFollowing(u.uid);
+    let nn=u.nick,ac=u.account,ui=u.uid;
+    if(kw){const r=new RegExp(`(${kw})`,"gi");nn=nn.replace(r,'<span class="highlight">$1</span>');ac=ac.replace(r,'<span class="highlight">$1</span>');ui=ui.replace(r,'<span class="highlight">$1</span>');}
+    html+=`<div class="user-item"><div class="user-left"><img src="${u.avatar}" class="avatar"><div><div class="user-item-name">${nn}</div><div style="font-size:12px;color:#ccc;">账号：${ac}｜UID：${ui}</div></div></div><div style="display:flex;gap:6px;"><button class="btn btn-sm btn-primary" onclick="follow('${u.uid}')">${fd?'已关注':'关注'}</button><button class="btn btn-sm btn-green" onclick="openChat('${u.uid}')">私信</button></div></div>`;
+  });
+  el.innerHTML=html||'<div style="text-align:center;color:#ccc;">无匹配用户</div>';
+}
+
+function openChat(uid){if(!isLogin()||uid===currentUser.uid)return;currentChatUid=uid;const u=users.find(x=>x.uid===uid);document.getElementById("chatTargetName").innerText="与 "+(u?.nick||"用户")+" 聊天";goPage("chatWindow");renderChatBox();markChatRead();}
+function sendChat(){const t=document.getElementById("chatInput").value.trim();if(!t||!currentChatUid)return;chatData.push({id:"c"+Date.now(),from:currentUser.uid,to:currentChatUid,content:t,type:"text",time:new Date().toLocaleString(),read:false});set(LOCAL_KEYS.chat,chatData);document.getElementById("chatInput").value="";renderChatBox();}
+function sendChatImage(){const f=document.getElementById("chatImgFile").files[0];if(!f||!currentChatUid)return;const r=new FileReader();r.onload=e=>{chatData.push({id:"c"+Date.now(),from:currentUser.uid,to:currentChatUid,content:e.target.result,type:"image",time:new Date().toLocaleString(),read:false});set(LOCAL_KEYS.chat,chatData);renderChatBox();};r.readAsDataURL(f);}
+function withdrawChat(id){if(!confirm("确定撤回？"))return;chatData=chatData.filter(m=>m.id!==id);set(LOCAL_KEYS.chat,chatData);renderChatBox();}
+function renderChatBox(){const b=document.getElementById("chatBox");const l=chatData.filter(m=>(m.from===currentUser.uid&&m.to===currentChatUid)||(m.from===currentChatUid&&m.to===currentUser.uid)).sort((a,b)=>a.id.localeCompare(b.id));let h="";l.forEach(m=>{const me=m.from===currentUser.uid;const w=me?`<span class="chat-withdraw" onclick="withdrawChat('${m.id}')">撤回</span>`:"";const c=m.type==="image"?`<img src="${m.content}" class="chat-img">`:m.content;h+=`<div class="chat-message ${me?'chat-me':'chat-other'}"><div>${c} ${w}</div><div class="chat-time">${m.time}</div></div>`;});b.innerHTML=h;b.scrollTop=b.scrollHeight;}
+function renderChatList(){const m={};chatData.forEach(e=>{const o=e.from===currentUser.uid?e.to:e.from;if(!m[o])m[o]={uid:o,t:e.time,u:0};if(e.to===currentUser.uid&&!e.read)m[o].u++;});const a=Object.values(m);const e=document.getElementById("chatUserList");let h="";a.forEach(x=>{const u=users.find(i=>i.uid===x.uid);if(!u)return;h+=`<div class="user-item" onclick="openChat('${u.uid}')"><div class="user-left"><img src="${u.avatar}" class="avatar"><div class="user-item-name">${u.nick}</div>${x.u>0?'<span class="badge">新</span>':''}</div></div>`;});e.innerHTML=h||'<div style="text-align:center;color:#ccc;">暂无私信</div>';document.getElementById("chatUnread").style.display=chatData.some(m=>m.to===currentUser.uid&&!m.read)?"inline":"none";}
+function markChatRead(){chatData.forEach(m=>{if(m.from===currentChatUid&&m.to===currentUser.uid)m.read=true;});set(LOCAL_KEYS.chat,chatData);renderChatList();}
+
+function createRoom(){const n=document.getElementById("roomName").value.trim()||"未命名房间";const r={id:"r"+Date.now(),name:n,owner:currentUser.uid,members:[{uid:currentUser.uid,mic:true}],globalMuted:false};voiceRooms.push(r);set(LOCAL_KEYS.voiceRooms,voiceRooms);enterRoom(r.id);}
+function renderRoomList(){const kw=(document.getElementById("roomSearch")?.value||"").toLowerCase().trim();const e=document.getElementById("roomList");let h="";voiceRooms.forEach(r=>{if(kw&&!r.name.toLowerCase().includes(kw))return;h+=`<div class="user-item"><div class="user-left"><div class="user-item-name">${r.name}（${r.members.length}人）</div></div><button class="btn btn-sm btn-primary" onclick="enterRoom('${r.id}')">进入</button></div>`;});e.innerHTML=h||'<div style="text-align:center;color:#ccc;">暂无房间</div>';}
+function enterRoom(id){currentRoomId=id;const r=voiceRooms.find(x=>x.id===id);if(!r)return;const m=r.members.find(x=>x.uid===currentUser.uid);if(!m)r.members.push({uid:currentUser.uid,mic:true});set(LOCAL_KEYS.voiceRooms,voiceRooms);document.getElementById("currentRoomName").innerText=r.name;renderRoomMembers();goPage("roomView");startMic();updateRoomControlUI();}
+function renderRoomMembers(){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r)return;const e=document.getElementById("roomMembers");let h="";r.members.forEach(m=>{const u=users.find(x=>x.uid===m.uid);if(!u)return;const ho=r.owner===m.uid;const mt=m.mic?"开启":"关闭";const mc=m.mic?"mic-on":"mic-off";const ht=ho?'<span class="room-host-tag">房主</span>':"";const mb=(r.owner===currentUser.uid&&!ho)?`<button class="btn btn-sm btn-red" onclick="toggleUserMic('${m.uid}')">${m.mic?'禁言':'解除'}</button>`:"";h+=`<div class="voice-member"><img src="${u.avatar}" class="avatar"><div><div>${u.nick} ${ht}</div><div class="mic-status ${mc}">麦：${mt}</div></div>${mb}</div>`;});e.innerHTML=h;}
+function updateRoomControlUI(){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r)return;const h=r.owner===currentUser.uid;document.getElementById("muteAllBtn").style.display=h?"inline-block":"none";document.getElementById("unmuteAllBtn").style.display=h?"inline-block":"none";document.getElementById("dismissBtn").style.display=h?"inline-block":"none";document.getElementById("micBtn").innerText=micOn?"关闭麦克风":"开启麦克风";}
+async function startMic(){try{localStream=await navigator.mediaDevices.getUserMedia({audio:true});micOn=true;localStream.getAudioTracks()[0].enabled=micOn;updateSelfMicState(micOn);updateRoomControlUI();}catch(e){alert("请允许麦克风权限");micOn=false;}}
+function toggleMic(){if(!localStream)return;micOn=!micOn;localStream.getAudioTracks()[0].enabled=micOn;updateSelfMicState(micOn);updateRoomControlUI();}
+function updateSelfMicState(s){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r)return;const m=r.members.find(x=>x.uid===currentUser.uid);if(m)m.mic=s;set(LOCAL_KEYS.voiceRooms,voiceRooms);renderRoomMembers();}
+function toggleUserMic(uid){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r||r.owner!==currentUser.uid)return;const m=r.members.find(x=>x.uid===uid);if(m)m.mic=!m.mic;set(LOCAL_KEYS.voiceRooms,voiceRooms);renderRoomMembers();}
+function muteAll(){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r||r.owner!==currentUser.uid)return;r.members.forEach(m=>{if(m.uid!==currentUser.uid)m.mic=false;});r.globalMuted=true;set(LOCAL_KEYS.voiceRooms,voiceRooms);renderRoomMembers();}
+function unmuteAll(){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r||r.owner!==currentUser.uid)return;r.members.forEach(m=>m.mic=true);r.globalMuted=false;set(LOCAL_KEYS.voiceRooms,voiceRooms);renderRoomMembers();}
+function dismissRoom(){if(!confirm("确定解散？"))return;voiceRooms=voiceRooms.filter(x=>x.id!==currentRoomId);set(LOCAL_KEYS.voiceRooms,voiceRooms);if(localStream)localStream.getTracks().forEach(t=>t.stop());goPage("voice");}
+function leaveRoom(){const r=voiceRooms.find(x=>x.id===currentRoomId);if(!r)return;r.members=r.members.filter(m=>m.uid!==currentUser.uid);if(r.members.length===0)voiceRooms=voiceRooms.filter(x=>x.id!==currentRoomId);set(LOCAL_KEYS.voiceRooms,voiceRooms);if(localStream)localStream.getTracks().forEach(t=>t.stop());goPage("voice");}
+
+function canPost(){const d=new Date();const m=d.getMonth()+1,da=d.getDate(),dy=d.getDay();const md=`${m}-${da}`;const v=(md>="7-1"&&md<="8-31")||(md>="1-15"&&md<="2-28");if(v)return true;return dy===5||dy===6;}
+function publishArticle(){if(!isLogin())return alert("请登录");const t=document.getElementById("newPostTitle").value.trim();const c=document.getElementById("newPostContent").value.trim();if(!t||!c)return alert("不能为空");articles.unshift({id:"a"+Date.now(),uid:currentUser.uid,title:t,content:c,time:new Date().toLocaleString(),status:"pending",reject:""});set(LOCAL_KEYS.articles,articles);document.getElementById("newPostTitle").value="";document.getElementById("newPostContent").value="";alert("投稿成功");renderMyPosts();}
+function renderArticles(){const l=articles.filter(a=>a.status==="pass");const e=document.getElementById("postList");let h="";l.forEach(a=>{const u=users.find(i=>i.uid===a.uid);h+=`<li style="margin:8px 0;"><a href="javascript:openArt('${a.id}')" style="color:#ffd700;">${a.title}（${u?.nick||'匿名'}）</a></li>`;});e.innerHTML=h||'<div style="color:#ccc;text-align:center;">暂无文章</div>';}
+function openArt(id){const a=articles.find(x=>x.id===id&&x.status==="pass");if(!a)return;const u=users.find(i=>i.uid===a.uid);document.getElementById("articleTitle").innerText=a.title;document.getElementById("articleAuthor").innerText=`作者：${u?.nick||'匿名'}｜${a.time}`;document.getElementById("articleContent").innerText=a.content;document.getElementById("articleContainer").classList.add("active");renderCommentsArt(id);}
+function closeArticle(){document.getElementById("articleContainer").classList.remove("active");goPage("latest");}
+function renderMyPosts(){const m=articles.filter(a=>a.uid===currentUser.uid);const e=document.getElementById("userPostList");let h="";m.forEach(a=>{let s=a.status==="pass"?"✅已通过":a.status==="reject"?"❌未通过":"⏳待审核";h+=`<div class="user-item"><div>${a.title}</div><div style="font-size:12px;">${s}</div></div>`;});e.innerHTML=h||'<div style="color:#ccc;text-align:center;">暂无投稿</div>';}
+function renderAudit(){if(!isAdminUser())return;const e=document.getElementById("auditList");let h="";articles.forEach(a=>{const u=users.find(i=>i.uid===a.uid);h+=`<div class="user-item"><div>${a.title}（${u?.nick||'匿名'}）</div><div>${a.status==='pending'?`<button class="btn btn-sm btn-green" onclick="setPass('${a.id}')">通过</button><button class="btn btn-sm btn-red" onclick="setReject('${a.id}')">拒绝</button>`:a.status==='pass'?'<span>已通过</span>':'<span>已拒绝</span>'}</div></div>`;});e.innerHTML=h;}
+function setPass(id){const a=articles.find(x=>x.id===id);if(a){a.status="pass";a.reject="";set(LOCAL_KEYS.articles,articles);renderAudit();renderArticles();}}
+function setReject(id){const r=prompt("拒绝理由：");if(!r)return;const a=articles.find(x=>x.id===id);if(a){a.status="reject";a.reject=r;set(LOCAL_KEYS.articles,articles);renderAudit();}}
+function submitComment(){if(!isLogin())return;const t=document.getElementById("commentInput").value.trim();if(!t)return;comments.push({id:"cm"+Date.now(),aid:currentArtId,uid:currentUser.uid,content:t,time:new Date().toLocaleString()});set(LOCAL_KEYS.comments,comments);document.getElementById("commentInput").value="";renderCommentsArt(currentArtId);}
+function renderCommentsArt(aid){currentArtId=aid;const c=comments.filter(x=>x.aid===aid);const e=document.getElementById("commentList");let h="";c.forEach(x=>{const u=users.find(i=>i.uid===x.uid);h+=`<div class="user-item" style="align-items:flex-start;"><div><div style="color:#ffd700;">${u?.nick||'匿名'}｜${x.time}</div><div style="margin-top:4px;">${x.content}</div></div>${isAdminUser()||x.uid===currentUser.uid?`<button class="btn btn-sm btn-red" onclick="delCm('${x.id}')">删</button>`:''}</div>`;});e.innerHTML=h||'<div style="color:#ccc;">暂无评论</div>';}
+function delCm(id){comments=comments.filter(x=>x.id!==id);set(LOCAL_KEYS.comments,comments);renderCommentsArt(currentArtId);}
+function renderAdminManage(){if(!isSuper())return;const e=document.getElementById("userListForAdmin");let h="";users.forEach(u=>{if(u.role==="super")return;const a=admins.includes(u.uid);h+=`<div class="user-item"><div>${u.nick}（${u.account}）</div><button class="btn btn-sm ${a?'btn-red':'btn-green'}" onclick="${a?'rmAdmin':'addAdmin'}('${u.uid}')">${a?'取消管理员':'设为管理员'}</button></div>`;});e.innerHTML=h;}
+function addAdmin(uid){if(!admins.includes(uid))admins.push(uid);set(LOCAL_KEYS.admins,admins);renderAdminManage();}
+function rmAdmin(uid){admins=admins.filter(x=>x!==uid);set(LOCAL_KEYS.admins,admins);renderAdminManage();}
+function loadProfile(){if(!isLogin())re
