@@ -10,7 +10,6 @@
       margin: 0;
       padding: 0;
     }
-    /* 统一全局背景：全程只有一种红色系，绝不白/黑乱跳 */
     html, body {
       background-color: #b81c1c;
       min-height: 100vh;
@@ -19,7 +18,7 @@
       line-height: 1.6;
     }
 
-    /* 登录弹窗：半透明暗红，不是纯黑，不刺眼 */
+    /* 登录注册弹窗 - 按钮绝对可点 */
     .auth-modal {
       position: fixed;
       top: 0; left: 0;
@@ -34,3 +33,219 @@
       background: #801010;
       padding: 30px;
       border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      z-index: 100000;
+    }
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .auth-tab.active {
+      background: #ffd700;
+      color: #5a0000;
+      font-weight: bold;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,215,0,0.3);
+      outline: none;
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      background: #ffd700;
+      color: #5a0000;
+      font-weight: bold;
+      border: none;
+      cursor: pointer !important;
+      outline: none;
+    }
+    .auth-tip {
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+      color: #ccc;
+    }
+    .auth-tip span {
+      color: #ffd700;
+      cursor: pointer;
+    }
+
+    /* 顶部用户栏 */
+    .user-bar {
+      background: #801010;
+      padding: 8px 15px;
+      font-size: 14px;
+      text-align: right;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .user-name {
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .user-link {
+      color: #fff;
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .user-link:hover {
+      color: #ffd700;
+    }
+    .badge {
+      background: #c81010;
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 10px;
+      margin-left: 3px;
+    }
+
+    /* 导航 */
+    .navbar {
+      background: #801010;
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      text-align: center;
+    }
+    .navbar h1 {
+      color: #ffd700;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .nav-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: #ffd700;
+      background: rgba(255,215,0,0.1);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .card {
+      background: #801010;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .card h2, .card h3 {
+      color: #ffd700;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .tip-text {
+      color: #ffd700;
+      font-size: 14px;
+      text-align: center;
+      margin: 8px 0;
+    }
+    .search-bar {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,215,0,0.3);
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    /* 按钮 */
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      outline: none;
+    }
+    .btn-primary {
+      background: #ffd700;
+      color: #5a0000;
+    }
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .btn-red {
+      background: #c81010;
+      color: #fff;
+    }
+    .btn-green {
+      background: #28a050;
+      color: #fff;
+    }
+    .btn-blue {
+      background: #1a73e8;
+      color: #fff;
+    }
+    .btn-gray {
+      background: #666;
+      color: #fff;
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .user-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-item-name {
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .hi
