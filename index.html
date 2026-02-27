@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;height:100%;}
-.splash-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;animation:splashFade 2.5s ease forwards;animation-delay:3s;}
+.splash-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;}
 .ntlc-logo{display:flex;gap:12px;font-size:80px;font-weight:900;margin-bottom:40px;}
 .ntlc-letter{opacity:0;transform:scale(0.5);animation:letterPop 0.6s ease forwards;}
 .ntlc-letter:nth-child(1){color:#4285F4;animation-delay:0.2s;}
@@ -71,4 +71,620 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 .btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:bold;margin-right:4px;}
 .btn-sm{padding:4px 8px;font-size:12px;}
 .btn-green{background:#28a050;color:#fff;}
-.btn-red{bac
+.btn-red{background:#c81010;color:#fff;}
+.btn-yellow{background:#ffc107;color:#222;}
+
+.form-row{margin-bottom:12px;}
+.form-row label{display:block;margin-bottom:4px;color:#ffd700;font-weight:bold;}
+
+.meeting-room{margin-bottom:15px;}
+.meeting-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;}
+.meeting-name{font-weight:bold;color:#ffd700;}
+.meeting-controls{display:flex;gap:8px;}
+.meeting-btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;background:#ffd700;color:#801010;}
+.meeting-btn.secondary{background:rgba(255,255,255,0.1);color:#fff;}
+.participant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px;}
+.participant-card{background:rgba(255,255,255,0.07);padding:15px;border-radius:8px;text-align:center;}
+.participant-avatar{width:50px;height:50px;border-radius:50%;background:#ffd700;color:#801010;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;}
+.participant-name{font-weight:bold;}
+.participant-role{font-size:12px;color:#ccc;margin-top:4px;}
+
+.chat-layout{display:grid;grid-template-columns:200px 1fr;gap:12px;margin-top:10px;}
+.chat-user-list{height:420px;overflow-y:auto;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px;}
+.chat-user-item{padding:8px;border-radius:6px;margin-bottom:6px;cursor:pointer;}
+.chat-user-item.active{background:rgba(255,215,0,0.15);}
+.msg-area{flex:1;background:rgba(0,0,0,0.15);border-radius:8px;padding:10px;overflow-y:auto;}
+.msg-input-area{display:flex;gap:6px;}
+.msg-input{flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid #ffd70055;}
+.send-btn{padding:0 16px;background:#ffd700;color:#801010;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
+.msg-item{max-width:75%;margin-bottom:10px;padding:8px 12px;border-radius:12px;}
+.msg-me{margin-left:auto;background:#ffd700;color:#5a0000;}
+.msg-other{margin-right:auto;background:rgba(255,255,255,0.1);color:#fff;}
+
+.user-preview{display:flex;align-items:center;gap:10px;padding:10px 0;}
+.user-preview-avatar{width:50px;height:50px;border-radius:50%;border:2px solid #ffd700;object-fit:cover;}
+</style>
+</head>
+<body>
+
+<div class="splash-screen">
+  <div class="ntlc-logo">
+    <span class="ntlc-letter">N</span>
+    <span class="ntlc-letter">T</span>
+    <span class="ntlc-letter">L</span>
+    <span class="ntlc-letter">C</span>
+  </div>
+  <p style="color:#666;">新思想学习社</p>
+</div>
+
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <span class="modal-close" onclick="closeAuth()">×</span>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-mode="login">登录</div>
+      <div class="auth-tab" data-mode="reg">注册</div>
+    </div>
+    <div id="loginForm">
+      <input class="auth-input" id="loginAcc" placeholder="账号">
+      <input class="auth-input" id="loginPwd" type="password" placeholder="密码">
+      <button class="auth-btn" onclick="doLogin()">登录</button>
+    </div>
+    <div id="regForm" style="display:none;">
+      <input class="auth-input" id="regAcc" placeholder="账号">
+      <input class="auth-input" id="regPwd" type="password" placeholder="密码">
+      <input class="auth-input" id="regNick" placeholder="昵称">
+      <button class="auth-btn" onclick="doReg()">注册</button>
+    </div>
+    <button class="cancel-login" onclick="closeAuth()">游客浏览</button>
+  </div>
+</div>
+
+<div class="pwd-modal" id="managePwdModal">
+  <div class="pwd-box">
+    <span class="modal-close" onclick="closePwdModal()">×</span>
+    <h3 style="color:#ffd700;text-align:center;">管理密码</h3>
+    <input class="pwd-input" id="managePwd" type="password" placeholder="输入管理密码">
+    <button class="pwd-btn" onclick="checkManagePwd()">确认进入</button>
+  </div>
+</div>
+
+<div class="reject-modal" id="rejectModal">
+  <div class="reject-box">
+    <span class="modal-close" onclick="closeRejectModal()">×</span>
+    <h3 style="color:#ffd700;text-align:center;">驳回理由</h3>
+    <textarea class="reject-reason" id="reasonInput"></textarea>
+    <button class="reject-btn" onclick="confirmReject()">提交</button>
+  </div>
+</div>
+
+<div class="api-modal" id="apiModal">
+  <div class="api-box">
+    <span class="modal-close" onclick="closeApiModal()">×</span>
+    <h3 style="color:#ffd700;text-align:center;margin-bottom:15px;">ChatGPT 配置</h3>
+    <p style="margin-bottom:10px;font-size:14px;">请输入你的 OpenAI API Key（仅本地保存）</p>
+    <input class="api-input" id="openaiApiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+    <button class="api-btn" onclick="saveApiKey()">保存并关闭</button>
+  </div>
+</div>
+
+<div class="main-app" id="mainApp">
+  <div class="user-bar">
+    <div class="user-info" style="display:flex;align-items:center;">
+      <img id="topAvatar" src="https://picsum.photos/80/80" class="avatar">
+      <span class="user-name" id="nickBar"></span>
+    </div>
+    <span class="logout" onclick="logout()">退出登录</span>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" id="searchInput" placeholder="请输入个人编号搜索用户" oninput="doSearchByUid()">
+  </div>
+
+  <div class="navbar">
+    <h1>新思想学习社</h1>
+    <div class="nav-links-first">
+      <span class="nav-link active" onclick="go('home')">首页</span>
+      <span class="nav-link" onclick="go('article')">最新文章</span>
+      <span class="nav-link member-only" onclick="go('publish')">发布文章</span>
+      <span class="nav-link member-only" onclick="go('usercenter')">个人中心</span>
+      <span class="nav-link member-only" onclick="go('chat')">私聊</span>
+    </div>
+    <div class="nav-links-second">
+      <span class="nav-link member-only" onclick="go('voice')">语音会议</span>
+      <span class="nav-link" onclick="go('userlist')">用户列表</span>
+      <span class="nav-link" onclick="openManagePwd()">管理中心</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="home" class="card"><h3>首页</h3><p>功能齐全：语音会议、ChatGPT文章评价、UID搜索、个人中心、文章管理</p></div>
+
+    <div id="article" class="card" style="display:none;"><h3>已通过文章</h3><div id="articleList"></div></div>
+
+    <div id="publish" class="card" style="display:none;"><h3>发布文章</h3><input class="auth-input" id="artTitle" placeholder="标题"><textarea class="auth-input" rows="7" id="artContent" placeholder="内容"></textarea><button class="auth-btn" onclick="publishArt()">提交</button></div>
+
+    <div id="usercenter" class="card" style="display:none;">
+      <h3>个人中心</h3>
+      <div class="form-row">
+        <label>个人编号（UID，不可修改）</label>
+        <input class="auth-input" id="showUid" readonly>
+      </div>
+      <div class="form-row">
+        <label>昵称</label>
+        <input class="auth-input" id="editNick">
+      </div>
+      <div class="form-row">
+        <label>性别（男/女/保密）</label>
+        <input class="auth-input" id="editGender" placeholder="例如：男">
+      </div>
+      <div class="form-row">
+        <label>年龄</label>
+        <input class="auth-input" id="editAge" placeholder="数字">
+      </div>
+      <div class="form-row">
+        <label>头像URL（粘贴图片地址）</label>
+        <input class="auth-input" id="editAvatar" placeholder="https://...">
+      </div>
+      <button class="auth-btn" onclick="saveUserInfo()">保存全部信息</button>
+      <hr style="margin:20px 0;border-color:#ffd70033;">
+      <h4 style="color:#ffd700;margin-bottom:10px;">我的文章</h4>
+      <div id="myArticleList"></div>
+    </div>
+
+    <div id="chat" class="card" style="display:none;"><h3>私聊</h3><div class="chat-layout"><div class="chat-user-list" id="chatUserList"></div><div class="chat-box"><div class="msg-area" id="msgArea"></div><div class="msg-input-area"><input class="msg-input" id="msgInput" onkeydown="event.key==='Enter'&&sendMsg()"><button class="send-btn" onclick="sendMsg()">发送</button></div></div></div></div>
+
+    <div id="voice" class="card" style="display:none;">
+      <h3>语音会议</h3>
+      <div class="meeting-room">
+        <div class="meeting-info">
+          <div class="meeting-name">当前房间：<span id="currentRoomName">未加入</span></div>
+          <div class="meeting-controls">
+            <button class="meeting-btn" onclick="createMeetingRoom()">创建房间</button>
+            <button class="meeting-btn secondary" id="micBtn" onclick="toggleMicrophone()">🎤 开启麦克风</button>
+            <button class="meeting-btn secondary" onclick="leaveMeetingRoom()">离开房间</button>
+          </div>
+        </div>
+        <h4 style="color:#ffd700;margin:15px 0 10px 0;">参会者列表</h4>
+        <div class="participant-grid" id="participantList">
+          <p style="text-align:center;color:#ccc;">请创建或加入房间</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="userlist" class="card" style="display:none;"><h3>搜索结果（按UID）</h3><div id="searchResult"></div></div>
+
+    <div id="manage" class="card" style="display:none;">
+      <h3>管理中心</h3>
+      <div style="margin-bottom:20px;">
+        <h4 style="color:#ffd700;">文章管理（审核+删除）</h4>
+        <div id="auditList"></div>
+      </div>
+      <hr style="margin:20px 0;border-color:#ffd70033;">
+      <div>
+        <h4 style="color:#ffd700;">用户封号管理</h4>
+        <div id="banUserList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE = {
+  users:"ntlc_users", cur:"ntlc_cur", arts:"ntlc_arts", chats:"ntlc_chats",
+  likes:"ntlc_likes", comments:"ntlc_comments", meetings:"ntlc_meetings",
+  aiEvals:"ntlc_ai_evals", apiKey:"ntlc_openai_key"
+};
+const MANAGE_PWD = "159357258";
+const AI_PROMPT = "请作为专业评审，从内容、逻辑、表达评价文章，给1-2条改进建议，150字左右。";
+
+let users = JSON.parse(localStorage.getItem(STORAGE.users) || "[]");
+let cur = JSON.parse(localStorage.getItem(STORAGE.cur) || null);
+let arts = JSON.parse(localStorage.getItem(STORAGE.arts) || "[]");
+let chats = JSON.parse(localStorage.getItem(STORAGE.chats) || "[]");
+let likes = JSON.parse(localStorage.getItem(STORAGE.likes) || "[]");
+let comments = JSON.parse(localStorage.getItem(STORAGE.comments) || "[]");
+let meetings = JSON.parse(localStorage.getItem(STORAGE.meetings) || "[]");
+let aiEvals = JSON.parse(localStorage.getItem(STORAGE.aiEvals) || "{}");
+let apiKey = localStorage.getItem(STORAGE.apiKey) || "";
+
+let currentRejectId = null;
+let chatTo = null;
+let currentMeeting = null;
+let micStream = null;
+let isMicOn = false;
+
+// 关键修复：直接显示登录界面，跳过启动动画
+document.getElementById("authModal").style.display = "flex";
+
+document.querySelectorAll(".auth-tab").forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll(".auth-tab").forEach(x => x.classList.remove("active"));
+    tab.classList.add("active");
+    const m = tab.dataset.mode;
+    document.getElementById("loginForm").style.display = m === "login" ? "block" : "none";
+    document.getElementById("regForm").style.display = m === "reg" ? "block" : "none";
+  };
+});
+
+function closeAuth() {
+  document.getElementById("authModal").style.display = "none";
+  document.getElementById("mainApp").style.display = "block";
+  if (!cur) {
+    document.getElementById("nickBar").innerText = "游客";
+    return;
+  }
+  document.getElementById("mainApp").classList.add("has-account");
+  document.getElementById("nickBar").innerText = cur.nick;
+  document.getElementById("topAvatar").src = cur.avatar || "https://picsum.photos/80/80";
+}
+
+function doReg() {
+  const acc = document.getElementById("regAcc").value.trim();
+  const pwd = document.getElementById("regPwd").value.trim();
+  const nick = document.getElementById("regNick").value.trim();
+  if (!acc || !pwd || !nick) return alert("请填完整");
+  if (users.some(u => u.account === acc)) return alert("账号已存在");
+  const uid = "UID" + Date.now();
+  const user = {
+    uid: uid, account: acc, pwd: pwd, nick: nick,
+    gender: "保密", age: "", avatar: "https://picsum.photos/80/80",
+    status: "normal"
+  };
+  users.push(user);
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  alert(`注册成功！你的个人编号：${uid}`);
+  document.querySelector(".auth-tab[data-mode='login']").click();
+}
+
+function doLogin() {
+  const acc = document.getElementById("loginAcc").value.trim();
+  const pwd = document.getElementById("loginPwd").value.trim();
+  const u = users.find(x => x.account === acc && x.pwd === pwd);
+  if (!u) return alert("账号或密码错误");
+  if (u.status === "ban") return alert("账号已封禁");
+  cur = u;
+  localStorage.setItem(STORAGE.cur, JSON.stringify(cur));
+  closeAuth();
+}
+
+function go(page) {
+  document.querySelectorAll(".card").forEach(c => c.style.display = "none");
+  document.getElementById(page).style.display = "block";
+  document.querySelectorAll(".nav-link").forEach(n => n.classList.remove("active"));
+  const el = document.querySelector(`.nav-link[onclick*="${page}"]`);
+  if (el) el.classList.add("active");
+  if (page === "article") renderArticles();
+  if (page === "chat") loadChatUsers();
+  if (page === "manage") renderManageCenter();
+  if (page === "usercenter") renderUserCenter();
+  if (page === "userlist") document.getElementById("searchResult").innerHTML = "<p style='text-align:center'>请输入个人编号搜索</p>";
+  if (page === "voice") renderMeetingRoom();
+}
+
+function doSearchByUid() {
+  const kw = document.getElementById("searchInput").value.trim();
+  go("userlist");
+  if (!kw) {
+    document.getElementById("searchResult").innerHTML = "<p style='text-align:center'>请输入个人编号</p>";
+    return;
+  }
+  const target = users.find(u => u.uid === kw);
+  const dom = document.getElementById("searchResult");
+  if (!target) {
+    dom.innerHTML = `<p style='text-align:center;color:#ccc;'>未找到编号：${kw}</p>`;
+    return;
+  }
+  dom.innerHTML = `
+  <div class="user-preview">
+    <img src="${target.avatar}" class="user-preview-avatar">
+    <div>
+      <div style="font-weight:bold;color:#ffd700;">${target.nick}</div>
+      <div>编号：${target.uid}</div>
+      <div>${target.gender}｜${target.age||"未填"}岁</div>
+      <button class="btn btn-sm btn-yellow" onclick="openChat('${target.uid}','${target.nick}')">发起私聊</button>
+    </div>
+  </div>`;
+}
+
+function renderUserCenter() {
+  if (!cur) return;
+  document.getElementById("showUid").value = cur.uid;
+  document.getElementById("editNick").value = cur.nick || "";
+  document.getElementById("editGender").value = cur.gender || "保密";
+  document.getElementById("editAge").value = cur.age || "";
+  document.getElementById("editAvatar").value = cur.avatar || "https://picsum.photos/80/80";
+
+  const myArts = arts.filter(a => a.uid === cur.uid);
+  document.getElementById("myArticleList").innerHTML = myArts.length ? myArts.map(a => `
+    <div style='padding:8px;border-bottom:1px solid #fff2;'>
+      <div style='color:#ffd700;'>${a.title} [${a.status}]</div>
+      <div style='font-size:12px;color:#ccc;'>${a.time}</div>
+    </div>
+  `).join("") : "<p style='color:#ccc;'>暂无文章</p>";
+}
+
+function saveUserInfo() {
+  if (!cur) return;
+  cur.nick = document.getElementById("editNick").value.trim() || cur.nick;
+  cur.gender = document.getElementById("editGender").value.trim() || "保密";
+  cur.age = document.getElementById("editAge").value.trim() || "";
+  cur.avatar = document.getElementById("editAvatar").value.trim() || "https://picsum.photos/80/80";
+
+  const u = users.find(x => x.uid === cur.uid);
+  Object.assign(u, cur);
+
+  arts.forEach(a => { if (a.uid === cur.uid) a.nick = cur.nick; });
+  comments.forEach(c => { if (c.uid === cur.uid) c.nick = cur.nick; });
+
+  localStorage.setItem(STORAGE.cur, JSON.stringify(cur));
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+
+  document.getElementById("nickBar").innerText = cur.nick;
+  document.getElementById("topAvatar").src = cur.avatar;
+  alert("保存成功！");
+  renderUserCenter();
+}
+
+function publishArt() {
+  if (!cur) return alert("请登录");
+  const t = document.getElementById("artTitle").value.trim();
+  const c = document.getElementById("artContent").value.trim();
+  if (!t || !c) return alert("不能为空");
+  arts.unshift({
+    id: "a"+Date.now(), title: t, content: c,
+    uid: cur.uid, nick: cur.nick, status: "pending",
+    time: new Date().toLocaleString()
+  });
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  alert("提交待审核");
+  go("article");
+}
+
+function toggleLike(aid) {
+  if (!cur) return alert("请登录");
+  const idx = likes.findIndex(x => x.aid === aid && x.uid === cur.uid);
+  idx > -1 ? likes.splice(idx, 1) : likes.push({ aid, uid: cur.uid });
+  localStorage.setItem(STORAGE.likes, JSON.stringify(likes));
+  renderArticles();
+}
+
+function sendComment(aid) {
+  if (!cur) return alert("请登录");
+  const inp = document.getElementById(`comment_${aid}`);
+  const txt = inp.value.trim();
+  if (!txt) return;
+  comments.push({
+    cid: "c"+Date.now(), aid: aid,
+    uid: cur.uid, nick: cur.nick,
+    content: txt, time: new Date().toLocaleString()
+  });
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+  inp.value = "";
+  renderArticles();
+}
+
+function openApiModal() { document.getElementById("openaiApiKey").value = apiKey; document.getElementById("apiModal").style.display = "flex"; }
+function closeApiModal() { document.getElementById("apiModal").style.display = "none"; }
+function saveApiKey() { apiKey = document.getElementById("openaiApiKey").value.trim(); localStorage.setItem(STORAGE.apiKey, apiKey); alert("API Key 保存成功！"); closeApiModal(); }
+
+async function getAiEvaluation(aid) {
+  if (!apiKey) { openApiModal(); return; }
+  if (aiEvals[aid]) { alert("已有评价，无需重复生成"); renderArticles(); return; }
+  const article = arts.find(a => a.id === aid);
+  if (!article) return;
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: AI_PROMPT },
+          { role: "user", content: `标题：${article.title}\n内容：${article.content}` }
+        ],
+        max_tokens: 200
+      })
+    });
+
+    const data = await response.json();
+    if (data.choices && data.choices[0]) {
+      aiEvals[aid] = data.choices[0].message.content.trim();
+    } else {
+      aiEvals[aid] = "评价失败：" + (data.error?.message || "未知错误");
+    }
+  } catch (error) {
+    aiEvals[aid] = "评价失败：网络错误或API Key无效";
+  }
+
+  localStorage.setItem(STORAGE.aiEvals, JSON.stringify(aiEvals));
+  renderArticles();
+}
+
+function renderArticles() {
+  const pass = arts.filter(a => a.status === "pass");
+  document.getElementById("articleList").innerHTML = pass.map(a => {
+    const likeCnt = likes.filter(x => x.aid === a.id).length;
+    const myLike = cur && likes.some(x => x.aid === a.id && x.uid === cur.uid);
+    const cmts = comments.filter(x => x.aid === a.id);
+    const aiEval = aiEvals[a.id] || "";
+
+    return `
+    <div class="article-item">
+      <div class="article-title">${a.title}</div>
+      <div class="article-meta">${a.nick}｜${a.time}</div>
+      <div class="article-content">${a.content}</div>
+      <div class="like-box">
+        <button class="like-btn" onclick="toggleLike('${a.id}')">
+          ${myLike ? '❤️已点赞' : '🤍点赞'} (${likeCnt})
+        </button>
+        <button class="ai-eval-btn" onclick="getAiEvaluation('${a.id}')">AI 评价</button>
+      </div>
+      ${aiEval ? `<div class="ai-result">${aiEval}</div>` : ""}
+      <div style="margin-top:10px;">
+        ${cmts.map(c => `
+        <div class="comment-item">
+          <div class="comment-user">${c.nick}｜${c.time}</div>
+          <div class="comment-text">${c.content}</div>
+        </div>`).join("")}
+        <div class="comment-input-box member-only">
+          <input class="comment-input" id="comment_${a.id}" placeholder="写评论…">
+          <button class="send-comment-btn" onclick="sendComment('${a.id}')">发送</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("") || "<p style='text-align:center;color:#ccc;'>暂无已通过文章</p>";
+}
+
+function createMeetingRoom() {
+  if (!cur) return alert("请登录");
+  const roomName = prompt("请输入房间名称：");
+  if (!roomName) return;
+  const roomId = "room_" + Date.now();
+  currentMeeting = {
+    id: roomId,
+    name: roomName,
+    creator: cur.uid,
+    participants: [cur.uid]
+  };
+  meetings.push(currentMeeting);
+  localStorage.setItem(STORAGE.meetings, JSON.stringify(meetings));
+  alert(`房间创建成功！房间名：${roomName}`);
+  renderMeetingRoom();
+}
+
+function renderMeetingRoom() {
+  const roomEl = document.getElementById("currentRoomName");
+  const partEl = document.getElementById("participantList");
+  
+  if (!currentMeeting) {
+    roomEl.innerText = "未加入";
+    partEl.innerHTML = "<p style='text-align:center;color:#ccc;'>请创建或加入房间</p>";
+    return;
+  }
+
+  roomEl.innerText = currentMeeting.name;
+  const participants = currentMeeting.participants.map(uid => {
+    const user = users.find(u => u.uid === uid);
+    return user || { nick: "未知用户", uid: uid };
+  });
+
+  partEl.innerHTML = participants.map(user => `
+    <div class="participant-card">
+      <div class="participant-avatar">${user.nick[0] || "?"}</div>
+      <div class="participant-name">${user.nick}</div>
+      <div class="participant-role">${user.uid === currentMeeting.creator ? "主持人" : "参会者"}</div>
+    </div>
+  `).join("");
+}
+
+async function toggleMicrophone() {
+  if (!cur) return alert("请登录");
+  if (!currentMeeting) return alert("请先加入房间");
+
+  if (isMicOn) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+    isMicOn = false;
+    document.getElementById("micBtn").innerText = "🎤 开启麦克风";
+    return;
+  }
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    isMicOn = true;
+    document.getElementById("micBtn").innerText = "🔇 关闭麦克风";
+    alert("麦克风已开启，可进行语音交流");
+  } catch (error) {
+    alert("麦克风权限被拒绝，请在浏览器设置中开启");
+  }
+}
+
+function leaveMeetingRoom() {
+  if (!currentMeeting) return;
+  currentMeeting.participants = currentMeeting.participants.filter(uid => uid !== cur.uid);
+  if (currentMeeting.participants.length === 0) {
+    meetings = meetings.filter(room => room.id !== currentMeeting.id);
+  } else {
+    meetings = meetings.map(room => room.id === currentMeeting.id ? currentMeeting : room);
+  }
+  localStorage.setItem(STORAGE.meetings, JSON.stringify(meetings));
+  currentMeeting = null;
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+    isMicOn = false;
+    document.getElementById("micBtn").innerText = "🎤 开启麦克风";
+  }
+  alert("已离开房间");
+  renderMeetingRoom();
+}
+
+function openManagePwd() { document.getElementById("managePwdModal").style.display = "flex"; }
+function closePwdModal() { document.getElementById("managePwdModal").style.display = "none"; }
+function checkManagePwd() {
+  if (document.getElementById("managePwd").value === MANAGE_PWD) {
+    closePwdModal(); go("manage");
+  } else alert("密码错误");
+}
+
+function openRejectModal(id) { currentRejectId = id; document.getElementById("rejectModal").style.display = "flex"; }
+function closeRejectModal() { document.getElementById("rejectModal").style.display = "none"; }
+function confirmReject() {
+  const r = document.getElementById("reasonInput").value.trim();
+  if (!r) return alert("请写理由");
+  const a = arts.find(x => x.id === currentRejectId);
+  a.status = "reject";
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  closeRejectModal(); renderManageCenter();
+}
+
+function passArticle(id) {
+  const a = arts.find(x => x.id === id);
+  a.status = "pass";
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  renderManageCenter();
+}
+
+function deleteArticle(aid) {
+  if (!confirm("确定删除该文章？所有评论点赞都会清空！")) return;
+  arts = arts.filter(x => x.id !== aid);
+  comments = comments.filter(x => x.aid !== aid);
+  likes = likes.filter(x => x.aid !== aid);
+  delete aiEvals[aid];
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+  localStorage.setItem(STORAGE.likes, JSON.stringify(likes));
+  localStorage.setItem(STORAGE.aiEvals, JSON.stringify(aiEvals));
+  renderManageCenter();
+}
+
+function toggleBan(uid) {
+  const u = users.find(x => x.uid === uid);
+  u.status = u.status === "normal" ? "ban" : "normal";
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  renderManageCenter();
+}
+
+function renderManageCenter() {
+  document.getElementById("auditList").innerHTML = arts.map(a => `
+    <div style='padding:10px;border-bottom:1px solid #fff2;'>
+      <div style='color:#ffd700;'>${a.title} [${a.status}]</div>
+      <div style='font-size:12px;color:#ccc;'>${a.nick}｜${a.time}</div>
+      <div style='margin-top:6px;display:flex;gap:6px;'>
+        ${a.status==="pending"?`
+        <button class='btn btn-sm btn-green' onclick='passArticle("${a.id}")'>通过</button>
+        <button class='btn btn-sm btn-yellow' onclick='openRejectModal("${a.id}")'>驳回</button>` : ""}
+        <button class='btn btn-sm btn-red' onclick='deleteArticle("${a.id}")'>删除文章</button>
+      </div>
+    </div>
+  `).join("") || "<p style='text-align:center;color:#ccc;'>无文章</p>";
+
+  document.getElementById("banUserList").innerHTML = users.map(u => `
+    <div style='padding:10px;border-bottom:1px solid #fff2;display:flex;justify-content:space-between;'>
+      <div>${u.nick}｜${u.uid
