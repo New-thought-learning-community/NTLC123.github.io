@@ -17,15 +17,15 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 @keyframes letterPop{0%{opacity:0;transform:scale(0.5);}70%{opacity:1;transform:scale(1.1);}100%{opacity:1;transform:scale(1);}}
 @keyframes splashFade{0%{opacity:1;}100%{opacity:0;visibility:hidden;}}
 
-.auth-modal,.pwd-modal,.reject-modal,.api-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(80,0,0,0.8);z-index:999;display:none;align-items:center;justify-content:center;}
-.auth-box,.pwd-box,.reject-box,.api-box{background:#801010;padding:30px;border-radius:12px;width:90%;max-width:420px;}
+.auth-modal,.pwd-modal,.reject-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(80,0,0,0.8);z-index:999;display:none;align-items:center;justify-content:center;}
+.auth-box,.pwd-box,.reject-box{background:#801010;padding:30px;border-radius:12px;width:90%;max-width:420px;}
 .modal-close{position:absolute;top:15px;right:15px;font-size:24px;color:#ffd700;cursor:pointer;}
 .auth-tabs{display:flex;gap:10px;margin-bottom:20px;}
 .auth-tab{flex:1;padding:12px;text-align:center;background:rgba(255,255,255,0.1);border-radius:8px;cursor:pointer;}
 .auth-tab.active{background:#ffd700;color:#5a0000;font-weight:bold;}
-.auth-input,.pwd-input,.reject-reason,.api-input{width:100%;padding:14px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,215,0,0.3);outline:none;}
+.auth-input,.pwd-input,.reject-reason{width:100%;padding:14px;margin-bottom:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,215,0,0.3);outline:none;}
 .reject-reason{height:100px;resize:none;}
-.auth-btn,.pwd-btn,.reject-btn,.api-btn{width:100%;padding:14px;border-radius:8px;background:#ffd700;color:#5a0000;font-weight:bold;border:none;cursor:pointer;}
+.auth-btn,.pwd-btn,.reject-btn{width:100%;padding:14px;border-radius:8px;background:#ffd700;color:#5a0000;font-weight:bold;border:none;cursor:pointer;}
 .cancel-login{width:100%;margin-top:10px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.1);color:#ffd700;border:1px solid #ffd700;cursor:pointer;}
 
 .main-app{display:none;}
@@ -56,10 +56,7 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 .article-content{margin:8px 0;line-height:1.6;}
 
 .like-box{display:flex;align-items:center;gap:10px;margin:10px 0;}
-.like-btn,.ai-eval-btn{background:#ffd700;color:#801010;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
-.ai-result{margin-top:10px;padding:10px;background:rgba(255,215,0,0.1);border-radius:6px;border-left:3px solid #ffd700;}
-.eval-loading{color:#ffd700;font-style:italic;}
-
+.like-btn{background:#ffd700;color:#801010;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
 .comment-item{background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:14px;}
 .comment-user{color:#ffd700;font-weight:bold;font-size:12px;}
 .comment-text{color:#eee;margin-top:2px;}
@@ -75,26 +72,6 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 
 .form-row{margin-bottom:12px;}
 .form-row label{display:block;margin-bottom:4px;color:#ffd700;font-weight:bold;}
-
-/* 原版会议样式完全保留，不动 */
-.meeting-room{margin-bottom:15px;}
-.meeting-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px;}
-.meeting-name{font-weight:bold;color:#ffd700;}
-.meeting-controls{display:flex;gap:8px;}
-.meeting-btn{padding:6px 12px;border-radius:6px;border:none;cursor:pointer;background:#ffd700;color:#801010;}
-.meeting-btn.secondary{background:rgba(255,255,255,0.1);color:#fff;}
-.participant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px;}
-.participant-card{background:rgba(255,255,255,0.07);padding:15px;border-radius:8px;text-align:center;}
-.participant-avatar{width:50px;height:50px;border-radius:50%;background:#ffd700;color:#801010;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;}
-.participant-name{font-weight:bold;}
-.participant-role{font-size:12px;color:#ccc;margin-top:4px;}
-
-/* 在线用户面板（样式和你系统完全统一） */
-.online-users-box{background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-top:10px;}
-.online-user-item{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:14px;}
-.room-msg-box{background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-top:10px;height:180px;overflow-y:auto;}
-.room-msg{margin:4px 0;font-size:14px;}
-.room-msg-input{width:100%;margin-top:8px;padding:8px;border-radius:6px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid #ffd70055;}
 
 .chat-layout{display:grid;grid-template-columns:200px 1fr;gap:12px;margin-top:10px;}
 .chat-user-list{height:420px;overflow-y:auto;background:rgba(255,255,255,0.05);border-radius:8px;padding:8px;}
@@ -164,19 +141,9 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
   </div>
 </div>
 
-<div class="api-modal" id="apiModal">
-  <div class="api-box">
-    <span class="modal-close" onclick="closeApiModal()">×</span>
-    <h3 style="color:#ffd700;text-align:center;margin-bottom:15px;">ChatGPT 配置</h3>
-    <p style="margin-bottom:10px;font-size:14px;">请输入你的 OpenAI API Key（仅本地保存）</p>
-    <input class="api-input" id="openaiApiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-    <button class="api-btn" onclick="saveApiKey()">保存并关闭</button>
-  </div>
-</div>
-
 <div class="main-app" id="mainApp">
   <div class="user-bar">
-    <div class="user-info" style="display:flex;align-items:center;">
+    <div class="user-info">
       <img id="topAvatar" src="https://picsum.photos/80/80" class="avatar">
       <span class="user-name" id="nickBar"></span>
     </div>
@@ -204,12 +171,13 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
   </div>
 
   <div class="container">
-    <div id="home" class="card"><h3>首页</h3><p>功能：语音会议、ChatGPT文章评价、UID搜索、个人中心、文章管理</p></div>
+    <div id="home" class="card"><h3>首页</h3><p>已支持：按个人编号搜索、性别年龄头像、点赞评论、删文章</p></div>
 
     <div id="article" class="card" style="display:none;"><h3>已通过文章</h3><div id="articleList"></div></div>
 
     <div id="publish" class="card" style="display:none;"><h3>发布文章</h3><input class="auth-input" id="artTitle" placeholder="标题"><textarea class="auth-input" rows="7" id="artContent" placeholder="内容"></textarea><button class="auth-btn" onclick="publishArt()">提交</button></div>
 
+    <!-- 个人中心（完整新版） -->
     <div id="usercenter" class="card" style="display:none;">
       <h3>个人中心</h3>
       <div class="form-row">
@@ -240,34 +208,7 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 
     <div id="chat" class="card" style="display:none;"><h3>私聊</h3><div class="chat-layout"><div class="chat-user-list" id="chatUserList"></div><div class="chat-box"><div class="msg-area" id="msgArea"></div><div class="msg-input-area"><input class="msg-input" id="msgInput" onkeydown="event.key==='Enter'&&sendMsg()"><button class="send-btn" onclick="sendMsg()">发送</button></div></div></div></div>
 
-    <!-- 语音会议页面：完全保留你原版样式 + 新增真多人在线 -->
-    <div id="voice" class="card" style="display:none;">
-      <h3>语音会议（真实多人在线）</h3>
-      <div class="meeting-room">
-        <div class="meeting-info">
-          <div class="meeting-name">当前房间：<span id="currentRoomName">未加入</span></div>
-          <div class="meeting-controls">
-            <button class="meeting-btn" onclick="createRealRoom()">创建房间</button>
-            <button class="meeting-btn" onclick="joinRealRoom()">加入房间</button>
-            <button class="meeting-btn secondary" id="micBtn" onclick="toggleMic()">🎤 麦克风</button>
-            <button class="meeting-btn secondary" onclick="leaveRealRoom()">离开</button>
-          </div>
-        </div>
-
-        <div class="online-users-box">
-          <div style="font-size:14px;margin-bottom:6px;color:#ffd700;">在线用户：</div>
-          <div id="onlineUserList"></div>
-        </div>
-
-        <div class="room-msg-box" id="roomChatBox"></div>
-        <input class="room-msg-input" id="roomMsgInput" placeholder="房间公聊消息..." onkeydown="event.key==='Enter'&&sendRoomMsg()">
-
-        <h4 style="color:#ffd700;margin:15px 0 10px 0;">参会者</h4>
-        <div class="participant-grid" id="participantList">
-          <p style="text-align:center;color:#ccc;">请创建或加入房间</p>
-        </div>
-      </div>
-    </div>
+    <div id="voice" class="card" style="display:none;"><h3>语音会议</h3><p>语音功能保留</p></div>
 
     <div id="userlist" class="card" style="display:none;"><h3>搜索结果（按UID）</h3><div id="searchResult"></div></div>
 
@@ -287,14 +228,12 @@ html,body{background:#b81c1c;color:#fff;font-family:sans-serif;line-height:1.6;h
 </div>
 
 <script>
-// ===================== 原版全局变量完全保留 =====================
 const STORAGE = {
-  users:"ntlc_users", cur:"ntlc_cur", arts:"ntlc_arts", chats:"ntlc_chats",
-  likes:"ntlc_likes", comments:"ntlc_comments", meetings:"ntlc_meetings",
-  aiEvals:"ntlc_ai_evals", apiKey:"ntlc_openai_key"
+  users:"ntlc_users", cur:"ntlc_cur",
+  arts:"ntlc_arts", chats:"ntlc_chats",
+  likes:"ntlc_likes", comments:"ntlc_comments"
 };
 const MANAGE_PWD = "159357258";
-const AI_PROMPT = "你是专业文章评审，简洁评价内容、逻辑、表达，给1-2条改进建议，150字内。";
 
 let users = JSON.parse(localStorage.getItem(STORAGE.users) || "[]");
 let cur = JSON.parse(localStorage.getItem(STORAGE.cur) || null);
@@ -302,25 +241,14 @@ let arts = JSON.parse(localStorage.getItem(STORAGE.arts) || "[]");
 let chats = JSON.parse(localStorage.getItem(STORAGE.chats) || "[]");
 let likes = JSON.parse(localStorage.getItem(STORAGE.likes) || "[]");
 let comments = JSON.parse(localStorage.getItem(STORAGE.comments) || "[]");
-let meetings = JSON.parse(localStorage.getItem(STORAGE.meetings) || "[]");
-let aiEvals = JSON.parse(localStorage.getItem(STORAGE.aiEvals) || "{}");
-let apiKey = localStorage.getItem(STORAGE.apiKey) || "";
 
 let currentRejectId = null;
 let chatTo = null;
 
-// ===================== 真实多人在线核心（WebSocket公用服务）=====================
-let ws = null;
-let currentRoomId = null;
-let onlineUsers = [];
-let localStream = null;
-let peerConnections = {};
-const ICE_CONFIG = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+setTimeout(() => {
+  cur ? closeAuth() : (document.getElementById("authModal").style.display = "flex");
+}, 4500);
 
-// 跳过启动动画
-document.getElementById("authModal").style.display = "flex";
-
-// ===================== 原版登录/注册/切换页面逻辑完全不动 =====================
 document.querySelectorAll(".auth-tab").forEach(tab => {
   tab.onclick = () => {
     document.querySelectorAll(".auth-tab").forEach(x => x.classList.remove("active"));
@@ -334,165 +262,183 @@ document.querySelectorAll(".auth-tab").forEach(tab => {
 function closeAuth() {
   document.getElementById("authModal").style.display = "none";
   document.getElementById("mainApp").style.display = "block";
-  if (!cur) { document.getElementById("nickBar").innerText = "游客"; return; }
+  if (!cur) {
+    document.getElementById("nickBar").innerText = "游客";
+    return;
+  }
   document.getElementById("mainApp").classList.add("has-account");
   document.getElementById("nickBar").innerText = cur.nick;
   document.getElementById("topAvatar").src = cur.avatar || "https://picsum.photos/80/80";
-  initWS();
 }
 
 function doReg() {
   const acc = document.getElementById("regAcc").value.trim();
   const pwd = document.getElementById("regPwd").value.trim();
   const nick = document.getElementById("regNick").value.trim();
-  if (!acc||!pwd||!nick) return alert("请填完整");
-  if (users.some(u=>u.account===acc)) return alert("账号已存在");
-  const uid = "UID"+Date.now();
-  const user={uid,account:acc,pwd:pwd,nick:nick,gender:"保密",age:"",avatar:"https://picsum.photos/80/80",status:"normal"};
+  if (!acc || !pwd || !nick) return alert("请填完整");
+  if (users.some(u => u.account === acc)) return alert("账号已存在");
+  const uid = "UID" + Date.now();
+  const user = {
+    uid: uid, account: acc, pwd: pwd, nick: nick,
+    gender: "保密", age: "", avatar: "https://picsum.photos/80/80",
+    status: "normal"
+  };
   users.push(user);
-  localStorage.setItem(STORAGE.users,JSON.stringify(users));
-  alert("注册成功！编号："+uid);
-  document.querySelector('.auth-tab[data-mode="login"]').click();
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  alert("注册成功！你的个人编号：" + uid);
+  document.querySelector(".auth-tab[data-mode='login']").click();
 }
 
 function doLogin() {
-  const acc=document.getElementById("loginAcc").value.trim();
-  const pwd=document.getElementById("loginPwd").value.trim();
-  const u=users.find(x=>x.account===acc&&x.pwd===pwd);
-  if(!u)return alert("账号或密码错误");
-  if(u.status==="ban")return alert("账号已封禁");
-  cur=u;localStorage.setItem(STORAGE.cur,JSON.stringify(cur));closeAuth();
+  const acc = document.getElementById("loginAcc").value.trim();
+  const pwd = document.getElementById("loginPwd").value.trim();
+  const u = users.find(x => x.account === acc && x.pwd === pwd);
+  if (!u) return alert("账号或密码错误");
+  if (u.status === "ban") return alert("账号已封禁");
+  cur = u;
+  localStorage.setItem(STORAGE.cur, JSON.stringify(cur));
+  closeAuth();
 }
 
 function go(page) {
-  document.querySelectorAll(".card").forEach(c=>c.style.display="none");
-  document.getElementById(page).style.display="block";
-  document.querySelectorAll(".nav-link").forEach(n=>n.classList.remove("active"));
-  const el=document.querySelector(`.nav-link[onclick*="${page}"]`);
-  if(el)el.classList.add("active");
-  if(page==="article")renderArticles();
-  if(page==="chat")loadChatUsers();
-  if(page==="manage")renderManageCenter();
-  if(page==="usercenter")renderUserCenter();
-  if(page==="userlist")document.getElementById("searchResult").innerHTML="<p>请输入编号搜索</p>";
+  document.querySelectorAll(".card").forEach(c => c.style.display = "none");
+  document.getElementById(page).style.display = "block";
+  document.querySelectorAll(".nav-link").forEach(n => n.classList.remove("active"));
+  const el = document.querySelector(`.nav-link[onclick*="${page}"]`);
+  if (el) el.classList.add("active");
+  if (page === "article") renderArticles();
+  if (page === "chat") loadChatUsers();
+  if (page === "manage") renderManageCenter();
+  if (page === "usercenter") renderUserCenter();
+  if (page === "userlist") document.getElementById("searchResult").innerHTML = "<p style='text-align:center'>请在顶部输入个人编号搜索</p>";
 }
 
-// ===================== 原版用户中心/文章/评论/AI完全保留 =====================
+// ================== 按 UID 搜索（你要的核心） ==================
 function doSearchByUid() {
-  const kw=document.getElementById("searchInput").value.trim();go("userlist");
-  if(!kw){document.getElementById("searchResult").innerHTML="<p>请输入个人编号</p>";return;}
-  const t=users.find(u=>u.uid===kw);
-  if(!t){document.getElementById("searchResult").innerHTML=`<p>未找到：${kw}</p>`;return;}
-  document.getElementById("searchResult").innerHTML=`
+  const kw = document.getElementById("searchInput").value.trim();
+  go("userlist");
+  if (!kw) {
+    document.getElementById("searchResult").innerHTML = "<p style='text-align:center'>请输入个人编号</p>";
+    return;
+  }
+  const target = users.find(u => u.uid === kw);
+  const dom = document.getElementById("searchResult");
+  if (!target) {
+    dom.innerHTML = `<p style='text-align:center;color:#ccc;'>未找到编号：${kw}</p>`;
+    return;
+  }
+  dom.innerHTML = `
   <div class="user-preview">
-    <img src="${t.avatar}" class="user-preview-avatar">
+    <img src="${target.avatar}" class="user-preview-avatar">
     <div>
-      <div style="font-weight:bold;color:#ffd700;">${t.nick}</div>
-      <div>编号：${t.uid}</div>
-      <div>${t.gender}｜${t.age||"未填"}岁</div>
-      <button class="btn btn-sm btn-yellow" onclick="openChat('${t.uid}','${t.nick}')">私聊</button>
+      <div style="font-weight:bold;color:#ffd700;">${target.nick}</div>
+      <div>编号：${target.uid}</div>
+      <div>${target.gender}｜${target.age||"未填"}岁</div>
+      <button class="btn btn-sm btn-yellow" onclick="openChat('${target.uid}','${target.nick}')">发起私聊</button>
     </div>
   </div>`;
 }
 
+// ================== 个人中心加载 & 保存 ==================
 function renderUserCenter() {
-  if(!cur)return;
-  document.getElementById("showUid").value=cur.uid;
-  document.getElementById("editNick").value=cur.nick||"";
-  document.getElementById("editGender").value=cur.gender||"保密";
-  document.getElementById("editAge").value=cur.age||"";
-  document.getElementById("editAvatar").value=cur.avatar||"https://picsum.photos/80/80";
-  const my=arts.filter(a=>a.uid===cur.uid);
-  document.getElementById("myArticleList").innerHTML=my.length?my.map(a=>`
-    <div style="padding:8px;border-bottom:1px solid #fff2;">
-      <div style="color:#ffd700;">${a.title} [${a.status}]</div>
-      <div style="font-size:12px;color:#ccc;">${a.time}</div>
-    </div>`).join(""):"<p>暂无文章</p>";
+  if (!cur) return;
+  document.getElementById("showUid").value = cur.uid;
+  document.getElementById("editNick").value = cur.nick || "";
+  document.getElementById("editGender").value = cur.gender || "保密";
+  document.getElementById("editAge").value = cur.age || "";
+  document.getElementById("editAvatar").value = cur.avatar || "https://picsum.photos/80/80";
+
+  const myArts = arts.filter(a => a.uid === cur.uid);
+  document.getElementById("myArticleList").innerHTML = myArts.length ? myArts.map(a => `
+    <div style='padding:8px;border-bottom:1px solid #fff2;'>
+      <div style='color:#ffd700;'>${a.title} [${a.status}]</div>
+      <div style='font-size:12px;color:#ccc;'>${a.time}</div>
+    </div>
+  `).join("") : "<p style='color:#ccc;'>暂无文章</p>";
 }
 
 function saveUserInfo() {
-  if(!cur)return;
-  cur.nick=document.getElementById("editNick").value.trim()||cur.nick;
-  cur.gender=document.getElementById("editGender").value.trim()||"保密";
-  cur.age=document.getElementById("editAge").value.trim()||"";
-  cur.avatar=document.getElementById("editAvatar").value.trim()||"https://picsum.photos/80/80";
-  const u=users.find(x=>x.uid===cur.uid);Object.assign(u,cur);
-  arts.forEach(a=>{if(a.uid===cur.uid)a.nick=cur.nick;});
-  comments.forEach(c=>{if(c.uid===cur.uid)c.nick=cur.nick;});
-  localStorage.setItem(STORAGE.cur,JSON.stringify(cur));
-  localStorage.setItem(STORAGE.users,JSON.stringify(users));
-  localStorage.setItem(STORAGE.arts,JSON.stringify(arts));
-  localStorage.setItem(STORAGE.comments,JSON.stringify(comments));
-  document.getElementById("nickBar").innerText=cur.nick;
-  document.getElementById("topAvatar").src=cur.avatar;
+  if (!cur) return;
+  cur.nick = document.getElementById("editNick").value.trim() || cur.nick;
+  cur.gender = document.getElementById("editGender").value.trim() || "保密";
+  cur.age = document.getElementById("editAge").value.trim() || "";
+  cur.avatar = document.getElementById("editAvatar").value.trim() || "https://picsum.photos/80/80";
+
+  const u = users.find(x => x.uid === cur.uid);
+  Object.assign(u, cur);
+
+  arts.forEach(a => { if (a.uid === cur.uid) a.nick = cur.nick; });
+  comments.forEach(c => { if (c.uid === cur.uid) c.nick = cur.nick; });
+
+  localStorage.setItem(STORAGE.cur, JSON.stringify(cur));
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+
+  document.getElementById("nickBar").innerText = cur.nick;
+  document.getElementById("topAvatar").src = cur.avatar;
   alert("保存成功！");
   renderUserCenter();
 }
 
+// ================== 文章、点赞、评论 ==================
 function publishArt() {
-  if(!cur)return alert("请登录");
-  const t=document.getElementById("artTitle").value.trim();
-  const c=document.getElementById("artContent").value.trim();
-  if(!t||!c)return alert("不能为空");
-  arts.unshift({id:"a"+Date.now(),title:t,content:c,uid:cur.uid,nick:cur.nick,status:"pending",time:new Date().toLocaleString()});
-  localStorage.setItem(STORAGE.arts,JSON.stringify(arts));
-  alert("提交待审核");go("article");
+  if (!cur) return alert("请登录");
+  const t = document.getElementById("artTitle").value.trim();
+  const c = document.getElementById("artContent").value.trim();
+  if (!t || !c) return alert("不能为空");
+  arts.unshift({
+    id: "a"+Date.now(), title: t, content: c,
+    uid: cur.uid, nick: cur.nick, status: "pending",
+    time: new Date().toLocaleString()
+  });
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  alert("提交待审核");
+  go("article");
 }
 
-function toggleLike(aid){
-  if(!cur)return alert("请登录");
-  const i=likes.findIndex(x=>x.aid===aid&&x.uid===cur.uid);
-  i>-1?likes.splice(i,1):likes.push({aid,uid:cur.uid});
-  localStorage.setItem(STORAGE.likes,JSON.stringify(likes));renderArticles();
+function toggleLike(aid) {
+  if (!cur) return alert("请登录");
+  const idx = likes.findIndex(x => x.aid === aid && x.uid === cur.uid);
+  idx > -1 ? likes.splice(idx, 1) : likes.push({ aid, uid: cur.uid });
+  localStorage.setItem(STORAGE.likes, JSON.stringify(likes));
+  renderArticles();
 }
 
-function sendComment(aid){
-  if(!cur)return alert("请登录");
-  const i=document.getElementById(`comment_${aid}`);
-  const t=i.value.trim();if(!t)return;
-  comments.push({cid:"c"+Date.now(),aid:aid,uid:cur.uid,nick:cur.nick,content:t,time:new Date().toLocaleString()});
-  localStorage.setItem(STORAGE.comments,JSON.stringify(comments));
-  i.value="";renderArticles();
+function sendComment(aid) {
+  if (!cur) return alert("请登录");
+  const inp = document.getElementById(`comment_${aid}`);
+  const txt = inp.value.trim();
+  if (!txt) return;
+  comments.push({
+    cid: "c"+Date.now(), aid: aid,
+    uid: cur.uid, nick: cur.nick,
+    content: txt, time: new Date().toLocaleString()
+  });
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+  inp.value = "";
+  renderArticles();
 }
 
-function openApiModal(){document.getElementById("openaiApiKey").value=apiKey;document.getElementById("apiModal").style.display="flex";}
-function closeApiModal(){document.getElementById("apiModal").style.display="none";}
-function saveApiKey(){apiKey=document.getElementById("openaiApiKey").value.trim();localStorage.setItem(STORAGE.apiKey,apiKey);alert("保存成功");closeApiModal();}
-
-async function getAiEvaluation(aid){
-  if(!apiKey){openApiModal();return;}
-  if(aiEvals[aid]){alert("已有评价");renderArticles();return;}
-  const a=arts.find(x=>x.id===aid);if(!a)return;
-  try{
-    const r=await fetch("https://api.openai.com/v1/chat/completions",{
-      method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
-      body:JSON.stringify({model:"gpt-3.5-turbo",messages:[{role:"system",content:AI_PROMPT},{role:"user",content:`标题：${a.title}内容：${a.content}`}],max_tokens:200})
-    });
-    const d=await r.json();
-    aiEvals[aid]=d.choices?.[0]?.message?.content||"评价失败";
-  }catch(e){aiEvals[aid]="网络或API Key错误";}
-  localStorage.setItem(STORAGE.aiEvals,JSON.stringify(aiEvals));renderArticles();
-}
-
-function renderArticles(){
-  const p=arts.filter(a=>a.status==="pass");
-  document.getElementById("articleList").innerHTML=p.map(a=>{
-    const lc=likes.filter(x=>x.aid===a.id).length;
-    const ml=cur&&likes.some(x=>x.aid===a.id&&x.uid===cur.uid);
-    const cs=comments.filter(x=>x.aid===a.id);
-    const ae=aiEvals[a.id]||"";
+function renderArticles() {
+  const pass = arts.filter(a => a.status === "pass");
+  document.getElementById("articleList").innerHTML = pass.map(a => {
+    const likeCnt = likes.filter(x => x.aid === a.id).length;
+    const myLike = cur && likes.some(x => x.aid === a.id && x.uid === cur.uid);
+    const cmts = comments.filter(x => x.aid === a.id);
     return `
     <div class="article-item">
       <div class="article-title">${a.title}</div>
       <div class="article-meta">${a.nick}｜${a.time}</div>
       <div class="article-content">${a.content}</div>
       <div class="like-box">
-        <button class="like-btn" onclick="toggleLike('${a.id}')">${ml?"❤️已点赞":"🤍点赞"}(${lc})</button>
-        <button class="ai-eval-btn" onclick="getAiEvaluation('${a.id}')">AI评价</button>
+        <button class="like-btn" onclick="toggleLike('${a.id}')">
+          ${myLike ? '❤️已点赞' : '🤍点赞'} (${likeCnt})
+        </button>
+        <span>评论(${cmts.length})</span>
       </div>
-      ${ae?`<div class="ai-result">${ae}</div>`:""}
       <div style="margin-top:10px;">
-        ${cs.map(c=>`
+        ${cmts.map(c => `
         <div class="comment-item">
           <div class="comment-user">${c.nick}｜${c.time}</div>
           <div class="comment-text">${c.content}</div>
@@ -503,90 +449,100 @@ function renderArticles(){
         </div>
       </div>
     </div>`;
-  }).join("")||"<p style='text-align:center'>暂无文章</p>";
+  }).join("") || "<p style='text-align:center;color:#ccc;'>暂无文章</p>";
 }
 
-// ===================== 管理功能完全保留 =====================
-function openManagePwd(){document.getElementById("managePwdModal").style.display="flex";}
-function closePwdModal(){document.getElementById("managePwdModal").style.display="none";}
-function checkManagePwd(){if(document.getElementById("managePwd").value===MANAGE_PWD){closePwdModal();go("manage");}else alert("密码错误");}
-function openRejectModal(id){currentRejectId=id;document.getElementById("rejectModal").style.display="flex";}
-function closeRejectModal(){document.getElementById("rejectModal").style.display="none";}
-function confirmReject(){const r=document.getElementById("reasonInput").value.trim();if(!r)return alert("请写理由");const a=arts.find(x=>x.id===currentRejectId);a.status="reject";localStorage.setItem(STORAGE.arts,JSON.stringify(arts));closeRejectModal();renderManageCenter();}
-function passArticle(id){const a=arts.find(x=>x.id===id);a.status="pass";localStorage.setItem(STORAGE.arts,JSON.stringify(arts));renderManageCenter();}
-function deleteArticle(id){if(!confirm("确定删除？"))return;arts=arts.filter(x=>x.id!==id);comments=comments.filter(x=>x.aid!==id);likes=likes.filter(x=>x.aid!==id);delete aiEvals[id];localStorage.setItem(STORAGE.arts,JSON.stringify(arts));localStorage.setItem(STORAGE.comments,JSON.stringify(comments));localStorage.setItem(STORAGE.likes,JSON.stringify(likes));localStorage.setItem(STORAGE.aiEvals,JSON.stringify(aiEvals));renderManageCenter();}
-function toggleBan(uid){const u=users.find(x=>x.uid===uid);u.status=u.status==="normal"?"ban":"normal";localStorage.setItem(STORAGE.users,JSON.stringify(users));renderManageCenter();}
-function renderManageCenter(){
-  document.getElementById("auditList").innerHTML=arts.map(a=>`
-    <div style="padding:10px;border-bottom:1px solid #fff2;">
-      <div style="color:#ffd700;">${a.title}[${a.status}]</div>
-      <div style="font-size:12px;">${a.nick}｜${a.time}</div>
-      <div style="margin-top:6px;display:flex;gap:6px;">
-        ${a.status==="pending"?`<button class="btn btn-sm btn-green" onclick="passArticle('${a.id}')">通过</button><button class="btn btn-sm btn-yellow" onclick="openRejectModal('${a.id}')">驳回</button>`:""}
-        <button class="btn btn-sm btn-red" onclick="deleteArticle('${a.id}')">删除</button>
+// ================== 审核、驳回、删除文章 ==================
+function openRejectModal(id) { currentRejectId = id; document.getElementById("rejectModal").style.display = "flex"; }
+function closeRejectModal() { document.getElementById("rejectModal").style.display = "none"; }
+function confirmReject() {
+  const r = document.getElementById("reasonInput").value.trim();
+  if (!r) return alert("请写理由");
+  const a = arts.find(x => x.id === currentRejectId);
+  a.status = "reject";
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  closeRejectModal(); renderManageCenter();
+}
+function passArticle(id) {
+  const a = arts.find(x => x.id === id);
+  a.status = "pass";
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  renderManageCenter();
+}
+function deleteArticle(aid) {
+  if (!confirm("确定删除？点赞评论一并删除")) return;
+  arts = arts.filter(x => x.id !== aid);
+  comments = comments.filter(x => x.aid !== aid);
+  likes = likes.filter(x => x.aid !== aid);
+  localStorage.setItem(STORAGE.arts, JSON.stringify(arts));
+  localStorage.setItem(STORAGE.comments, JSON.stringify(comments));
+  localStorage.setItem(STORAGE.likes, JSON.stringify(likes));
+  renderManageCenter();
+}
+
+// ================== 管理、封号 ==================
+function openManagePwd() { document.getElementById("managePwdModal").style.display = "flex"; }
+function closePwdModal() { document.getElementById("managePwdModal").style.display = "none"; }
+function checkManagePwd() {
+  if (document.getElementById("managePwd").value === MANAGE_PWD) {
+    closePwdModal(); go("manage");
+  } else alert("密码错误");
+}
+
+function toggleBan(uid) {
+  const u = users.find(x => x.uid === uid);
+  u.status = u.status === "normal" ? "ban" : "normal";
+  localStorage.setItem(STORAGE.users, JSON.stringify(users));
+  renderManageCenter();
+}
+
+function renderManageCenter() {
+  document.getElementById("auditList").innerHTML = arts.map(a => `
+    <div style='padding:10px;border-bottom:1px solid #fff2;'>
+      <div style='color:#ffd700;'>${a.title} [${a.status}]</div>
+      <div style='font-size:12px;'>${a.nick}｜${a.time}</div>
+      <div style='margin-top:6px;display:flex;gap:6px;'>
+        ${a.status==="pending"?`
+        <button class='btn btn-sm btn-green' onclick='passArticle("${a.id}")'>通过</button>
+        <button class='btn btn-sm btn-yellow' onclick='openRejectModal("${a.id}")'>驳回</button>`:""}
+        <button class='btn btn-sm btn-red' onclick='deleteArticle("${a.id}")'>删除文章</button>
       </div>
-    </div>`).join("");
-  document.getElementById("banUserList").innerHTML=users.map(u=>`
-    <div style="padding:10px;border-bottom:1px solid #fff2;display:flex;justify-content:space-between;">
+    </div>
+  `).join("");
+
+  document.getElementById("banUserList").innerHTML = users.map(u => `
+    <div style='padding:10px;border-bottom:1px solid #fff2;display:flex;justify-content:space-between;'>
       <div>${u.nick}｜${u.uid}｜${u.status}</div>
-      <button class="btn btn-sm ${u.status==='normal'?'btn-red':'btn-green'}" onclick="toggleBan('${u.uid}')">${u.status==='normal'?'封禁':'解封'}</button>
-    </div>`).join("");
+      <button class='btn btn-sm ${u.status==="normal"?"btn-red":"btn-green"}' onclick='toggleBan("${u.uid}")'>
+        ${u.status==="normal"?"封禁":"解封"}
+      </button>
+    </div>
+  `).join("");
 }
 
-// ===================== 私聊保留 =====================
-function loadChatUsers(){const l=users.filter(u=>!cur||u.uid!==cur.uid);document.getElementById("chatUserList").innerHTML=l.map(u=>`<div class="chat-user-item" onclick="openChat('${u.uid}','${u.nick}')">${u.nick}</div>`).join("");}
-function openChat(uid){chatTo=uid;}
-function sendMsg(){if(!chatTo||!cur)return;const t=document.getElementById("msgInput").value.trim();if(!t)return;chats.push({from:cur.uid,to:chatTo,text:t,time:new Date().toLocaleString()});localStorage.setItem(STORAGE.chats,JSON.stringify(chats));document.getElementById("msgInput").value="";alert("发送成功");}
-
-// ===================== 真实多人 WebSocket 初始化 =====================
-function initWS() {
-  if (!cur) return;
-  try {
-    ws = new WebSocket("wss://echo.websocket.events");
-    ws.onopen = () => { console.log("WS连接成功"); };
-    ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        handleRoomMessage(data);
-      } catch(err){}
-    };
-  } catch(e){}
+// ================== 私聊 ==================
+function loadChatUsers() {
+  const list = users.filter(u => !cur || u.uid !== cur.uid);
+  document.getElementById("chatUserList").innerHTML = list.map(u => `
+    <div class="chat-user-item" onclick="openChat('${u.uid}','${u.nick}')">${u.nick}</div>
+  `).join("");
+}
+function openChat(uid, nick) { chatTo = uid; }
+function sendMsg() {
+  if (!chatTo || !cur) return;
+  const t = document.getElementById("msgInput").value.trim();
+  if (!t) return;
+  chats.push({ from: cur.uid, to: chatTo, text: t, time: new Date().toLocaleString() });
+  localStorage.setItem(STORAGE.chats, JSON.stringify(chats));
+  document.getElementById("msgInput").value = "";
+  alert("消息已发送");
 }
 
-function sendWS(data) {
-  if (ws && ws.readyState === 1) ws.send(JSON.stringify(data));
+function logout() {
+  cur = null;
+  localStorage.removeItem(STORAGE.cur);
+  location.reload();
 }
-
-function createRealRoom() {
-  if (!cur) return alert("请登录");
-  const room = prompt("输入房间号（数字/英文）：", "room1");
-  if (!room) return;
-  currentRoomId = room;
-  document.getElementById("currentRoomName").innerText = room;
-  sendWS({ type: "join", room: room, uid: cur.uid, nick: cur.nick });
-}
-
-function joinRealRoom() {
-  if (!cur) return alert("请登录");
-  const room = prompt("输入要加入的房间号：");
-  if (!room) return;
-  currentRoomId = room;
-  document.getElementById("currentRoomName").innerText = room;
-  sendWS({ type: "join", room: room, uid: cur.uid, nick: cur.nick });
-}
-
-function leaveRealRoom() {
-  if (!currentRoomId || !ws) return;
-  sendWS({ type: "leave", room: currentRoomId, uid: cur.uid });
-  currentRoomId = null;
-  onlineUsers = [];
-  document.getElementById("currentRoomName").innerText = "未加入";
-  document.getElementById("onlineUserList").innerHTML = "";
-  document.getElementById("roomChatBox").innerHTML = "";
-  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-}
-
-function sendRoomMsg() {
-  const txt = document.getElementById("roomMsgInput").value.trim();
-  if (!txt || !currentRoomId || !ws) return;
-  sendWS({ type: "msg", room: currentRoomId, uid: c
+</script>
+</body>
+</html>
