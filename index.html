@@ -2,198 +2,90 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新思想学习社 - 后台连接</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>新思想学习社 · 真实上线版</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS 客户端 (使用用户提供的密钥) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        .bg-red-deep { background-color: #b91c1c; }
+        .animate-gradual { transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .fade-out { opacity: 0; pointer-events: none; }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); }
+        @keyframes gentleRise {
+            0% { opacity: 0; transform: scale(0.98); }
+            40% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: scale(1.02); }
         }
-
-        html, body {
-            background: #b81c1c;
-            color: #fff;
-            font-family: sans-serif;
-            line-height: 1.6;
-            height: 100%;
+        .splash-animation {
+            animation: gentleRise 2.8s ease-in-out forwards;
         }
-
-        /* 启动页动画 */
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            animation: splashFade 2.5s ease forwards;
-            animation-delay: 3s;
+        .main-red-bg {
+            background-color: #a31f1f; 
+            background-image: radial-gradient(circle at 10% 30%, #c53030 0%, #991b1b 90%);
         }
-
-        .ntlc-logo {
-            display: flex;
-            gap: 12px;
-            font-size: 80px;
-            font-weight: 900;
-            margin-bottom: 40px;
+        .nav-active {
+            background-color: #dc2626;
+            color: white;
+            border-radius: 9999px;
         }
+    </style>
+</head>
+<body class="main-red-bg text-white min-h-screen flex flex-col items-center relative">
 
-        .ntlc-letter {
-            opacity: 0;
-            transform: scale(0.5);
-            animation: letterPop 0.6s ease forwards;
-        }
+    <!-- 开篇动画层 NTLC + 红色小字 -->
+    <div id="splashOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-90 text-white splash-animation">
+        <div class="text-7xl md:text-9xl font-light tracking-widest drop-shadow-2xl" style="font-weight: 300;">NTLC</div>
+        <div class="text-red-500 text-xl md:text-2xl mt-4 tracking-wide">新思想学习社</div>
+    </div>
 
-        .ntlc-letter:nth-child(1) { color: #4285F4; animation-delay: 0.2s; }
-        .ntlc-letter:nth-child(2) { color: #EA4335; animation-delay: 0.4s; }
-        .ntlc-letter:nth-child(3) { color: #FBBC05; animation-delay: 0.6s; }
-        .ntlc-letter:nth-child(4) { color: #34A853; animation-delay: 0.8s; }
+    <!-- 主应用容器 (动画结束后显示) -->
+    <div id="mainApp" class="w-full max-w-6xl mx-auto p-4 hidden flex-col gap-3 relative z-10">
 
-        @keyframes letterPop {
-            0% { opacity: 0; transform: scale(0.5); }
-            70% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        <!-- 登录弹窗 (默认弹出) -->
+        <div id="loginModal" class="modal-backdrop fixed inset-0 z-40 flex items-center justify-center p-4 transition-all">
+            <div class="bg-white text-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border-t-4 border-red-600 relative">
+                <!-- 关闭叉: 游客登录 -->
+                <button id="closeLoginAsGuest" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-2xl">&times;</button>
+                <h2 class="text-2xl font-bold text-red-700 mb-4 text-center">新思想学习社</h2>
+                
+                <!-- 注册 / 登录 选项卡 -->
+                <div class="flex border-b border-gray-300 mb-4">
+                    <button id="tabRegister" class="flex-1 py-2 font-medium text-red-600 border-b-2 border-red-600">注册</button>
+                    <button id="tabLogin" class="flex-1 py-2 font-medium text-gray-500">登录</button>
+                </div>
 
-        @keyframes splashFade {
-            0% { opacity: 1; }
-            100% { opacity: 0; visibility: hidden; }
-        }
+                <!-- 注册面板 (邮箱+密码，真实邮件确认) -->
+                <div id="registerPanel" class="block">
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700">邮箱</label>
+                        <input type="email" id="regEmail" placeholder="your@email.com" class="w-full p-2 border rounded-lg mt-1">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">密码</label>
+                        <input type="password" id="regPassword" placeholder="至少6位" class="w-full p-2 border rounded-lg mt-1">
+                    </div>
+                    <button id="registerBtn" class="w-full bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 font-semibold">注册并登录</button>
+                    <p class="text-xs text-gray-500 mt-3 text-center">我们将向您的邮箱发送确认邮件（需配置SMTP）</p>
+                </div>
 
-        /* 模态框样式 */
-        .auth-modal, .pwd-modal, .reject-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(80, 0, 0, 0.8);
-            z-index: 999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
+                <!-- 登录面板 (邮箱+密码) 初始隐藏 -->
+                <div id="loginPanel" class="hidden">
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700">邮箱</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" class="w-full p-2 border rounded-lg mt-1">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">密码</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" class="w-full p-2 border rounded-lg mt-1">
+                    </div>
+                    <button id="loginBtn" class="w-full bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 font-semibold">登录</button>
+                    <p class="text-xs text-gray-500 mt-3 text-center">使用已注册账号登录</p>
+                </div>
 
-        .auth-box, .pwd-box, .reject-box {
-            background: #801010;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 420px;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            color: #ffd700;
-            cursor: pointer;
-        }
-
-        .auth-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .auth-tab.active {
-            background: #ffd700;
-            color: #5a0000;
-            font-weight: bold;
-        }
-
-        .auth-input, .pwd-input, .reject-reason {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            outline: none;
-        }
-
-        .reject-reason {
-            height: 100px;
-            resize: none;
-        }
-
-        .auth-btn, .pwd-btn, .reject-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            background: #ffd700;
-            color: #5a0000;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-
-        .cancel-login {
-            width: 100%;
-            margin-top: 10px;
-            padding: 12px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffd700;
-            border: 1px solid #ffd700;
-            cursor: pointer;
-        }
-
-        /* 主应用样式 */
-        .main-app {
-            display: none;
-        }
-
-        .user-bar {
-            background: #801010;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid #ffd700;
-            object-fit: cover;
-        }
-
-        .user-name {
-            color: #ffd700;
-            font-weight: bold;
-            margin-left: 6px;
-        }
-
-        .logout {
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .search-bar {
-            background: #801010;
-            padding: 8px 15px;
-            text-align: center;
-        }
-
-        .search-input {
-            width: 90%;
-            max-width: 40
+                <div class="mt-3 text-center text-sm text-gray-400">游客模式无法发布、私信与审核</div>
+      
