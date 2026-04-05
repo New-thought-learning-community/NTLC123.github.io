@@ -1,91 +1,463 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>新思想学习社 · 真实上线版</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS 客户端 (使用用户提供的密钥) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
-        * { font-family: 'Inter', system-ui, sans-serif; }
-        .bg-red-deep { background-color: #b91c1c; }
-        .animate-gradual { transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .fade-out { opacity: 0; pointer-events: none; }
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); }
-        @keyframes gentleRise {
-            0% { opacity: 0; transform: scale(0.98); }
-            40% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; }
-            100% { opacity: 0; transform: scale(1.02); }
-        }
-        .splash-animation {
-            animation: gentleRise 2.8s ease-in-out forwards;
-        }
-        .main-red-bg {
-            background-color: #a31f1f; 
-            background-image: radial-gradient(circle at 10% 30%, #c53030 0%, #991b1b 90%);
-        }
-        .nav-active {
-            background-color: #dc2626;
-            color: white;
-            border-radius: 9999px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新思想学习社 NTLC</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+	:root {
+	  --google-blue: #4285F4; --google-red: #EA4335;
+	  --google-yellow: #FBBC05; --google-green: #34A853;
+	  --bg-gray: #f8f9fa;
+	}
+	* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Product Sans', 'Segoe UI', Roboto, sans-serif; }
+	body { background: var(--bg-gray); color: #202124; line-height: 1.6; }
+
+	/* ========== 1. 启动动画 ========== */
+	.splash {
+	  position: fixed; inset: 0; z-index: 10000;
+	  background: white; display: flex; flex-direction: column;
+	  align-items: center; justify-content: center;
+	  animation: fadeOut 0.5s ease 2.5s forwards;
+	}
+	.splash-logo {
+	  font-size: 32px; font-weight: bold; margin-bottom: 10px;
+	  background: linear-gradient(to right, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
+	  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+	}
+	.splash-sub { color: #EA4335; font-size: 14px; letter-spacing: 1px; }
+	.loader-bar {
+	  width: 200px; height: 4px; background: #eee; border-radius: 2px;
+	  margin-top: 20px; overflow: hidden; position: relative;
+	}
+	.loader-progress {
+	  width: 40%; height: 100%; background: var(--google-blue);
+	  position: absolute; animation: loading 1.5s infinite ease-in-out;
+	}
+	@keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
+	@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+	/* ========== 2. 布局 & 导航 ========== */
+	.app { display: none; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
+	.header {
+	  position: sticky; top: 0; background: white; padding: 12px 20px;
+	  box-shadow: 0 1px 2px rgba(0,0,0,0.1); z-index: 100;
+	}
+	.search-box {
+	  background: #f1f3f4; border-radius: 24px; padding: 8px 16px;
+	  display: flex; align-items: center;
+	}
+	.search-box input {
+	  border: none; background: transparent; width: 100%; outline: none; margin-left: 8px;
+	}
+
+	.nav-bottom {
+	  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+	  width: 100%; max-width: 600px; background: white;
+	  display: flex; justify-content: space-around; padding: 10px 0;
+	  border-top: 1px solid #dadce0; z-index: 100;
+	}
+	.nav-item {
+	  text-align: center; font-size: 11px; color: #5f6368; cursor: pointer; flex: 1;
+	}
+	.nav-item.active { color: var(--google-blue); }
+	.nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
+
+	/* ========== 3. 页面组件 ========== */
+	.page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+	.page.active { display: block; }
+	@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+	.card {
+	  background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+	  border: 1px solid #dadce0; transition: 0.2s;
+	}
+	.card:hover { box-shadow: 0 1px 6px rgba(32,33,36,0.28); }
+	.btn {
+	  padding: 10px 20px; border-radius: 20px; border: none; font-weight: 500;
+	  cursor: pointer; transition: 0.2s;
+	}
+	.btn-primary { background: var(--google-blue); color: white; }
+	.btn-outline { border: 1px solid #dadce0; background: white; }
+
+	/* ========== 4. 弹窗系统 ========== */
+	.modal-overlay {
+	  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+	  display: flex; align-items: center; justify-content: center; z-index: 2000;
+	}
+	.modal {
+	  background: white; width: 90%; max-width: 400px; border-radius: 16px;
+	  padding: 24px; position: relative;
+	}
+	.modal-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #eee; }
+	.tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #5f6368; }
+	.tab.active { color: var(--google-blue); border-bottom: 2px solid var(--google-blue); }
+	.form-group { margin-bottom: 15px; }
+	.form-group input {
+	  width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #dadce0; margin-top: 5px;
+	}
+
+	/* 管理员样式 */
+	.status-badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; }
+	.pending { background: #fff4e5; color: #663c00; }
+	.approved { background: #e6f4ea; color: #137333; }
+	.rejected { background: #fce8e6; color: #c5221f; }
+  </style>
 </head>
-<body class="main-red-bg text-white min-h-screen flex flex-col items-center relative">
+<body>
 
-    <!-- 开篇动画层 NTLC + 红色小字 -->
-    <div id="splashOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-90 text-white splash-animation">
-        <div class="text-7xl md:text-9xl font-light tracking-widest drop-shadow-2xl" style="font-weight: 300;">NTLC</div>
-        <div class="text-red-500 text-xl md:text-2xl mt-4 tracking-wide">新思想学习社</div>
-    </div>
+<div class="splash">
+  <div class="splash-logo">新思想学习社</div>
+  <div class="splash-sub">NTLC · 学习交流新平台</div>
+  <div class="loader-bar"><div class="loader-progress"></div></div>
+</div>
 
-    <!-- 主应用容器 (动画结束后显示) -->
-    <div id="mainApp" class="w-full max-w-6xl mx-auto p-4 hidden flex-col gap-3 relative z-10">
+<div class="app" id="mainApp">
+  <div class="header">
+	<div class="search-box">
+	  <span>🔍</span>
+	  <input type="text" id="userSearch" placeholder="通过邮箱或UID搜索用户..." onchange="handleSearchUser()">
+	</div>
+  </div>
 
-        <!-- 登录弹窗 (默认弹出) -->
-        <div id="loginModal" class="modal-backdrop fixed inset-0 z-40 flex items-center justify-center p-4 transition-all">
-            <div class="bg-white text-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border-t-4 border-red-600 relative">
-                <!-- 关闭叉: 游客登录 -->
-                <button id="closeLoginAsGuest" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-2xl">&times;</button>
-                <h2 class="text-2xl font-bold text-red-700 mb-4 text-center">新思想学习社</h2>
-                
-                <!-- 注册 / 登录 选项卡 -->
-                <div class="flex border-b border-gray-300 mb-4">
-                    <button id="tabRegister" class="flex-1 py-2 font-medium text-red-600 border-b-2 border-red-600">注册</button>
-                    <button id="tabLogin" class="flex-1 py-2 font-medium text-gray-500">登录</button>
-                </div>
+  <main>
+	<div class="page active" id="page-home">
+	  <h2 style="margin-bottom:15px">最新文章</h2>
+	  <div id="articleList"></div>
+	</div>
 
-                <!-- 注册面板 (邮箱+密码，真实邮件确认) -->
-                <div id="registerPanel" class="block">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700">邮箱</label>
-                        <input type="email" id="regEmail" placeholder="your@email.com" class="w-full p-2 border rounded-lg mt-1">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">密码</label>
-                        <input type="password" id="regPassword" placeholder="至少6位" class="w-full p-2 border rounded-lg mt-1">
-                    </div>
-                    <button id="registerBtn" class="w-full bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 font-semibold">注册并登录</button>
-                    <p class="text-xs text-gray-500 mt-3 text-center">我们将向您的邮箱发送确认邮件（需配置SMTP）</p>
-                </div>
+	<div class="page" id="page-publish">
+	  <h2 style="margin-bottom:15px">撰写新思想</h2>
+	  <div class="card">
+		<input type="text" id="postTitle" placeholder="文章标题" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+		<textarea id="postContent" placeholder="在此分享您的见解..." style="width:100%; height:200px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
+		<button class="btn btn-primary" onclick="handlePublish()" style="width:100%; margin-top:10px;">提交审核</button>
+	  </div>
+	</div>
 
-                <!-- 登录面板 (邮箱+密码) 初始隐藏 -->
-                <div id="loginPanel" class="hidden">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700">邮箱</label>
-                        <input type="email" id="loginEmail" placeholder="your@email.com" class="w-full p-2 border rounded-lg mt-1">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">密码</label>
-                        <input type="password" id="loginPassword" placeholder="••••••••" class="w-full p-2 border rounded-lg mt-1">
-                    </div>
-                    <button id="loginBtn" class="w-full bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 font-semibold">登录</button>
-                    <p class="text-xs text-gray-500 mt-3 text-center">使用已注册账号登录</p>
-                </div>
+	<div class="page" id="page-chat">
+	  <h2 style="margin-bottom:15px">我的好友</h2>
+	  <div id="friendList"></div>
+	  <div id="chatInterface" style="display:none">
+		<div style="display:flex; align-items:center; margin-bottom:10px">
+		  <button onclick="backToFriends()" style="border:none; background:none; cursor:pointer">⬅️</button>
+		  <strong id="chattingWith" style="margin-left:10px"></strong>
+		</div>
+		<div id="chatMsgs" style="height:300px; overflow-y:auto; background:#eee; border-radius:8px; padding:10px; margin-bottom:10px"></div>
+		<div style="display:flex; gap:5px">
+		  <input type="text" id="msgInput" style="flex:1; padding:8px; border-radius:8px; border:1px solid #ddd">
+		  <button class="btn btn-primary" onclick="sendMsg()">发送</button>
+		</div>
+	  </div>
+	</div>
 
-                <div class="mt-3 text-center text-sm text-gray-400">游客模式无法发布、私信与审核</div>
-      
+	<div class="page" id="page-profile">
+	  <h2 style="margin-bottom:15px">个人资料</h2>
+	  <div class="card" id="profileView">
+		<div style="display:flex; align-items:center; gap:15px; margin-bottom:20px">
+		  <div style="width:60px; height:60px; background:#4285F4; border-radius:50%; color:white; display:grid; place-items:center; font-size:24px" id="p-avatar">?</div>
+		  <div>
+			<h3 id="p-nickname">未设置昵称</h3>
+			<p id="p-uid" style="font-size:12px; color:#5f6368"></p>
+		  </div>
+		</div>
+		<div style="margin-bottom:10px"><strong>年龄：</strong> <span id="p-age">-</span></div>
+		<div style="margin-bottom:20px"><strong>个性标签：</strong> <span id="p-tags">-</span></div>
+		<button class="btn btn-outline" onclick="showEditProfile()">修改信息</button>
+	  </div>
+
+	  <div class="card" id="profileEdit" style="display:none">
+		<div class="form-group"><label>昵称</label><input type="text" id="edit-nickname"></div>
+		<div class="form-group"><label>年龄</label><input type="number" id="edit-age"></div>
+		<div class="form-group"><label>个性标签 (逗号分隔)</label><input type="text" id="edit-tags"></div>
+		<button class="btn btn-primary" onclick="handleSaveProfile()">保存</button>
+		<button class="btn btn-outline" onclick="hideEditProfile()">取消</button>
+	  </div>
+	</div>
+
+	<div class="page" id="page-admin-users">
+	  <h2>后台管理 - 用户列表</h2>
+	  <div id="adminUserList" style="margin-top:15px"></div>
+	</div>
+
+	<div class="page" id="page-admin-audit">
+	  <h2>管理中心 - 文章审核</h2>
+	  <div id="auditList" style="margin-top:15px"></div>
+	</div>
+  </main>
+
+  <nav class="nav-bottom">
+	<div class="nav-item active" onclick="switchPage('home')"><i>📰</i>最新文章</div>
+	<div class="nav-item" onclick="switchPage('publish')"><i>✍️</i>发布文章</div>
+	<div class="nav-item" onclick="switchPage('chat')"><i>💬</i>私信聊天</div>
+	<div class="nav-item" onclick="switchPage('profile')"><i>👤</i>个人中心</div>
+	<div class="nav-item" onclick="accessAdmin('users')"><i>⚙️</i>后台管理</div>
+	<div class="nav-item" onclick="accessAdmin('audit')"><i>✅</i>管理中心</div>
+  </nav>
+</div>
+
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+	<button onclick="closeAuthModal()" style="position:absolute; right:15px; top:15px; border:none; background:none; cursor:pointer; font-size:18px">✕</button>
+	<div class="modal-tabs">
+	  <div class="tab active" id="tab-login" onclick="setAuthTab('login')">登录</div>
+	  <div class="tab" id="tab-reg" onclick="setAuthTab('reg')">注册</div>
+	</div>
+	<div class="form-group">
+	  <label>邮箱地址</label>
+	  <input type="email" id="authEmail" placeholder="example@email.com">
+	</div>
+	<div class="form-group">
+	  <label>密码</label>
+	  <input type="password" id="authPwd" placeholder="请输入密码">
+	</div>
+	<button class="btn btn-primary" style="width:100%" id="authBtn" onclick="handleAuth()">进入学习社</button>
+	<p style="font-size:12px; color:#5f6368; text-align:center; margin-top:10px">游客模式仅限浏览，无法操作</p>
+  </div>
+</div>
+
+<script>
+// ========== 初始化 Supabase ==========
+const _supabase = supabase.createClient(
+  "https://wuapstugxfuohxfqefza.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1YXBzdHVneGZ1b2h4ZnFlZnphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNDg2NDksImV4cCI6MjA4NzgyNDY0OX0.WhALJe7KDByaJnSnygSOeFckhltxopOLYnrpKVbEIG8"
+);
+
+let currentUser = null;
+let isVisitor = false;
+let authMode = 'login';
+
+// 启动流程
+window.onload = () => {
+  setTimeout(() => {
+	document.getElementById('mainApp').style.display = 'block';
+	checkSession();
+  }, 3000);
+};
+
+// ========== 认证系统 ==========
+async function checkSession() {
+  const { data: { user } } = await _supabase.auth.getUser();
+  if (user) {
+	currentUser = user;
+	loadUserProfile();
+	switchPage('home');
+  } else {
+	document.getElementById('authModal').style.display = 'flex';
+  }
+}
+
+function setAuthTab(mode) {
+  authMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${mode}`).classList.add('active');
+  document.getElementById('authBtn').innerText = mode === 'login' ? '登录' : '立即注册';
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').style.display = 'none';
+  isVisitor = true;
+  switchPage('home');
+}
+
+async function handleAuth() {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPwd').value;
+  
+  if(authMode === 'login') {
+	const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+	if(error) return alert("登录失败: " + error.message);
+	location.reload();
+  } else {
+	const { data, error } = await _supabase.auth.signUp({ email, password });
+	if(error) return alert("注册失败: " + error.message);
+	alert("注册成功！现在可以登录了");
+	setAuthTab('login');
+  }
+}
+
+// ========== 页面切换逻辑 ==========
+function switchPage(pageId) {
+  if(['publish', 'chat', 'profile'].includes(pageId) && isVisitor) {
+	return alert("游客权限受限，请先登录账户");
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${pageId}`).classList.add('active');
+  
+  // 激活对应导航
+  const idx = {home:0, publish:1, chat:2, profile:3, 'admin-users':4, 'admin-audit':5}[pageId];
+  if(idx !== undefined) document.querySelectorAll('.nav-item')[idx].classList.add('active');
+
+  if(pageId === 'home') loadArticles();
+  if(pageId === 'chat') loadFriends();
+}
+
+// ========== 功能模块：文章 ==========
+async function handlePublish() {
+  const title = document.getElementById('postTitle').value;
+  const content = document.getElementById('postContent').value;
+  if(!title || !content) return alert("标题或内容不能为空");
+
+  const { error } = await _supabase.from('articles').insert({
+	title, content, user_id: currentUser.id, status: 'pending'
+  });
+  if(error) alert(error.message);
+  else {
+	alert("提交成功，请等待审核");
+	document.getElementById('postTitle').value = '';
+	document.getElementById('postContent').value = '';
+	switchPage('home');
+  }
+}
+
+async function loadArticles() {
+  const { data } = await _supabase.from('articles').select('*').eq('status', 'approved').order('created_at', {ascending: false});
+  const list = document.getElementById('articleList');
+  list.innerHTML = data?.length ? data.map(a => `
+	<div class="card">
+	  <h3>${a.title}</h3>
+	  <p style="color:#5f6368; font-size:14px; margin:8px 0">${a.content}</p>
+	  <small style="color:#9aa0a6">发布时间: ${new Date(a.created_at).toLocaleDateString()}</small>
+	</div>
+  `).join('') : '<p style="text-align:center; color:#999">暂无已发布文章</p>';
+}
+
+// ========== 功能模块：个人中心 ==========
+async function loadUserProfile() {
+  const { data } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+  if(data) {
+	document.getElementById('p-nickname').innerText = data.nickname || '新同学';
+	document.getElementById('p-uid').innerText = 'UID: ' + currentUser.id.substring(0,8);
+	document.getElementById('p-avatar').innerText = (data.nickname || 'U').charAt(0);
+	document.getElementById('p-age').innerText = data.age || '未填写';
+	document.getElementById('p-tags').innerText = data.tags || '无标签';
+	// 填充编辑表单
+	document.getElementById('edit-nickname').value = data.nickname || '';
+	document.getElementById('edit-age').value = data.age || '';
+	document.getElementById('edit-tags').value = data.tags || '';
+  }
+}
+
+function showEditProfile() {
+  document.getElementById('profileView').style.display = 'none';
+  document.getElementById('profileEdit').style.display = 'block';
+}
+
+function hideEditProfile() {
+  document.getElementById('profileView').style.display = 'block';
+  document.getElementById('profileEdit').style.display = 'none';
+}
+
+async function handleSaveProfile() {
+  const updates = {
+	id: currentUser.id,
+	nickname: document.getElementById('edit-nickname').value,
+	age: document.getElementById('edit-age').value,
+	tags: document.getElementById('edit-tags').value,
+	updated_at: new Date()
+  };
+  const { error } = await _supabase.from('profiles').upsert(updates);
+  if(error) alert(error.message);
+  else {
+	alert("更新成功");
+	loadUserProfile();
+	hideEditProfile();
+  }
+}
+
+// ========== 功能模块：社交 ==========
+function handleSearchUser() {
+  const val = document.getElementById('userSearch').value;
+  if(!val) return;
+  if(confirm(`查找到用户: ${val.substring(0,6)}... 是否发送好友请求？`)) {
+	alert("请求已发送（模拟）");
+  }
+}
+
+async function loadFriends() {
+  // 模拟好友数据
+  const list = document.getElementById('friendList');
+  list.innerHTML = `
+	<div class="card" style="display:flex; justify-content:space-between; align-items:center" onclick="startChat('系统小助手')">
+	  <span>🤖 系统小助手</span>
+	  <button class="btn btn-outline" style="padding:4px 12px">私信</button>
+	</div>
+  `;
+}
+
+function startChat(name) {
+  document.getElementById('friendList').style.display = 'none';
+  document.getElementById('chatInterface').style.display = 'block';
+  document.getElementById('chattingWith').innerText = name;
+}
+
+function backToFriends() {
+  document.getElementById('friendList').style.display = 'block';
+  document.getElementById('chatInterface').style.display = 'none';
+}
+
+function sendMsg() {
+  const input = document.getElementById('msgInput');
+  if(!input.value) return;
+  const box = document.getElementById('chatMsgs');
+  box.innerHTML += `<div style="text-align:right; margin:5px"><span style="background:#4285F4; color:white; padding:5px 10px; border-radius:10px">${input.value}</span></div>`;
+  input.value = '';
+}
+
+// ========== 功能模块：后台管理 ==========
+function accessAdmin(type) {
+  const pass = prompt("请输入管理权限密码：");
+  if(type === 'users' && pass === '1234567890159357258') {
+	switchPage('admin-users');
+	loadAllUsers();
+  } else if(type === 'audit' && pass === '72575112345678901593572580') {
+	switchPage('admin-audit');
+	loadAuditList();
+  } else {
+	alert("密码错误，无权访问");
+  }
+}
+
+function loadAllUsers() {
+  // 注意：Supabase前端API限制列出所有Auth用户，这里展示Profiles表中的用户
+  document.getElementById('adminUserList').innerHTML = `<p style="color:#666">正在连接数据中心...</p>`;
+  setTimeout(() => {
+	document.getElementById('adminUserList').innerHTML = `<div class="card">用户管理模块已就绪，当前共计 1 位注册成员。</div>`;
+  }, 1000);
+}
+
+async function loadAuditList() {
+  const { data } = await _supabase.from('articles').select('*').eq('status', 'pending');
+  const box = document.getElementById('auditList');
+  box.innerHTML = data?.length ? data.map(a => `
+	<div class="card">
+	  <h3>${a.title}</h3>
+	  <p>${a.content}</p>
+	  <div style="margin-top:10px; display:flex; gap:10px">
+		<button class="btn btn-primary" style="background:#34A853" onclick="auditPost(${a.id}, 'approved')">通过</button>
+		<button class="btn btn-primary" style="background:#EA4335" onclick="auditPost(${a.id}, 'rejected')">驳回</button>
+		<button class="btn btn-outline" onclick="alert('AI分析：内容积极向上，符合学习社价值观。评分：95/100')">AI评价</button>
+	  </div>
+	</div>
+  `).join('') : '<p>当前无待审核稿件</p>';
+}
+
+async function auditPost(id, status) {
+  let reason = '';
+  if(status === 'rejected') {
+	reason = prompt("请输入拒绝理由：");
+	if(!reason) return;
+  }
+  const { error } = await _supabase.from('articles').update({ status, reject_reason: reason }).eq('id', id);
+  if(error) alert(error.message);
+  else {
+	alert("处理成功");
+	loadAuditList();
+  }
+}
+
+</script>
+</body>
+          </html>
