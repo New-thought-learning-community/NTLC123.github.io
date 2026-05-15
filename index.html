@@ -414,3 +414,39 @@
                 let html = '<h3>消息中心</h3>';
                 if (reqs && reqs.length) {
                     html += '<h4>好友请求</h4>' + reqs.map(r => `<div style="display:flex;justify-content:space-between;padding:8px;border:1px solid #e8e8e8;border-radius:8px;margin-bottom:6px;"><span>👤 ${r.user_uid}</span><div><button class="btn btn
+                        else act = `<button class="btn btn-sm btn-primary" onclick="window._addFriend('${q}')">添加好友</button>`;
+                        showOverlay(`<button class="close-btn" onclick="window._closeOverlay()">✕</button><h3>搜索结果</h3><div style="text-align:center;"><div style="width:48px;height:48px;border-radius:50%;background:#1a1a1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;">${(data.nickname||'?')[0]}</div><p><strong>${escapeHTML(data.nickname||'未设置')}</strong></p><p>UID: ${data.uid}</p><p>${act}</p></div>`);
+                    });
+                });
+            }
+            window._addFriend = async (uid) => {
+                await supabase.from('friends').insert({ user_uid: currentUser.uid, friend_uid: uid, status: 'pending', created_at: new Date().toISOString() });
+                await supabase.from('notifications').insert({ user_uid: uid, type: 'friend_request', content: `${currentUser.nickname} 请求添加好友`, read: false, created_at: new Date().toISOString() });
+                showToast('请求已发送');
+                closeOverlay();
+            };
+            window._closeOverlay = closeOverlay;
+
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') performSearch(); });
+            bottomNav.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', function() { renderPanel(this.dataset.panel); }));
+
+            // 轮询
+            function startPolling() {
+                if (notificationPollInterval) clearInterval(notificationPollInterval);
+                notificationPollInterval = setInterval(() => { if (currentUser) fetchNotifications(); }, 5000);
+                if (chatPollInterval) clearInterval(chatPollInterval);
+                chatPollInterval = setInterval(() => { if (currentUser && activeChatFriend) fetchChat(activeChatFriend).then(() => { if (currentPanel === 'chat') renderChat(); }); }, 3000);
+            }
+
+            (function init() {
+                const saved = localStorage.getItem('ntlc_user');
+                if (saved) try { currentUser = JSON.parse(saved); } catch(e) { localStorage.removeItem('ntlc_user'); }
+                renderPanel('articles');
+                startPolling();
+                if (!currentUser && welcomeScreen.classList.contains('hide')) setTimeout(() => showLoginModal(), 600);
+            })();
+        })();
+    </script>
+</body>
+</html>
