@@ -1,463 +1,416 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>新思想学习社 NTLC</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-	:root {
-	  --google-blue: #4285F4; --google-red: #EA4335;
-	  --google-yellow: #FBBC05; --google-green: #34A853;
-	  --bg-gray: #f8f9fa;
-	}
-	* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Product Sans', 'Segoe UI', Roboto, sans-serif; }
-	body { background: var(--bg-gray); color: #202124; line-height: 1.6; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新思想学习社 - NTLC</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --bg: #fff;
+            --surface: #fafafa;
+            --border: #e8e8e8;
+            --text: #1a1a1a;
+            --text-secondary: #666;
+            --accent: #c0392b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+            --font: 'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',-apple-system,sans-serif;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:var(--font);background:#fff;color:var(--text);line-height:1.6;
+            -webkit-font-smoothing:antialiased;min-height:100vh;display:flex;justify-content:center;align-items:center;
+        }
+        #app-container{
+            width:100%;max-width:520px;min-height:100vh;background:#fff;position:relative;
+            display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden;
+        }
+        @media(min-width:521px){
+            #app-container{min-height:92vh;border-radius:20px;margin:2vh auto;}
+        }
 
-	/* ========== 1. 启动动画 ========== */
-	.splash {
-	  position: fixed; inset: 0; z-index: 10000;
-	  background: white; display: flex; flex-direction: column;
-	  align-items: center; justify-content: center;
-	  animation: fadeOut 0.5s ease 2.5s forwards;
-	}
-	.splash-logo {
-	  font-size: 32px; font-weight: bold; margin-bottom: 10px;
-	  background: linear-gradient(to right, var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green));
-	  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-	}
-	.splash-sub { color: #EA4335; font-size: 14px; letter-spacing: 1px; }
-	.loader-bar {
-	  width: 200px; height: 4px; background: #eee; border-radius: 2px;
-	  margin-top: 20px; overflow: hidden; position: relative;
-	}
-	.loader-progress {
-	  width: 40%; height: 100%; background: var(--google-blue);
-	  position: absolute; animation: loading 1.5s infinite ease-in-out;
-	}
-	@keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
-	@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        /* 极简欢迎屏 */
+        #welcome-screen{
+            position:fixed;inset:0;z-index:9999;background:#fff;display:flex;flex-direction:column;
+            align-items:center;justify-content:center;cursor:pointer;user-select:none;
+            transition:opacity 0.35s ease,visibility 0.35s ease;
+        }
+        #welcome-screen.hide{opacity:0;visibility:hidden;pointer-events:none;}
+        .welcome-logo{
+            width:64px;height:64px;border-radius:50%;background:#1a1a1a;
+            display:flex;align-items:center;justify-content:center;margin-bottom:24px;
+        }
+        .welcome-logo svg{width:32px;height:32px;fill:#fff;}
+        #welcome-screen h1{font-size:1.6rem;font-weight:700;letter-spacing:0.04em;color:#1a1a1a;margin-bottom:6px;}
+        #welcome-screen .subtitle{font-size:0.85rem;color:#777;text-align:center;line-height:1.6;max-width:280px;}
 
-	/* ========== 2. 布局 & 导航 ========== */
-	.app { display: none; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
-	.header {
-	  position: sticky; top: 0; background: white; padding: 12px 20px;
-	  box-shadow: 0 1px 2px rgba(0,0,0,0.1); z-index: 100;
-	}
-	.search-box {
-	  background: #f1f3f4; border-radius: 24px; padding: 8px 16px;
-	  display: flex; align-items: center;
-	}
-	.search-box input {
-	  border: none; background: transparent; width: 100%; outline: none; margin-left: 8px;
-	}
+        #main-app{flex:1;display:flex;flex-direction:column;opacity:1;}
 
-	.nav-bottom {
-	  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-	  width: 100%; max-width: 600px; background: white;
-	  display: flex; justify-content: space-around; padding: 10px 0;
-	  border-top: 1px solid #dadce0; z-index: 100;
-	}
-	.nav-item {
-	  text-align: center; font-size: 11px; color: #5f6368; cursor: pointer; flex: 1;
-	}
-	.nav-item.active { color: var(--google-blue); }
-	.nav-item i { font-size: 20px; display: block; margin-bottom: 2px; }
+        #top-bar{padding:14px 16px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;display:flex;gap:10px;align-items:center;}
+        #top-bar input{flex:1;border:1.5px solid var(--border);border-radius:24px;padding:10px 18px;font-size:0.9rem;background:var(--surface);outline:none;transition:var(--transition);font-family:var(--font);}
+        #top-bar input:focus{border-color:#bbb;background:#fff;box-shadow:var(--shadow-sm);}
+        #top-bar .search-btn{background:#1a1a1a;color:#fff;border:none;border-radius:24px;padding:10px 18px;cursor:pointer;font-size:0.85rem;font-weight:500;letter-spacing:0.03em;transition:var(--transition);white-space:nowrap;font-family:var(--font);}
+        #top-bar .search-btn:hover{background:#333;}
 
-	/* ========== 3. 页面组件 ========== */
-	.page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
-	.page.active { display: block; }
-	@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #content-area{flex:1;overflow-y:auto;padding:12px 16px 100px;-webkit-overflow-scrolling:touch;}
+        #content-area::-webkit-scrollbar{width:3px;}
+        #content-area::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
 
-	.card {
-	  background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;
-	  border: 1px solid #dadce0; transition: 0.2s;
-	}
-	.card:hover { box-shadow: 0 1px 6px rgba(32,33,36,0.28); }
-	.btn {
-	  padding: 10px 20px; border-radius: 20px; border: none; font-weight: 500;
-	  cursor: pointer; transition: 0.2s;
-	}
-	.btn-primary { background: var(--google-blue); color: white; }
-	.btn-outline { border: 1px solid #dadce0; background: white; }
+        #bottom-nav{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 4px 14px;z-index:100;gap:2px;}
+        #bottom-nav .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;border-radius:8px;transition:var(--transition);min-width:44px;font-size:0.68rem;color:#999;letter-spacing:0.02em;user-select:none;border:none;background:none;font-family:var(--font);}
+        #bottom-nav .nav-item.active{color:#1a1a1a;font-weight:600;}
+        #bottom-nav .nav-item:hover{background:#f5f5f5;}
 
-	/* ========== 4. 弹窗系统 ========== */
-	.modal-overlay {
-	  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-	  display: flex; align-items: center; justify-content: center; z-index: 2000;
-	}
-	.modal {
-	  background: white; width: 90%; max-width: 400px; border-radius: 16px;
-	  padding: 24px; position: relative;
-	}
-	.modal-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #eee; }
-	.tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #5f6368; }
-	.tab.active { color: var(--google-blue); border-bottom: 2px solid var(--google-blue); }
-	.form-group { margin-bottom: 15px; }
-	.form-group input {
-	  width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #dadce0; margin-top: 5px;
-	}
+        .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;cursor:pointer;transition:var(--transition);box-shadow:var(--shadow-sm);}
+        .card:hover{box-shadow:var(--shadow-md);border-color:#d5d5d5;}
+        .card .card-title{font-weight:600;font-size:1rem;margin-bottom:6px;}
+        .card .card-meta{font-size:0.78rem;color:#999;display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+        .card .card-preview{font-size:0.85rem;color:#555;margin-top:6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 
-	/* 管理员样式 */
-	.status-badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; }
-	.pending { background: #fff4e5; color: #663c00; }
-	.approved { background: #e6f4ea; color: #137333; }
-	.rejected { background: #fce8e6; color: #c5221f; }
-  </style>
+        .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .modal{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);padding:24px 20px;position:relative;animation:slideUp 0.3s ease;}
+        @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .modal .close-btn{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#999;padding:4px 8px;border-radius:50%;transition:var(--transition);line-height:1;}
+        .modal .close-btn:hover{background:#f0f0f0;color:#333;}
+
+        .tabs{display:flex;gap:0;margin-bottom:18px;border-bottom:2px solid var(--border);}
+        .tabs .tab{flex:1;text-align:center;padding:10px;cursor:pointer;font-weight:500;color:#999;transition:var(--transition);border-bottom:2px solid transparent;margin-bottom:-2px;font-size:0.9rem;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);}
+        .tabs .tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a;font-weight:600;}
+
+        .input-group{margin-bottom:14px;}
+        .input-group label{display:block;font-size:0.8rem;font-weight:500;color:#555;margin-bottom:4px;}
+        .input-group input,.input-group textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;font-size:0.9rem;outline:none;transition:var(--transition);font-family:var(--font);background:#fafafa;resize:vertical;}
+        .input-group input:focus,.input-group textarea:focus{border-color:#bbb;background:#fff;box-shadow:var(--shadow-sm);}
+        .btn{width:100%;padding:11px;border-radius:24px;border:none;cursor:pointer;font-weight:600;font-size:0.9rem;letter-spacing:0.03em;transition:var(--transition);font-family:var(--font);}
+        .btn-primary{background:#1a1a1a;color:#fff;}
+        .btn-primary:hover{background:#333;}
+        .btn-outline{background:#fff;border:1.5px solid #1a1a1a;color:#1a1a1a;}
+        .btn-outline:hover{background:#f5f5f5;}
+        .btn-danger{background:#c0392b;color:#fff;}
+        .btn-danger:hover{background:#a93226;}
+        .btn-sm{padding:6px 14px;font-size:0.78rem;width:auto;border-radius:18px;}
+        .btn-xs{padding:4px 10px;font-size:0.7rem;width:auto;border-radius:14px;}
+        .action-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+        .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:500;}
+        .badge-pending{background:#fff3cd;color:#856404;}
+        .badge-approved{background:#d4edda;color:#155724;}
+        .badge-rejected{background:#f8d7da;color:#721c24;}
+
+        .chat-container{display:flex;flex-direction:column;gap:8px;max-height:350px;overflow-y:auto;padding:8px 0;}
+        .chat-bubble{max-width:75%;padding:10px 14px;border-radius:18px;font-size:0.85rem;line-height:1.5;word-break:break-word;}
+        .chat-bubble.sent{align-self:flex-end;background:#1a1a1a;color:#fff;border-bottom-right-radius:4px;}
+        .chat-bubble.received{align-self:flex-start;background:#f0f0f0;color:#1a1a1a;border-bottom-left-radius:4px;}
+        .chat-time{font-size:0.65rem;color:#999;margin-top:2px;text-align:right;}
+        .chat-bubble.received .chat-time{text-align:left;}
+        .empty-state{text-align:center;color:#bbb;padding:40px 20px;font-size:0.9rem;}
+
+        #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:999;background:#1a1a1a;color:#fff;padding:10px 22px;border-radius:24px;font-size:0.85rem;opacity:0;pointer-events:none;transition:opacity 0.3s ease;white-space:nowrap;box-shadow:var(--shadow-md);}
+        #toast.show{opacity:1;}
+    </style>
 </head>
 <body>
 
-<div class="splash">
-  <div class="splash-logo">新思想学习社</div>
-  <div class="splash-sub">NTLC · 学习交流新平台</div>
-  <div class="loader-bar"><div class="loader-progress"></div></div>
-</div>
+    <!-- 极简欢迎屏（保留图标与核心文字） -->
+    <div id="welcome-screen">
+        <div class="welcome-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
+        </div>
+        <h1>新思想学习社</h1>
+        <p class="subtitle">欢迎您的加入同志，全世界的无产者，联合起来！</p>
+    </div>
 
-<div class="app" id="mainApp">
-  <div class="header">
-	<div class="search-box">
-	  <span>🔍</span>
-	  <input type="text" id="userSearch" placeholder="通过邮箱或UID搜索用户..." onchange="handleSearchUser()">
-	</div>
-  </div>
+    <!-- 主应用 -->
+    <div id="app-container">
+        <div id="main-app">
+            <div id="top-bar">
+                <input type="text" id="search-input" placeholder="搜索用户 UID...">
+                <button class="search-btn" id="search-btn">🔍 搜索</button>
+            </div>
+            <div id="content-area"></div>
+            <div id="bottom-nav">
+                <button class="nav-item active" data-panel="articles">📄<span>最新文章</span></button>
+                <button class="nav-item" data-panel="publish">✏️<span>发布文章</span></button>
+                <button class="nav-item" data-panel="messages">🔔<span>消息中心</span></button>
+                <button class="nav-item" data-panel="chat">💬<span>聊天</span></button>
+                <button class="nav-item" data-panel="profile">👤<span>个人中心</span></button>
+                <button class="nav-item" data-panel="admin-users">⚙️<span>后台管理</span></button>
+                <button class="nav-item" data-panel="admin-review">📋<span>管理中心</span></button>
+            </div>
+        </div>
+    </div>
 
-  <main>
-	<div class="page active" id="page-home">
-	  <h2 style="margin-bottom:15px">最新文章</h2>
-	  <div id="articleList"></div>
-	</div>
+    <div id="toast"></div>
+    <div id="overlay-container"></div>
 
-	<div class="page" id="page-publish">
-	  <h2 style="margin-bottom:15px">撰写新思想</h2>
-	  <div class="card">
-		<input type="text" id="postTitle" placeholder="文章标题" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
-		<textarea id="postContent" placeholder="在此分享您的见解..." style="width:100%; height:200px; padding:10px; border:1px solid #ddd; border-radius:8px;"></textarea>
-		<button class="btn btn-primary" onclick="handlePublish()" style="width:100%; margin-top:10px;">提交审核</button>
-	  </div>
-	</div>
+    <script>
+        (function() {
+            const SUPABASE_URL = 'https://wuapstugxfuohxfqefza.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1YXBzdHVneGZ1b2h4ZnFlZnphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNDg2NDksImV4cCI6MjA4NzgyNDY0OX0.WhALJe7KDByaJnSnygSOeFckhltxopOLYnrpKVbEIG8';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-	<div class="page" id="page-chat">
-	  <h2 style="margin-bottom:15px">我的好友</h2>
-	  <div id="friendList"></div>
-	  <div id="chatInterface" style="display:none">
-		<div style="display:flex; align-items:center; margin-bottom:10px">
-		  <button onclick="backToFriends()" style="border:none; background:none; cursor:pointer">⬅️</button>
-		  <strong id="chattingWith" style="margin-left:10px"></strong>
-		</div>
-		<div id="chatMsgs" style="height:300px; overflow-y:auto; background:#eee; border-radius:8px; padding:10px; margin-bottom:10px"></div>
-		<div style="display:flex; gap:5px">
-		  <input type="text" id="msgInput" style="flex:1; padding:8px; border-radius:8px; border:1px solid #ddd">
-		  <button class="btn btn-primary" onclick="sendMsg()">发送</button>
-		</div>
-	  </div>
-	</div>
+            let currentUser = null;
+            let currentPanel = 'articles';
+            let allArticles = [], allNotifications = [], allFriends = [], allChatMessages = {};
+            let activeChatFriend = null;
+            let chatPollInterval, notificationPollInterval;
 
-	<div class="page" id="page-profile">
-	  <h2 style="margin-bottom:15px">个人资料</h2>
-	  <div class="card" id="profileView">
-		<div style="display:flex; align-items:center; gap:15px; margin-bottom:20px">
-		  <div style="width:60px; height:60px; background:#4285F4; border-radius:50%; color:white; display:grid; place-items:center; font-size:24px" id="p-avatar">?</div>
-		  <div>
-			<h3 id="p-nickname">未设置昵称</h3>
-			<p id="p-uid" style="font-size:12px; color:#5f6368"></p>
-		  </div>
-		</div>
-		<div style="margin-bottom:10px"><strong>年龄：</strong> <span id="p-age">-</span></div>
-		<div style="margin-bottom:20px"><strong>个性标签：</strong> <span id="p-tags">-</span></div>
-		<button class="btn btn-outline" onclick="showEditProfile()">修改信息</button>
-	  </div>
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainApp = document.getElementById('main-app');
+            const contentArea = document.getElementById('content-area');
+            const bottomNav = document.getElementById('bottom-nav');
+            const overlayContainer = document.getElementById('overlay-container');
+            const toast = document.getElementById('toast');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
 
-	  <div class="card" id="profileEdit" style="display:none">
-		<div class="form-group"><label>昵称</label><input type="text" id="edit-nickname"></div>
-		<div class="form-group"><label>年龄</label><input type="number" id="edit-age"></div>
-		<div class="form-group"><label>个性标签 (逗号分隔)</label><input type="text" id="edit-tags"></div>
-		<button class="btn btn-primary" onclick="handleSaveProfile()">保存</button>
-		<button class="btn btn-outline" onclick="hideEditProfile()">取消</button>
-	  </div>
-	</div>
+            function showToast(msg, duration = 2200) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => toast.classList.remove('show'), duration);
+            }
+            function formatTime(ts) {
+                if (!ts) return '';
+                const d = new Date(ts), now = new Date();
+                const diff = now - d;
+                if (diff < 60000) return '刚刚';
+                if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+                if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+                return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            }
+            function truncate(str, len = 80) { return str && str.length > len ? str.substring(0, len) + '...' : str || ''; }
+            function escapeHTML(str) { const div = document.createElement('div'); div.textContent = str || ''; return div.innerHTML; }
+            function showOverlay(html) {
+                overlayContainer.innerHTML = `<div class="overlay" id="active-overlay"><div class="modal">${html}</div></div>`;
+                document.getElementById('active-overlay').addEventListener('click', function(e) { if (e.target === this) closeOverlay(); });
+                document.body.style.overflow = 'hidden';
+            }
+            function closeOverlay() { overlayContainer.innerHTML = ''; document.body.style.overflow = ''; }
 
-	<div class="page" id="page-admin-users">
-	  <h2>后台管理 - 用户列表</h2>
-	  <div id="adminUserList" style="margin-top:15px"></div>
-	</div>
+            function generateUID() {
+                const now = new Date();
+                return `NT${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${Math.random().toString(36).substring(2,6).toUpperCase()}`;
+            }
+            async function sha256(message) {
+                const msgBuffer = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
 
-	<div class="page" id="page-admin-audit">
-	  <h2>管理中心 - 文章审核</h2>
-	  <div id="auditList" style="margin-top:15px"></div>
-	</div>
-  </main>
+            // 欢迎屏点击即消失
+            welcomeScreen.addEventListener('click', () => {
+                welcomeScreen.classList.add('hide');
+                if (!currentUser) setTimeout(() => showLoginModal(), 400);
+            });
+            setTimeout(() => { if (!welcomeScreen.classList.contains('hide')) welcomeScreen.click(); }, 3000);
 
-  <nav class="nav-bottom">
-	<div class="nav-item active" onclick="switchPage('home')"><i>📰</i>最新文章</div>
-	<div class="nav-item" onclick="switchPage('publish')"><i>✍️</i>发布文章</div>
-	<div class="nav-item" onclick="switchPage('chat')"><i>💬</i>私信聊天</div>
-	<div class="nav-item" onclick="switchPage('profile')"><i>👤</i>个人中心</div>
-	<div class="nav-item" onclick="accessAdmin('users')"><i>⚙️</i>后台管理</div>
-	<div class="nav-item" onclick="accessAdmin('audit')"><i>✅</i>管理中心</div>
-  </nav>
-</div>
+            // 登录注册弹窗
+            function showLoginModal(tab = 'login') {
+                const html = `<button class="close-btn" id="modal-close-btn">✕</button>
+                <div class="tabs"><button class="tab ${tab==='login'?'active':''}" data-tab="login">登录</button><button class="tab ${tab==='register'?'active':''}" data-tab="register">注册</button></div>
+                <div id="auth-form-content">${tab==='login'?getLoginHTML():getRegHTML()}</div>`;
+                showOverlay(html);
+                setTimeout(() => {
+                    document.getElementById('modal-close-btn').addEventListener('click', closeOverlay);
+                    document.querySelectorAll('#active-overlay .tab').forEach(t => {
+                        t.addEventListener('click', function() {
+                            document.querySelectorAll('#active-overlay .tab').forEach(tb => tb.classList.remove('active'));
+                            this.classList.add('active');
+                            document.getElementById('auth-form-content').innerHTML = this.dataset.tab === 'login' ? getLoginHTML() : getRegHTML();
+                            bindAuthEvents(this.dataset.tab);
+                        });
+                    });
+                    bindAuthEvents(tab);
+                }, 50);
+            }
+            function getLoginHTML() {
+                return `<div class="input-group"><label>邮箱</label><input type="email" id="login-email"></div><div class="input-group"><label>密码</label><input type="password" id="login-password"></div><button class="btn btn-primary" id="login-submit-btn">登录</button>`;
+            }
+            function getRegHTML() {
+                return `<div class="input-group"><label>邮箱</label><input type="email" id="reg-email"></div><div class="input-group"><label>密码(至少6位)</label><input type="password" id="reg-password"></div><div class="input-group"><label>昵称</label><input type="text" id="reg-nickname"></div><button class="btn btn-primary" id="reg-submit-btn">注册</button>`;
+            }
+            function bindAuthEvents(type) {
+                if (type === 'login') {
+                    document.getElementById('login-submit-btn').addEventListener('click', async () => {
+                        const email = document.getElementById('login-email').value.trim();
+                        const pw = document.getElementById('login-password').value;
+                        if (!email || !pw) return showToast('请填写完整');
+                        const hash = await sha256(pw);
+                        const { data, error } = await supabase.from('users').select('*').eq('email', email).eq('password_hash', hash).single();
+                        if (error || !data) return showToast('邮箱或密码错误');
+                        currentUser = data;
+                        localStorage.setItem('ntlc_user', JSON.stringify(currentUser));
+                        closeOverlay();
+                        showToast('欢迎回来，' + (data.nickname || '同志'));
+                        refreshPanel();
+                    });
+                } else {
+                    document.getElementById('reg-submit-btn').addEventListener('click', async () => {
+                        const email = document.getElementById('reg-email').value.trim();
+                        const pw = document.getElementById('reg-password').value;
+                        const nick = document.getElementById('reg-nickname').value.trim();
+                        if (!email || !pw || !nick) return showToast('请填写完整');
+                        if (pw.length < 6) return showToast('密码至少6位');
+                        const { data: exist } = await supabase.from('users').select('uid').eq('email', email).single();
+                        if (exist) return showToast('该邮箱已注册');
+                        const hash = await sha256(pw);
+                        const uid = generateUID();
+                        const newUser = { uid, email, password_hash: hash, nickname: nick, avatar: '', age: null, tags: '', created_at: new Date().toISOString() };
+                        const { error } = await supabase.from('users').insert(newUser);
+                        if (error) return showToast('注册失败');
+                        currentUser = newUser;
+                        localStorage.setItem('ntlc_user', JSON.stringify(currentUser));
+                        closeOverlay();
+                        showToast('注册成功！' + nick + '同志');
+                        refreshPanel();
+                    });
+                }
+            }
+            function logout() {
+                currentUser = null;
+                localStorage.removeItem('ntlc_user');
+                closeOverlay();
+                showToast('已退出');
+                refreshPanel();
+            }
 
-<div class="modal-overlay" id="authModal">
-  <div class="modal">
-	<button onclick="closeAuthModal()" style="position:absolute; right:15px; top:15px; border:none; background:none; cursor:pointer; font-size:18px">✕</button>
-	<div class="modal-tabs">
-	  <div class="tab active" id="tab-login" onclick="setAuthTab('login')">登录</div>
-	  <div class="tab" id="tab-reg" onclick="setAuthTab('reg')">注册</div>
-	</div>
-	<div class="form-group">
-	  <label>邮箱地址</label>
-	  <input type="email" id="authEmail" placeholder="example@email.com">
-	</div>
-	<div class="form-group">
-	  <label>密码</label>
-	  <input type="password" id="authPwd" placeholder="请输入密码">
-	</div>
-	<button class="btn btn-primary" style="width:100%" id="authBtn" onclick="handleAuth()">进入学习社</button>
-	<p style="font-size:12px; color:#5f6368; text-align:center; margin-top:10px">游客模式仅限浏览，无法操作</p>
-  </div>
-</div>
+            function refreshPanel() { renderPanel(currentPanel); }
+            function renderPanel(panel) {
+                currentPanel = panel;
+                bottomNav.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                const active = bottomNav.querySelector(`[data-panel="${panel}"]`);
+                if (active) active.classList.add('active');
+                switch (panel) {
+                    case 'articles': renderArticles(); break;
+                    case 'publish': renderPublish(); break;
+                    case 'messages': renderMessages(); break;
+                    case 'chat': renderChat(); break;
+                    case 'profile': renderProfile(); break;
+                    case 'admin-users': renderAdminUsers(); break;
+                    case 'admin-review': renderAdminReview(); break;
+                }
+                contentArea.scrollTop = 0;
+            }
 
-<script>
-// ========== 初始化 Supabase ==========
-const _supabase = supabase.createClient(
-  "https://wuapstugxfuohxfqefza.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1YXBzdHVneGZ1b2h4ZnFlZnphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNDg2NDksImV4cCI6MjA4NzgyNDY0OX0.WhALJe7KDByaJnSnygSOeFckhltxopOLYnrpKVbEIG8"
-);
+            async function renderArticles() {
+                contentArea.innerHTML = '<div class="empty-state">加载中...</div>';
+                const { data } = await supabase.from('articles').select('*').eq('status', 'approved').order('created_at', { ascending: false }).limit(50);
+                allArticles = data || [];
+                if (allArticles.length === 0) {
+                    contentArea.innerHTML = '<div class="empty-state">暂无已发布文章</div>';
+                    return;
+                }
+                contentArea.innerHTML = allArticles.map(a => `
+                    <div class="card" onclick="window._openArticle(${a.id})">
+                        <div class="card-title">${escapeHTML(a.title)}</div>
+                        <div class="card-preview">${escapeHTML(truncate(a.content,100))}</div>
+                        <div class="card-meta"><span>👤 ${escapeHTML(a.author_nickname||a.author_uid)}</span><span>🕐 ${formatTime(a.created_at)}</span><span>👍 ${a.likes_count||0}</span><span>💬 ${a.comments_count||0}</span><span>⭐ ${a.favorites_count||0}</span></div>
+                    </div>`).join('');
+            }
 
-let currentUser = null;
-let isVisitor = false;
-let authMode = 'login';
+            window._openArticle = async function(id) {
+                if (!currentUser) return showToast('请先登录'), showLoginModal();
+                const { data: art } = await supabase.from('articles').select('*').eq('id', id).single();
+                if (!art) return showToast('文章不存在');
+                const { data: comments } = await supabase.from('comments').select('*').eq('article_id', id).order('created_at', { ascending: true });
+                let userLiked = false, userFav = false;
+                if (currentUser) {
+                    const { data: l } = await supabase.from('likes').select('*').eq('article_id', id).eq('user_uid', currentUser.uid).single();
+                    userLiked = !!l;
+                    const { data: f } = await supabase.from('favorites').select('*').eq('article_id', id).eq('user_uid', currentUser.uid).single();
+                    userFav = !!f;
+                }
+                const commHTML = (comments||[]).map(c => `<div style="padding:6px 0;border-bottom:1px solid #f0f0f0;"><strong>${escapeHTML(c.user_nickname||c.user_uid)}</strong> <span style="font-size:0.7rem;color:#999;">${formatTime(c.created_at)}</span><p style="margin:4px 0 0;">${escapeHTML(c.content)}</p></div>`).join('');
+                showOverlay(`
+                    <button class="close-btn" onclick="window._closeOverlay()">✕</button>
+                    <h3>${escapeHTML(art.title)}</h3>
+                    <p style="color:#999;font-size:0.8rem;">${escapeHTML(art.author_nickname||art.author_uid)} · ${formatTime(art.created_at)}</p>
+                    <div style="white-space:pre-wrap;margin:14px 0;padding:12px;background:#fafafa;border-radius:8px;">${escapeHTML(art.content)}</div>
+                    <div class="action-row">
+                        <button class="btn btn-sm ${userLiked?'btn-primary':'btn-outline'}" id="det-like">👍 ${art.likes_count||0}</button>
+                        <button class="btn btn-sm ${userFav?'btn-primary':'btn-outline'}" id="det-fav">⭐ ${art.favorites_count||0}</button>
+                    </div>
+                    <div style="margin-top:16px;"><strong>评论 (${(comments||[]).length})</strong><div style="max-height:200px;overflow-y:auto;">${commHTML||'<p style="color:#bbb;">暂无评论</p>'}</div>
+                    <div style="display:flex;gap:8px;margin-top:8px;"><input id="det-comment-input" placeholder="写评论..." style="flex:1;border:1.5px solid #e8e8e8;border-radius:20px;padding:6px 12px;"><button class="btn btn-sm btn-primary" id="det-comment-btn">发送</button></div></div>`);
+                setTimeout(() => {
+                    document.getElementById('det-like').addEventListener('click', () => toggleLike(id, art.author_uid));
+                    document.getElementById('det-fav').addEventListener('click', () => toggleFav(id, art.author_uid));
+                    document.getElementById('det-comment-btn').addEventListener('click', () => {
+                        const inp = document.getElementById('det-comment-input');
+                        submitComment(id, art.author_uid, inp);
+                    });
+                }, 50);
+            };
 
-// 启动流程
-window.onload = () => {
-  setTimeout(() => {
-	document.getElementById('mainApp').style.display = 'block';
-	checkSession();
-  }, 3000);
-};
+            async function toggleLike(articleId, authorUid) {
+                const { data: ex } = await supabase.from('likes').select('*').eq('article_id', articleId).eq('user_uid', currentUser.uid).single();
+                if (ex) { await supabase.from('likes').delete().eq('id', ex.id); showToast('已取消'); }
+                else {
+                    await supabase.from('likes').insert({ article_id: articleId, user_uid: currentUser.uid, created_at: new Date().toISOString() });
+                    showToast('已点赞');
+                    if (authorUid !== currentUser.uid) await supabase.from('notifications').insert({ user_uid: authorUid, type: 'like', content: `${currentUser.nickname||currentUser.uid} 赞了你的文章`, read: false, created_at: new Date().toISOString() });
+                }
+                await refreshCounts(articleId);
+                closeOverlay(); window._openArticle(articleId);
+            }
+            async function toggleFav(articleId, authorUid) {
+                const { data: ex } = await supabase.from('favorites').select('*').eq('article_id', articleId).eq('user_uid', currentUser.uid).single();
+                if (ex) { await supabase.from('favorites').delete().eq('id', ex.id); showToast('已取消'); }
+                else {
+                    await supabase.from('favorites').insert({ article_id: articleId, user_uid: currentUser.uid, created_at: new Date().toISOString() });
+                    showToast('已收藏');
+                    if (authorUid !== currentUser.uid) await supabase.from('notifications').insert({ user_uid: authorUid, type: 'favorite', content: `${currentUser.nickname||currentUser.uid} 收藏了你的文章`, read: false, created_at: new Date().toISOString() });
+                }
+                await refreshCounts(articleId);
+                closeOverlay(); window._openArticle(articleId);
+            }
+            async function submitComment(articleId, authorUid, input) {
+                const content = input.value.trim();
+                if (!content) return showToast('输入评论');
+                await supabase.from('comments').insert({ article_id: articleId, user_uid: currentUser.uid, user_nickname: currentUser.nickname, content, created_at: new Date().toISOString() });
+                if (authorUid !== currentUser.uid) await supabase.from('notifications').insert({ user_uid: authorUid, type: 'comment', content: `${currentUser.nickname||currentUser.uid} 评论了你的文章`, read: false, created_at: new Date().toISOString() });
+                await refreshCounts(articleId);
+                showToast('评论已发送');
+                closeOverlay(); window._openArticle(articleId);
+            }
+            async function refreshCounts(articleId) {
+                const { count: lc } = await supabase.from('likes').select('*', { count: 'exact', head: true }).eq('article_id', articleId);
+                const { count: fc } = await supabase.from('favorites').select('*', { count: 'exact', head: true }).eq('article_id', articleId);
+                const { count: cc } = await supabase.from('comments').select('*', { count: 'exact', head: true }).eq('article_id', articleId);
+                await supabase.from('articles').update({ likes_count: lc||0, favorites_count: fc||0, comments_count: cc||0 }).eq('id', articleId);
+            }
 
-// ========== 认证系统 ==========
-async function checkSession() {
-  const { data: { user } } = await _supabase.auth.getUser();
-  if (user) {
-	currentUser = user;
-	loadUserProfile();
-	switchPage('home');
-  } else {
-	document.getElementById('authModal').style.display = 'flex';
-  }
-}
+            function renderPublish() {
+                if (!currentUser) return contentArea.innerHTML = '<div class="empty-state">请先登录</div>';
+                contentArea.innerHTML = `<h3>发布新文章</h3><div class="input-group"><label>标题</label><input id="pub-title"></div><div class="input-group"><label>内容</label><textarea id="pub-content" rows="5"></textarea></div><button class="btn btn-primary" id="pub-btn">提交审核</button><div id="my-articles" style="margin-top:20px;"></div>`;
+                document.getElementById('pub-btn').addEventListener('click', async () => {
+                    const title = document.getElementById('pub-title').value.trim();
+                    const content = document.getElementById('pub-content').value.trim();
+                    if (!title || !content) return showToast('填写完整');
+                    await supabase.from('articles').insert({ author_uid: currentUser.uid, author_nickname: currentUser.nickname, title, content, status: 'pending', likes_count:0, favorites_count:0, comments_count:0, created_at: new Date().toISOString() });
+                    showToast('已提交审核');
+                    loadMyArticles();
+                });
+                loadMyArticles();
+            }
+            async function loadMyArticles() {
+                const { data } = await supabase.from('articles').select('*').eq('author_uid', currentUser.uid).order('created_at', { ascending: false });
+                const el = document.getElementById('my-articles');
+                if (!el) return;
+                el.innerHTML = (data||[]).map(a => `<div style="padding:8px;border:1px solid #e8e8e8;border-radius:8px;margin-bottom:6px;"><strong>${escapeHTML(a.title)}</strong> <span class="badge badge-${a.status}">${a.status==='approved'?'已发布':a.status==='rejected'?'已拒绝':'待审核'}</span>${a.reject_reason?`<p style="color:#c0392b;font-size:0.7rem;">理由：${escapeHTML(a.reject_reason)}</p>`:''}</div>`).join('') || '<p style="color:#bbb;">暂无投稿</p>';
+            }
 
-function setAuthTab(mode) {
-  authMode = mode;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${mode}`).classList.add('active');
-  document.getElementById('authBtn').innerText = mode === 'login' ? '登录' : '立即注册';
-}
-
-function closeAuthModal() {
-  document.getElementById('authModal').style.display = 'none';
-  isVisitor = true;
-  switchPage('home');
-}
-
-async function handleAuth() {
-  const email = document.getElementById('authEmail').value;
-  const password = document.getElementById('authPwd').value;
-  
-  if(authMode === 'login') {
-	const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-	if(error) return alert("登录失败: " + error.message);
-	location.reload();
-  } else {
-	const { data, error } = await _supabase.auth.signUp({ email, password });
-	if(error) return alert("注册失败: " + error.message);
-	alert("注册成功！现在可以登录了");
-	setAuthTab('login');
-  }
-}
-
-// ========== 页面切换逻辑 ==========
-function switchPage(pageId) {
-  if(['publish', 'chat', 'profile'].includes(pageId) && isVisitor) {
-	return alert("游客权限受限，请先登录账户");
-  }
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(`page-${pageId}`).classList.add('active');
-  
-  // 激活对应导航
-  const idx = {home:0, publish:1, chat:2, profile:3, 'admin-users':4, 'admin-audit':5}[pageId];
-  if(idx !== undefined) document.querySelectorAll('.nav-item')[idx].classList.add('active');
-
-  if(pageId === 'home') loadArticles();
-  if(pageId === 'chat') loadFriends();
-}
-
-// ========== 功能模块：文章 ==========
-async function handlePublish() {
-  const title = document.getElementById('postTitle').value;
-  const content = document.getElementById('postContent').value;
-  if(!title || !content) return alert("标题或内容不能为空");
-
-  const { error } = await _supabase.from('articles').insert({
-	title, content, user_id: currentUser.id, status: 'pending'
-  });
-  if(error) alert(error.message);
-  else {
-	alert("提交成功，请等待审核");
-	document.getElementById('postTitle').value = '';
-	document.getElementById('postContent').value = '';
-	switchPage('home');
-  }
-}
-
-async function loadArticles() {
-  const { data } = await _supabase.from('articles').select('*').eq('status', 'approved').order('created_at', {ascending: false});
-  const list = document.getElementById('articleList');
-  list.innerHTML = data?.length ? data.map(a => `
-	<div class="card">
-	  <h3>${a.title}</h3>
-	  <p style="color:#5f6368; font-size:14px; margin:8px 0">${a.content}</p>
-	  <small style="color:#9aa0a6">发布时间: ${new Date(a.created_at).toLocaleDateString()}</small>
-	</div>
-  `).join('') : '<p style="text-align:center; color:#999">暂无已发布文章</p>';
-}
-
-// ========== 功能模块：个人中心 ==========
-async function loadUserProfile() {
-  const { data } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-  if(data) {
-	document.getElementById('p-nickname').innerText = data.nickname || '新同学';
-	document.getElementById('p-uid').innerText = 'UID: ' + currentUser.id.substring(0,8);
-	document.getElementById('p-avatar').innerText = (data.nickname || 'U').charAt(0);
-	document.getElementById('p-age').innerText = data.age || '未填写';
-	document.getElementById('p-tags').innerText = data.tags || '无标签';
-	// 填充编辑表单
-	document.getElementById('edit-nickname').value = data.nickname || '';
-	document.getElementById('edit-age').value = data.age || '';
-	document.getElementById('edit-tags').value = data.tags || '';
-  }
-}
-
-function showEditProfile() {
-  document.getElementById('profileView').style.display = 'none';
-  document.getElementById('profileEdit').style.display = 'block';
-}
-
-function hideEditProfile() {
-  document.getElementById('profileView').style.display = 'block';
-  document.getElementById('profileEdit').style.display = 'none';
-}
-
-async function handleSaveProfile() {
-  const updates = {
-	id: currentUser.id,
-	nickname: document.getElementById('edit-nickname').value,
-	age: document.getElementById('edit-age').value,
-	tags: document.getElementById('edit-tags').value,
-	updated_at: new Date()
-  };
-  const { error } = await _supabase.from('profiles').upsert(updates);
-  if(error) alert(error.message);
-  else {
-	alert("更新成功");
-	loadUserProfile();
-	hideEditProfile();
-  }
-}
-
-// ========== 功能模块：社交 ==========
-function handleSearchUser() {
-  const val = document.getElementById('userSearch').value;
-  if(!val) return;
-  if(confirm(`查找到用户: ${val.substring(0,6)}... 是否发送好友请求？`)) {
-	alert("请求已发送（模拟）");
-  }
-}
-
-async function loadFriends() {
-  // 模拟好友数据
-  const list = document.getElementById('friendList');
-  list.innerHTML = `
-	<div class="card" style="display:flex; justify-content:space-between; align-items:center" onclick="startChat('系统小助手')">
-	  <span>🤖 系统小助手</span>
-	  <button class="btn btn-outline" style="padding:4px 12px">私信</button>
-	</div>
-  `;
-}
-
-function startChat(name) {
-  document.getElementById('friendList').style.display = 'none';
-  document.getElementById('chatInterface').style.display = 'block';
-  document.getElementById('chattingWith').innerText = name;
-}
-
-function backToFriends() {
-  document.getElementById('friendList').style.display = 'block';
-  document.getElementById('chatInterface').style.display = 'none';
-}
-
-function sendMsg() {
-  const input = document.getElementById('msgInput');
-  if(!input.value) return;
-  const box = document.getElementById('chatMsgs');
-  box.innerHTML += `<div style="text-align:right; margin:5px"><span style="background:#4285F4; color:white; padding:5px 10px; border-radius:10px">${input.value}</span></div>`;
-  input.value = '';
-}
-
-// ========== 功能模块：后台管理 ==========
-function accessAdmin(type) {
-  const pass = prompt("请输入管理权限密码：");
-  if(type === 'users' && pass === '1234567890159357258') {
-	switchPage('admin-users');
-	loadAllUsers();
-  } else if(type === 'audit' && pass === '72575112345678901593572580') {
-	switchPage('admin-audit');
-	loadAuditList();
-  } else {
-	alert("密码错误，无权访问");
-  }
-}
-
-function loadAllUsers() {
-  // 注意：Supabase前端API限制列出所有Auth用户，这里展示Profiles表中的用户
-  document.getElementById('adminUserList').innerHTML = `<p style="color:#666">正在连接数据中心...</p>`;
-  setTimeout(() => {
-	document.getElementById('adminUserList').innerHTML = `<div class="card">用户管理模块已就绪，当前共计 1 位注册成员。</div>`;
-  }, 1000);
-}
-
-async function loadAuditList() {
-  const { data } = await _supabase.from('articles').select('*').eq('status', 'pending');
-  const box = document.getElementById('auditList');
-  box.innerHTML = data?.length ? data.map(a => `
-	<div class="card">
-	  <h3>${a.title}</h3>
-	  <p>${a.content}</p>
-	  <div style="margin-top:10px; display:flex; gap:10px">
-		<button class="btn btn-primary" style="background:#34A853" onclick="auditPost(${a.id}, 'approved')">通过</button>
-		<button class="btn btn-primary" style="background:#EA4335" onclick="auditPost(${a.id}, 'rejected')">驳回</button>
-		<button class="btn btn-outline" onclick="alert('AI分析：内容积极向上，符合学习社价值观。评分：95/100')">AI评价</button>
-	  </div>
-	</div>
-  `).join('') : '<p>当前无待审核稿件</p>';
-}
-
-async function auditPost(id, status) {
-  let reason = '';
-  if(status === 'rejected') {
-	reason = prompt("请输入拒绝理由：");
-	if(!reason) return;
-  }
-  const { error } = await _supabase.from('articles').update({ status, reject_reason: reason }).eq('id', id);
-  if(error) alert(error.message);
-  else {
-	alert("处理成功");
-	loadAuditList();
-  }
-}
-
-</script>
-</body>
-          </html>
+            async function renderMessages() {
+                if (!currentUser) return contentArea.innerHTML = '<div class="empty-state">请先登录</div>';
+                await fetchNotifications();
+                const { data: reqs } = await supabase.from('friends').select('*').eq('friend_uid', currentUser.uid).eq('status', 'pending');
+                const { data: anns } = await supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(10);
+                let html = '<h3>消息中心</h3>';
+                if (reqs && reqs.length) {
+                    html += '<h4>好友请求</h4>' + reqs.map(r => `<div style="display:flex;justify-content:space-between;padding:8px;border:1px solid #e8e8e8;border-radius:8px;margin-bottom:6px;"><span>👤 ${r.user_uid}</span><div><button class="btn btn
