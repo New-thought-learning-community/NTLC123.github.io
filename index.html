@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新思想期刊 · NT Journal</title>
     <style>
-        /* ============ CSS 变量与全局重置 ============ */
+        /* ============ 基础变量与重置 ============ */
         :root {
             --bg-primary: #ffffff;
-            --bg-secondary: #f8f8f7;
-            --bg-tertiary: #f2f1ef;
+            --bg-secondary: #f9f9f7;
+            --bg-tertiary: #f2f1ed;
             --text-primary: #1a1a1a;
             --text-secondary: #4a4a4a;
             --text-tertiary: #7a7a7a;
@@ -88,7 +88,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-light);
             height: var(--nav-height);
@@ -96,7 +96,6 @@
         }
         .navbar.scrolled {
             box-shadow: var(--shadow-sm);
-            border-bottom-color: var(--border);
         }
         .navbar-inner {
             max-width: var(--max-width);
@@ -113,6 +112,7 @@
             gap: 10px;
             text-decoration: none;
             color: var(--text-primary);
+            flex-shrink: 0;
         }
         .nav-brand .brand-icon {
             width: 38px;
@@ -190,8 +190,7 @@
             color: #fff;
         }
         .btn-nav-admin:hover {
-            background: #f0eeea;
-            color: var(--text-primary);
+            background: var(--bg-tertiary);
         }
         .user-avatar-mini {
             width: 28px;
@@ -199,7 +198,6 @@
             border-radius: 50%;
             object-fit: cover;
             background: #e0e0e0;
-            display: inline-block;
         }
         .hamburger {
             display: none;
@@ -274,6 +272,14 @@
         .section {
             padding: 48px 0;
         }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
         .section-header h2 {
             font-family: var(--font-serif);
             font-size: 1.6rem;
@@ -308,6 +314,7 @@
         .article-card:hover {
             box-shadow: var(--shadow-md);
             transform: translateY(-2px);
+            border-color: transparent;
         }
         .card-tag {
             font-size: 0.78rem;
@@ -326,6 +333,7 @@
         .card-excerpt {
             font-size: 0.9rem;
             color: var(--text-tertiary);
+            flex: 1;
         }
         .card-meta {
             font-size: 0.8rem;
@@ -342,7 +350,7 @@
             width: 60px;
             height: 60px;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid var(--border-light);
         }
         .empty-state {
@@ -363,6 +371,11 @@
             font-weight: 600;
             text-decoration: none;
             display: inline-block;
+            transition: all var(--transition);
+        }
+        .btn-outline-red:hover {
+            background: var(--accent-red);
+            color: #fff;
         }
         .feature-section {
             background: var(--bg-secondary);
@@ -478,8 +491,9 @@
         }
         .btn-submit:hover {
             background: #a93226;
+            transform: translateY(-1px);
         }
-        /* 模态框 */
+        /* 模态框通用 */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -533,9 +547,7 @@
             border-bottom: 2px solid transparent;
             margin-bottom: -2px;
             background: none;
-            border-top: none;
-            border-left: none;
-            border-right: none;
+            border: none;
         }
         .modal-tab.active {
             color: var(--accent-red);
@@ -581,9 +593,7 @@
             color: var(--text-tertiary);
             border-bottom: 2px solid transparent;
             background: none;
-            border-top: none;
-            border-left: none;
-            border-right: none;
+            border: none;
         }
         .admin-tab.active {
             color: var(--accent-red);
@@ -653,6 +663,7 @@
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
+        /* ============ 响应式设计 ============ */
         @media (max-width: 768px) {
             .hamburger { display: flex; }
             .nav-links {
@@ -670,8 +681,21 @@
                 z-index: 1000;
             }
             .nav-links.open { right: 0; }
-            .nav-links a { width: 100%; }
+            .nav-links a { width: 100%; padding: 12px 16px; }
+            .btn-nav-auth, .btn-nav-admin, .btn-nav-user {
+                margin-left: 0;
+                margin-top: 8px;
+                width: 100%;
+                justify-content: center;
+            }
             .feature-inner { grid-template-columns: 1fr; }
+            .hero { padding: 40px 12px 24px; }
+            .articles-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .navbar-inner { padding: 0 12px; }
+            main { padding: 0 12px; }
+            .modal { padding: 24px 16px; }
         }
     </style>
 </head>
@@ -742,7 +766,7 @@
                 <div class="feature-info">
                     <h2><span class="icon">✉️</span> 青年信箱</h2>
                     <p>思想交流角落，欢迎投递理论困惑、实践感悟或社会观察。</p>
-                    <a href="mailto:youth@ntjournal.cn" style="color:var(--accent-red);">📮 youth@ntjournal.cn</a>
+                    <a href="mailto:3788315936@qq.com" style="color:var(--accent-red);">📮 3788315936@qq.com</a>
                 </div>
                 <form class="feature-form" id="mailboxForm">
                     <input type="text" placeholder="你的署名（可选）" id="mailName">
@@ -816,7 +840,7 @@
         </div>
     </div>
 
-    <!-- 账号设置模态 -->
+    <!-- 账号设置 -->
     <div class="modal-overlay" id="accountModalOverlay">
         <div class="modal">
             <button class="modal-close" id="accountModalClose">×</button>
@@ -838,14 +862,25 @@
 
     <script>
         (() => {
-            const ADMIN_PASSWORD = '159357258000ABC@';
-            let pendingArticles = [];
-            let approvedArticles = [];
-            let currentAnnouncement = '';
-            let currentUser = null; // { nickname, email, avatar, bio }
-            let articleImages = []; // 投稿临时图片
+            // ========== 后端接口配置（替换为你的实际地址） ==========
+            const API_BASE = ''; // 例如 'https://your-api.com/api'
+            // 接口示例：
+            // POST /articles 提交稿件
+            // GET /articles 获取已发布文章
+            // POST /auth/login 登录
+            // POST /auth/register 注册
+            // PUT /user/profile 更新账号信息
+            // POST /upload 图片上传 (返回 {url:图片地址})
+            // 管理接口根据实际后端设计
 
-            // DOM
+            const ADMIN_PASSWORD = '159357258000ABC@';
+            let pendingArticles = [];      // 待审核 (可对接后端审核队列)
+            let approvedArticles = [];    // 已发布
+            let currentAnnouncement = '';
+            let currentUser = null;       // { nickname, email, avatar, bio }
+            let articleImages = [];       // 投稿临时图片 (可对接上传)
+
+            // DOM 快捷选取
             const $ = (s) => document.querySelector(s);
             const $$ = (s) => document.querySelectorAll(s);
             const toast = $('#toast');
@@ -861,7 +896,6 @@
             const modalOverlay = $('#modalOverlay');
             const accountModalOverlay = $('#accountModalOverlay');
             const imagePreviewContainer = $('#imagePreviewContainer');
-            const btnAddImage = $('#btnAddImage');
             const articleForm = $('#articleForm');
             const loginForm = $('#loginForm');
             const registerForm = $('#registerForm');
@@ -876,19 +910,24 @@
                 window._t = setTimeout(() => toast.classList.remove('show'), 2200);
             }
 
-            // 模拟图片上传
-            function simulateUpload(file) {
+            // ========== 图片上传 (对接后端) ==========
+            async function uploadImage(file) {
+                // 实际应使用 FormData 上传到你的后端 /upload 接口
+                // const formData = new FormData();
+                // formData.append('file', file);
+                // const res = await fetch(API_BASE + '/upload', { method:'POST', body: formData });
+                // const data = await res.json();
+                // return data.url;
+                // 当前为演示模拟，返回临时 blob URL
+                showToast('📤 图片上传中...');
                 return new Promise((resolve) => {
-                    showToast('📤 图片上传中...');
                     setTimeout(() => {
-                        const url = URL.createObjectURL(file);
                         showToast('✅ 图片上传成功');
-                        resolve(url);
-                    }, 800);
+                        resolve(URL.createObjectURL(file));
+                    }, 600);
                 });
             }
 
-            // 文章渲染
             function renderArticles() {
                 if (!approvedArticles.length) {
                     articlesContainer.innerHTML = `<div class="empty-state"><p>📄 暂无文章，成为第一位投稿者吧！</p><a href="#submit-article" class="btn-outline-red">立即投稿</a></div>`;
@@ -896,7 +935,7 @@
                 }
                 let html = '<div class="articles-grid">';
                 approvedArticles.forEach((a, i) => {
-                    const imagesHtml = a.images && a.images.length ? 
+                    const imagesHtml = a.images?.length ? 
                         `<div class="card-images">${a.images.map(img => `<img src="${img}" alt="">`).join('')}</div>` : '';
                     html += `<div class="article-card" data-index="${i}">
                         <span class="card-tag">${a.category}</span>
@@ -918,7 +957,7 @@
                 }
                 let html = '<ul class="review-list">';
                 pendingArticles.forEach((a, i) => {
-                    const imgs = a.images && a.images.length ? a.images.map(img => `<img src="${img}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">`).join('') : '';
+                    const imgs = a.images?.length ? a.images.map(img => `<img src="${img}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">`).join('') : '';
                     html += `<li class="review-item">
                         <h4>${a.title}</h4>
                         <div>作者：${a.author} | ${a.category} | ${a.date}</div>
@@ -941,7 +980,6 @@
                 } else announcementBar.classList.remove('show');
             }
 
-            // 用户状态UI
             function updateAuthUI() {
                 if (currentUser) {
                     navAuthArea.innerHTML = `<button class="btn-nav-user" id="btnOpenAccount">
@@ -968,9 +1006,9 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            // 投稿图片管理
+            // 图片预览管理
             function addImage(file) {
-                simulateUpload(file).then(url => {
+                uploadImage(file).then(url => {
                     articleImages.push(url);
                     renderImagePreviews();
                 });
@@ -985,10 +1023,10 @@
                 });
                 html += `<button type="button" class="btn-upload" id="btnAddImageInner">📷 添加图片</button>`;
                 imagePreviewContainer.innerHTML = html;
-                $('#btnAddImageInner').addEventListener('click', () => triggerFileInput());
+                $('#btnAddImageInner').addEventListener('click', triggerFileInput);
                 $$('.remove-img').forEach(btn => btn.addEventListener('click', (e) => {
                     const idx = parseInt(e.target.getAttribute('data-remove'));
-                    URL.revokeObjectURL(articleImages[idx]);
+                    URL.revokeObjectURL(articleImages[idx]);  // 若为blob则释放，后端URL无需释放
                     articleImages.splice(idx, 1);
                     renderImagePreviews();
                 }));
@@ -998,15 +1036,13 @@
                 input.type = 'file';
                 input.accept = 'image/*';
                 input.multiple = true;
-                input.onchange = () => {
-                    [...input.files].forEach(f => addImage(f));
-                };
+                input.onchange = () => { [...input.files].forEach(f => addImage(f)); };
                 input.click();
             }
 
             // 事件绑定
-            btnAddImage.addEventListener('click', triggerFileInput);
-            articleForm.addEventListener('submit', (e) => {
+            $('#btnAddImage').addEventListener('click', triggerFileInput);
+            articleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const title = $('#articleTitle').value.trim();
                 const author = $('#articleAuthor').value.trim() || '无名同志';
@@ -1018,6 +1054,15 @@
                     date: new Date().toISOString().slice(0,10),
                     images: [...articleImages]
                 };
+                // 对接后端：发送 article 到 POST /articles
+                // try {
+                //   const res = await fetch(API_BASE + '/articles', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(article)
+                //   });
+                //   if (res.ok) showToast('稿件已提交');
+                // } catch (err) { showToast('提交失败'); }
                 pendingArticles.push(article);
                 articleImages.forEach(url => URL.revokeObjectURL(url));
                 articleImages = [];
@@ -1030,7 +1075,9 @@
             mailboxForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const name = $('#mailName').value.trim() || '匿名青年';
-                if (!$('#mailContent').value.trim()) return showToast('请填写内容');
+                const content = $('#mailContent').value.trim();
+                if (!content) return showToast('请填写内容');
+                // 对接后端：可发送邮件内容到后端接口，或直接 mailto: 触发客户端邮件
                 showToast('📬 信件已投递！感谢' + name);
                 mailboxForm.reset();
             });
@@ -1049,10 +1096,12 @@
                 }
             }
             $$('.modal-tab').forEach(t => t.addEventListener('click', () => switchAuthTab(t.dataset.tab)));
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const username = loginForm.querySelectorAll('input')[0].value.trim();
+                const password = loginForm.querySelectorAll('input')[1].value;
                 if (!username) return showToast('请输入用户名');
+                // 对接后端：POST /auth/login
                 currentUser = { nickname: username, email: username+'@nt.cn', avatar: '', bio: '' };
                 showToast('✅ 登录成功，欢迎 ' + username);
                 loginForm.reset();
@@ -1060,7 +1109,7 @@
                 document.body.style.overflow = '';
                 updateAuthUI();
             });
-            registerForm.addEventListener('submit', (e) => {
+            registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const inputs = registerForm.querySelectorAll('input');
                 const username = inputs[0].value.trim();
@@ -1085,17 +1134,18 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        currentUser.avatar = ev.target.result;
+                        currentUser.avatar = ev.target.result;  // 可改为上传后返回的URL
                         $('#accountAvatarPreview').src = currentUser.avatar;
                         updateAuthUI();
                     };
                     reader.readAsDataURL(file);
                 }
             });
-            accountForm.addEventListener('submit', (e) => {
+            accountForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 currentUser.nickname = $('#accountNickname').value.trim();
                 currentUser.bio = $('#accountBio').value.trim();
+                // 对接后端：PUT /user/profile
                 showToast('✅ 账号信息已更新');
                 updateAuthUI();
                 accountModalOverlay.classList.remove('active');
@@ -1127,10 +1177,7 @@
                 renderReviewList();
                 $('#announceInput').value = currentAnnouncement || '';
             }
-            function closeAdmin() {
-                adminModalOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
+            function closeAdmin() { adminModalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
             $('#adminModalClose').addEventListener('click', closeAdmin);
             adminModalOverlay.addEventListener('click', (e) => { if (e.target === adminModalOverlay) closeAdmin(); });
             $('#passwordModalClose').addEventListener('click', () => { passwordModalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
@@ -1158,10 +1205,7 @@
                 updateAnnouncement();
                 showToast('公告已清除');
             });
-            $('#closeAnnounce').addEventListener('click', () => {
-                currentAnnouncement = '';
-                updateAnnouncement();
-            });
+            $('#closeAnnounce').addEventListener('click', () => { currentAnnouncement = ''; updateAnnouncement(); });
             $('#reviewListContainer').addEventListener('click', (e) => {
                 if (e.target.classList.contains('btn-approve')) {
                     const idx = parseInt(e.target.dataset.approve);
@@ -1208,12 +1252,12 @@
                 });
             }, {passive: true});
 
-            // 初始渲染
+            // 初始化
             renderArticles();
             updateAnnouncement();
             updateAuthUI();
             renderImagePreviews();
-            console.log('✨ NT Journal 已启动，支持图片上传与账号管理');
+            console.log('✨ NT Journal 已启动 · UI全面优化 · 可对接后端');
         })();
     </script>
 </body>
