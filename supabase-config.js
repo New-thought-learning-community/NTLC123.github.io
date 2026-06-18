@@ -15,3 +15,10 @@ async function NTLC_CreatePost(textContent) {
         // 读帖法宝（按时间倒序拿所有帖子）
               async function NTLC_GetPosts() {
                 return await supabase.from('posts').select('*').order('created_at', { ascending: false });}
+//  管理员读贴法宝（管理员：拿所有帖子来审核）
+        async function NTLC_AdminGetPosts() {
+          return await supabase.from('posts').select('*').order('created_at', { ascending: false });
+        }
+    // 审核动作法宝（通过或者封禁：传入帖子id和新状态 'approved' 或 'banned'）
+      async function NTLC_ReviewPost(postId, newStatus) {
+        return await supabase.from('posts').update({ status: newStatus }).eq('id', postId);}
