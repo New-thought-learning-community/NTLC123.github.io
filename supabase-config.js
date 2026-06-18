@@ -6,3 +6,12 @@ async function NTLC_Login(email, password) {   const { data, error } = await sup
                                             return { success: true, user: data.user };
 async function NTLC_Register(email, password) {   const { data, error } = await supabase.auth.signUp({ email, password }); if (error) {
 alert("注册失败：" + error.message);       return { success: false, error: error.message }; }   alert("注册成功！请检查邮箱激活。");return { success: true }
+// 发帖法宝
+async function NTLC_CreatePost(textContent) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "请先登录" };
+  return await supabase.from('posts').insert([{ content: textContent }]);
+}
+        // 读帖法宝（按时间倒序拿所有帖子）
+              async function NTLC_GetPosts() {
+                return await supabase.from('posts').select('*').order('created_at', { ascending: false });}
