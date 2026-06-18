@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><br/><br/><script src="supabase-config.js"></script>    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新思想期刊 · NT Journal</title>
+    <!-- Supabase SDK 与配置文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <style>
         /* ============ 基础变量与重置 ============ */
         :root {
@@ -21,9 +23,9 @@
             --accent-gold-pale: #fdf6e8;
             --border: #e8e6e1;
             --border-light: #f0eeea;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.10);
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
@@ -65,9 +67,7 @@
             position: relative;
             animation: fadeInDown 0.3s ease;
         }
-        .announcement-bar.show {
-            display: block;
-        }
+        .announcement-bar.show { display: block; }
         .announcement-bar .close-announce {
             position: absolute;
             right: 16px;
@@ -89,15 +89,13 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.94);
+            background: rgba(255,255,255,0.94);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-light);
             height: var(--nav-height);
             transition: all var(--transition);
         }
-        .navbar.scrolled {
-            box-shadow: var(--shadow-sm);
-        }
+        .navbar.scrolled { box-shadow: var(--shadow-sm); }
         .navbar-inner {
             max-width: var(--max-width);
             margin: 0 auto;
@@ -126,7 +124,7 @@
             color: #fff;
             font-weight: 700;
             font-size: 16px;
-            box-shadow: 0 2px 8px rgba(192, 57, 43, 0.25);
+            box-shadow: 0 2px 8px rgba(192,57,43,0.25);
         }
         .nav-brand .brand-text {
             font-family: var(--font-serif);
@@ -134,9 +132,7 @@
             font-weight: 700;
             color: var(--text-primary);
         }
-        .nav-brand .brand-text span {
-            color: var(--accent-red);
-        }
+        .nav-brand .brand-text span { color: var(--accent-red); }
         .nav-links {
             display: flex;
             align-items: center;
@@ -190,9 +186,7 @@
             background: var(--accent-red);
             color: #fff;
         }
-        .btn-nav-admin:hover {
-            background: var(--bg-tertiary);
-        }
+        .btn-nav-admin:hover { background: var(--bg-tertiary); }
         .user-avatar-mini {
             width: 28px;
             height: 28px;
@@ -218,15 +212,9 @@
             border-radius: 2px;
             transition: all var(--transition);
         }
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
         /* 主内容 */
         main {
             flex: 1;
@@ -235,10 +223,7 @@
             margin: 0 auto;
             padding: 0 24px;
         }
-        .hero {
-            text-align: center;
-            padding: 60px 20px 40px;
-        }
+        .hero { text-align: center; padding: 60px 20px 40px; }
         .hero-badge {
             display: inline-block;
             background: var(--accent-gold-pale);
@@ -248,7 +233,7 @@
             padding: 6px 16px;
             border-radius: 20px;
             margin-bottom: 20px;
-            border: 1px solid rgba(212, 160, 23, 0.2);
+            border: 1px solid rgba(212,160,23,0.2);
         }
         .hero h1 {
             font-family: var(--font-serif);
@@ -266,13 +251,11 @@
             left: 0;
             right: 0;
             height: 6px;
-            background: rgba(212, 160, 23, 0.35);
+            background: rgba(212,160,23,0.35);
             border-radius: 3px;
             z-index: -1;
         }
-        .section {
-            padding: 48px 0;
-        }
+        .section { padding: 48px 0; }
         .section-header {
             display: flex;
             align-items: center;
@@ -331,22 +314,9 @@
             font-size: 1.15rem;
             font-weight: 700;
         }
-        .card-excerpt {
-            font-size: 0.9rem;
-            color: var(--text-tertiary);
-            flex: 1;
-        }
-        .card-meta {
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
-            display: flex;
-            gap: 16px;
-        }
-        .card-images {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .card-excerpt { font-size: 0.9rem; color: var(--text-tertiary); flex: 1; }
+        .card-meta { font-size: 0.8rem; color: var(--text-tertiary); display: flex; gap: 16px; }
+        .card-images { display: flex; gap: 8px; flex-wrap: wrap; }
         .card-images img {
             width: 60px;
             height: 60px;
@@ -374,10 +344,7 @@
             display: inline-block;
             transition: all var(--transition);
         }
-        .btn-outline-red:hover {
-            background: var(--accent-red);
-            color: #fff;
-        }
+        .btn-outline-red:hover { background: var(--accent-red); color: #fff; }
         .feature-section {
             background: var(--bg-secondary);
             border-radius: var(--radius-lg);
@@ -403,15 +370,8 @@
             align-items: center;
             gap: 8px;
         }
-        .feature-info p {
-            color: var(--text-tertiary);
-            font-size: 0.95rem;
-        }
-        .feature-form {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
+        .feature-info p { color: var(--text-tertiary); font-size: 0.95rem; }
+        .feature-form { display: flex; flex-direction: column; gap: 14px; }
         .feature-form input,
         .feature-form textarea,
         .feature-form select {
@@ -429,14 +389,9 @@
         .feature-form select:focus {
             outline: none;
             border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.08);
+            box-shadow: 0 0 0 3px rgba(212,160,23,0.08);
         }
-        .image-upload-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
+        .image-upload-area { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
         .image-preview-item {
             position: relative;
             width: 70px;
@@ -445,11 +400,7 @@
             overflow: hidden;
             border: 1px solid var(--border);
         }
-        .image-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
         .image-preview-item .remove-img {
             position: absolute;
             top: 2px;
@@ -487,13 +438,10 @@
             color: #fff;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(192, 57, 43, 0.2);
+            box-shadow: 0 2px 10px rgba(192,57,43,0.2);
             transition: all var(--transition);
         }
-        .btn-submit:hover {
-            background: #a93226;
-            transform: translateY(-1px);
-        }
+        .btn-submit:hover { background: #a93226; transform: translateY(-1px); }
         /* 模态框通用 */
         .modal-overlay {
             position: fixed;
@@ -508,10 +456,7 @@
             transition: opacity var(--transition);
             backdrop-filter: blur(4px);
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal {
             background: #fff;
             border-radius: var(--radius-lg);
@@ -554,33 +499,18 @@
             color: var(--accent-red);
             border-bottom-color: var(--accent-red);
         }
-        .modal-form {
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-        }
-        .modal-form.active {
-            display: flex;
-        }
+        .modal-form { display: none; flex-direction: column; gap: 14px; }
+        .modal-form.active { display: flex; }
         .modal-form input {
             padding: 12px 16px;
             border: 1.5px solid var(--border);
             border-radius: var(--radius-md);
             font-size: 0.9rem;
         }
-        .modal-form .btn-submit {
-            align-self: stretch;
-            text-align: center;
-        }
-        .form-hint {
-            font-size: 0.78rem;
-            color: var(--text-tertiary);
-            text-align: center;
-        }
+        .modal-form .btn-submit { align-self: stretch; text-align: center; }
+        .form-hint { font-size: 0.78rem; color: var(--text-tertiary); text-align: center; }
         /* 管理面板 */
-        .admin-modal .modal {
-            max-width: 700px;
-        }
+        .admin-modal .modal { max-width: 700px; }
         .admin-tabs {
             display: flex;
             gap: 0;
@@ -600,12 +530,8 @@
             color: var(--accent-red);
             border-bottom-color: var(--accent-red);
         }
-        .admin-panel {
-            display: none;
-        }
-        .admin-panel.active {
-            display: block;
-        }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; }
         .review-list {
             list-style: none;
             display: flex;
@@ -660,11 +586,8 @@
             transition: all 0.35s;
             z-index: 3000;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        /* ============ 响应式设计 ============ */
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .hamburger { display: flex; }
             .nav-links {
@@ -739,7 +662,7 @@
         <section class="feature-section" id="submit-article">
             <div class="feature-inner">
                 <div class="feature-info">
-                    <h2><span class="icon">✍️</span> 文章投稿</h2>
+                    <h2>✍️ 文章投稿</h2>
                     <p>欢迎各位同志踊跃投稿，分享理论学习心得、实践感悟或社会观察。优秀稿件将发表在期刊平台。</p>
                 </div>
                 <form class="feature-form" id="articleForm">
@@ -765,7 +688,7 @@
         <section class="feature-section" id="mailbox">
             <div class="feature-inner">
                 <div class="feature-info">
-                    <h2><span class="icon">✉️</span> 青年信箱</h2>
+                    <h2>✉️ 青年信箱</h2>
                     <p>思想交流角落，欢迎投递理论困惑、实践感悟或社会观察。</p>
                     <a href="mailto:3788315936@qq.com" style="color:var(--accent-red);">📮 3788315936@qq.com</a>
                 </div>
@@ -863,25 +786,80 @@
 
     <script>
         (() => {
-            // ========== 后端接口配置（替换为你的实际地址） ==========
-            const API_BASE = ''; // 例如 'https://your-api.com/api'
-            // 接口示例：
-            // POST /articles 提交稿件
-            // GET /articles 获取已发布文章
-            // POST /auth/login 登录
-            // POST /auth/register 注册
-            // PUT /user/profile 更新账号信息
-            // POST /upload 图片上传 (返回 {url:图片地址})
-            // 管理接口根据实际后端设计
+            // ========== Supabase 交互函数 ==========
+            // 确保 supabase 对象已由 supabase-config.js 初始化
 
+            // 创建文章（投稿）
+            async function NTLC_CreatePost(content) {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .insert([{ content, status: 'pending' }])
+                    .select();
+                return { data, error };
+            }
+
+            // 登录
+            async function NTLC_Login(email, password) {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                return { data, error };
+            }
+
+            // 注册
+            async function NTLC_Register(email, password) {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+                return { data, error };
+            }
+
+            // 审核文章（修改状态）
+            async function NTLC_ReviewPost(postId, status) {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .update({ status })
+                    .eq('id', postId);
+                return { data, error };
+            }
+
+            // 获取已发布文章
+            async function fetchApprovedArticles() {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+                if (error) {
+                    console.error('获取文章失败:', error);
+                    return [];
+                }
+                return data;
+            }
+
+            // 获取待审核文章
+            async function fetchPendingArticles() {
+                const { data, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+                if (error) {
+                    console.error('获取待审核失败:', error);
+                    return [];
+                }
+                return data;
+            }
+
+            // ========== 全局变量 ==========
             const ADMIN_PASSWORD = '159357258000ABC@';
-            let pendingArticles = [];      // 待审核 (可对接后端审核队列)
-            let approvedArticles = [];    // 已发布
             let currentAnnouncement = '';
-            let currentUser = null;       // { nickname, email, avatar, bio }
-            let articleImages = [];       // 投稿临时图片 (可对接上传)
+            let currentUser = null;
+            let articleImages = []; // 仅用于前端预览，实际提交时可结合 Supabase Storage
 
-            // DOM 快捷选取
+            // ========== DOM 快捷选取 ==========
             const $ = (s) => document.querySelector(s);
             const $$ = (s) => document.querySelectorAll(s);
             const toast = $('#toast');
@@ -911,14 +889,8 @@
                 window._t = setTimeout(() => toast.classList.remove('show'), 2200);
             }
 
-            // ========== 图片上传 (对接后端) ==========
+            // ========== 图片上传（可替换为 Supabase Storage） ==========
             async function uploadImage(file) {
-                // 实际应使用 FormData 上传到你的后端 /upload 接口
-                // const formData = new FormData();
-                // formData.append('file', file);
-                // const res = await fetch(API_BASE + '/upload', { method:'POST', body: formData });
-                // const data = await res.json();
-                // return data.url;
                 // 当前为演示模拟，返回临时 blob URL
                 showToast('📤 图片上传中...');
                 return new Promise((resolve) => {
@@ -929,44 +901,46 @@
                 });
             }
 
-            function renderArticles() {
+            // ========== 渲染文章列表 ==========
+            async function renderArticles() {
+                const approvedArticles = await fetchApprovedArticles();
                 if (!approvedArticles.length) {
                     articlesContainer.innerHTML = `<div class="empty-state"><p>📄 暂无文章，成为第一位投稿者吧！</p><a href="#submit-article" class="btn-outline-red">立即投稿</a></div>`;
                     return;
                 }
                 let html = '<div class="articles-grid">';
-                approvedArticles.forEach((a, i) => {
-                    const imagesHtml = a.images?.length ? 
-                        `<div class="card-images">${a.images.map(img => `<img src="${img}" alt="">`).join('')}</div>` : '';
-                    html += `<div class="article-card" data-index="${i}">
-                        <span class="card-tag">${a.category}</span>
-                        <h3>${a.title}</h3>
-                        <p class="card-excerpt">${a.content.substring(0,80)}…</p>
-                        ${imagesHtml}
-                        <div class="card-meta"><span>✍️ ${a.author}</span><span>📅 ${a.date}</span></div>
+                approvedArticles.forEach((a) => {
+                    // 内容格式：假设 content 保存为完整文本，这里简单提取前 80 字符
+                    const excerpt = (a.content || '').substring(0, 80) + '…';
+                    // 分类等信息暂未存入数据库，可后续扩展
+                    html += `<div class="article-card" data-id="${a.id}">
+                        <span class="card-tag">理论研习</span>
+                        <h3>${a.title || '无标题'}</h3>
+                        <p class="card-excerpt">${excerpt}</p>
+                        <div class="card-meta"><span>✍️ 作者</span><span>📅 ${a.created_at ? a.created_at.slice(0,10) : ''}</span></div>
                     </div>`;
                 });
                 html += '</div>';
                 articlesContainer.innerHTML = html;
             }
 
-            function renderReviewList() {
+            // ========== 渲染待审核列表 ==========
+            async function renderReviewList() {
                 const container = $('#reviewListContainer');
+                const pendingArticles = await fetchPendingArticles();
                 if (!pendingArticles.length) {
                     container.innerHTML = '<p>暂无待审核稿件</p>';
                     return;
                 }
                 let html = '<ul class="review-list">';
-                pendingArticles.forEach((a, i) => {
-                    const imgs = a.images?.length ? a.images.map(img => `<img src="${img}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">`).join('') : '';
+                pendingArticles.forEach((a) => {
+                    const excerpt = (a.content || '').substring(0, 80) + '…';
                     html += `<li class="review-item">
-                        <h4>${a.title}</h4>
-                        <div>作者：${a.author} | ${a.category} | ${a.date}</div>
-                        <div>${a.content.substring(0,80)}…</div>
-                        <div style="display:flex;gap:4px;margin:6px 0;">${imgs}</div>
+                        <h4>${a.title || '无标题'}</h4>
+                        <div>${excerpt}</div>
                         <div class="review-actions">
-                            <button class="btn-sm btn-approve" data-approve="${i}">批准</button>
-                            <button class="btn-sm btn-reject" data-reject="${i}">拒绝</button>
+                            <button class="btn-sm btn-approve" data-id="${a.id}">批准</button>
+                            <button class="btn-sm btn-reject" data-id="${a.id}">拒绝</button>
                         </div>
                     </li>`;
                 });
@@ -1027,7 +1001,7 @@
                 $('#btnAddImageInner').addEventListener('click', triggerFileInput);
                 $$('.remove-img').forEach(btn => btn.addEventListener('click', (e) => {
                     const idx = parseInt(e.target.getAttribute('data-remove'));
-                    URL.revokeObjectURL(articleImages[idx]);  // 若为blob则释放，后端URL无需释放
+                    URL.revokeObjectURL(articleImages[idx]);
                     articleImages.splice(idx, 1);
                     renderImagePreviews();
                 }));
@@ -1041,8 +1015,9 @@
                 input.click();
             }
 
-            // 事件绑定
+            // ========== 事件绑定 ==========
             $('#btnAddImage').addEventListener('click', triggerFileInput);
+
             articleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const title = $('#articleTitle').value.trim();
@@ -1050,34 +1025,23 @@
                 const category = $('#articleCategory').value;
                 const content = $('#articleContent').value.trim();
                 if (!title || !category || !content) return showToast('请填写完整');
-                const article = {
-                    title, author, category, content,
-                    date: new Date().toISOString().slice(0,10),
-                    images: [...articleImages]
-                };
-              // ==========================================
-             // 🎛️ 缝合后的 Supabase 真实发布逻辑
-             // ==========================================
-             // 1. 拼装成我们存进数据库的完整内容
-             const fullContent = `【${category}】${title}\n作者: ${author}\n\n${content}`;
-             // 2. 扔给云端，默认就是 pending 待审核状态
-             const result = await NTLC_CreatePost(fullContent);
-             if (result && result.error) {
-              return showToast('<span class="emoji emoji2716"></span> 投稿失败：' + result.error);<br/>    }
-             // 3. 原汁原味保留你原本的图片及表单清空特效
-             articleImages.forEach(url => URL.revokeObjectURL(url));
-             articleImages = [];
-             renderImagePreviews();
-             articleForm.reset();
-             showToast('<span class="emoji emoji1f4d1"></span> 稿件已提交，等待审核');
-             // 4. 如果此时管理员窗口开着，立马自动刷新你的审核面板
-             if (adminModalOverlay.classList.contains('active')) {   renderReviewList();}
+                // 组装提交内容（可根据需要存储为 JSON 字符串）
+                const fullContent = JSON.stringify({ title, author, category, content, images: [...articleImages] });
+                const { error } = await NTLC_CreatePost(fullContent);
+                if (error) return showToast('投稿失败：' + error.message);
+                articleImages.forEach(url => URL.revokeObjectURL(url));
+                articleImages = [];
+                renderImagePreviews();
+                articleForm.reset();
+                showToast('📝 稿件已提交，等待审核');
+                if (adminModalOverlay.classList.contains('active')) renderReviewList();
+            });
+
             mailboxForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const name = $('#mailName').value.trim() || '匿名青年';
                 const content = $('#mailContent').value.trim();
                 if (!content) return showToast('请填写内容');
-                // 对接后端：可发送邮件内容到后端接口，或直接 mailto: 触发客户端邮件
                 showToast('📬 信件已投递！感谢' + name);
                 mailboxForm.reset();
             });
@@ -1096,21 +1060,23 @@
                 }
             }
             $$('.modal-tab').forEach(t => t.addEventListener('click', () => switchAuthTab(t.dataset.tab)));
+
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const username = loginForm.querySelectorAll('input')[0].value.trim();
-                const password = loginForm.querySelectorAll('input')[1].value;
-                if (!username) return showToast('请输入用户名');
-               // 变成真的用 Supabase 登录
-             const { data, error } = await NTLC_Login(username, password);
-             if (error) return showToast('<span class="emoji emoji2716"></span> ' + error);
-             currentUser = { nickname: username, email: username, avatar: '', bio: '' };
-             showToast('✅ 登录成功，欢迎 ' + username);
+                const inputs = loginForm.querySelectorAll('input');
+                const email = inputs[0].value.trim();
+                const password = inputs[1].value;
+                if (!email) return showToast('请输入邮箱');
+                const { data, error } = await NTLC_Login(email, password);
+                if (error) return showToast('登录失败：' + error.message);
+                currentUser = { nickname: email, email, avatar: '', bio: '' };
+                showToast('✅ 登录成功，欢迎 ' + email);
                 loginForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
                 updateAuthUI();
             });
+
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const inputs = registerForm.querySelectorAll('input');
@@ -1119,15 +1085,15 @@
                 const password = inputs[2].value;
                 if (!username || !email || !password) return showToast('请填写完整');
                 if (password.length < 6) return showToast('密码至少6位');
-               // 变成真的用 Supabase 注册
-             const { error } = await NTLC_Register(email, password);
-             if (error) return showToast('<span class="emoji emoji2716"></span> ' + error);
-             showToast('<span class="emoji emoji1f389"></span> 注册成功！请检查邮箱激活');
+                const { data, error } = await NTLC_Register(email, password);
+                if (error) return showToast('注册失败：' + error.message);
+                showToast('🎉 注册成功，请检查邮箱确认！');
                 registerForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
                 updateAuthUI();
             });
+
             $('#modalClose').addEventListener('click', () => { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
 
@@ -1138,7 +1104,7 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        currentUser.avatar = ev.target.result;  // 可改为上传后返回的URL
+                        currentUser.avatar = ev.target.result;
                         $('#accountAvatarPreview').src = currentUser.avatar;
                         updateAuthUI();
                     };
@@ -1149,7 +1115,6 @@
                 e.preventDefault();
                 currentUser.nickname = $('#accountNickname').value.trim();
                 currentUser.bio = $('#accountBio').value.trim();
-                // 对接后端：PUT /user/profile
                 showToast('✅ 账号信息已更新');
                 updateAuthUI();
                 accountModalOverlay.classList.remove('active');
@@ -1174,11 +1139,11 @@
                     $('#adminPassword').value = '';
                 }
             });
-            function openAdminPanel() {
+            async function openAdminPanel() {
                 adminModalOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 switchAdminTab('announce');
-                renderReviewList();
+                await renderReviewList();
                 $('#announceInput').value = currentAnnouncement || '';
             }
             function closeAdmin() { adminModalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
@@ -1210,31 +1175,32 @@
                 showToast('公告已清除');
             });
             $('#closeAnnounce').addEventListener('click', () => { currentAnnouncement = ''; updateAnnouncement(); });
-            $('#reviewListContainer').addEventListener('click', (e) => {
+
+            // 审核按钮事件（事件委托）
+            $('#reviewListContainer').addEventListener('click', async (e) => {
                 if (e.target.classList.contains('btn-approve')) {
-                    const idx = parseInt(e.target.dataset.approve);
-                         // ==========================================
-                 // 🟢 当管理员点击【批准/通过】按钮
-                 // ==========================================
-                 // 1. 获取当前点击的稿件在 Supabase 中的真 ID
-                 const postId = e.target.dataset.id; 
-                 // 2. 调用我们在 supabase-config.js 里写好的审核法宝，状态改成 approved
-                 const { error } = await NTLC_ReviewPost(postId, 'approved');
-                 if (error) return showToast('<span class="emoji emoji2716"></span> 审批失败：' + error);
-                 showToast('🟢 稿件已批准并公开发布！');
-                 // 3. 实时刷新列表
-                 await renderReviewList();
-                 if (typeof renderArticles === 'function') await renderArticles();
+                    const postId = e.target.dataset.id;
+                    const { error } = await NTLC_ReviewPost(postId, 'approved');
+                    if (error) return showToast('审批失败：' + error.message);
+                    showToast('🟢 稿件已批准并发布！');
+                    await renderReviewList();
+                    await renderArticles();
                 } else if (e.target.classList.contains('btn-reject')) {
-                 // ==========================================
-                 // <span class="emoji emoji1f534"></span> 当管理员点击【拒绝/退回】按钮
-                 // ==========================================
-                 const postId = e.target.dataset.reject; // 或者是 dataset.id，取决于你按钮上的绑定
-                 // 状态改成 banned (封禁/拒绝)
-                 const { error } = await NTLC_ReviewPost(postId, 'banned');
-                 if (error) return showToast('<span class="emoji emoji2716"></span> 操作失败：' + error);
-                 showToast('<span class="emoji emoji2716"></span> 稿件已拒绝');await renderReviewList();
-                  }
+                    const postId = e.target.dataset.id;
+                    const { error } = await NTLC_ReviewPost(postId, 'banned');
+                    if (error) return showToast('操作失败：' + error.message);
+                    showToast('🔴 稿件已拒绝');
+                    await renderReviewList();
+                }
+            });
+
+            // 封禁演示
+            $('#banSubmitBtn').addEventListener('click', () => {
+                const target = $('#banTarget').value.trim();
+                if (!target) return showToast('请输入目标');
+                showToast(`⛔ 已封禁：${target} (演示)`);
+                $('#banTarget').value = '';
+            });
 
             // 移动菜单
             hamburger.addEventListener('click', () => {
@@ -1265,7 +1231,7 @@
             updateAnnouncement();
             updateAuthUI();
             renderImagePreviews();
-            console.log('✨ NT Journal 已启动 · UI全面优化 · 可对接后端');
+            console.log('✨ NT Journal 已启动 · Supabase 全面对接');
         })();
     </script>
 </body>
