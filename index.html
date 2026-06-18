@@ -1103,9 +1103,11 @@
                 const username = loginForm.querySelectorAll('input')[0].value.trim();
                 const password = loginForm.querySelectorAll('input')[1].value;
                 if (!username) return showToast('请输入用户名');
-                // 对接后端：POST /auth/login
-                currentUser = { nickname: username, email: username+'@nt.cn', avatar: '', bio: '' };
-                showToast('✅ 登录成功，欢迎 ' + username);
+               // 变成真的用 Supabase 登录
+             const { data, error } = await NTLC_Login(username, password);
+             if (error) return showToast('<span class="emoji emoji2716"></span> ' + error);
+             currentUser = { nickname: username, email: username, avatar: '', bio: '' };
+             showToast('✅ 登录成功，欢迎 ' + username);
                 loginForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
@@ -1119,8 +1121,10 @@
                 const password = inputs[2].value;
                 if (!username || !email || !password) return showToast('请填写完整');
                 if (password.length < 6) return showToast('密码至少6位');
-                currentUser = { nickname: username, email, avatar: '', bio: '' };
-                showToast('🎉 注册成功，欢迎 ' + username);
+               // 变成真的用 Supabase 注册
+             const { error } = await NTLC_Register(email, password);
+             if (error) return showToast('<span class="emoji emoji2716"></span> ' + error);
+             showToast('<span class="emoji emoji1f389"></span> 注册成功！请检查邮箱激活');
                 registerForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
