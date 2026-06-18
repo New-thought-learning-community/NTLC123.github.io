@@ -1,5 +1,8 @@
-// 你的专属 Supabase 数据库连接配置
-const SUPABASE_URL = "https://cjyxxieokhkppokwziuy.supabase.co";
+const SUPABASE_URL = "https://cjyxxieokhkppokwziuy.supabase.co"; 
 const SUPABASE_ANON_KEY = "sb_publishable_R203Lw5vihT_mnRquY4K5Q_uByNAERj";
-// 初始化客户端（生成 supabase 控制变量)
 const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+async function NTLC_Login(email, password) {   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {       alert("登录失败：" + error.message);       return { success: false, error: error.message };   }   alert("登录成功！");
+                                            return { success: true, user: data.user };
+async function NTLC_Register(email, password) {   const { data, error } = await supabase.auth.signUp({ email, password }); if (error) {
+alert("注册失败：" + error.message);       return { success: false, error: error.message }; }   alert("注册成功！请检查邮箱激活。");return { success: true }
