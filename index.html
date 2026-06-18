@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新思想期刊 · NT Journal</title>
-    <!-- Supabase SDK 与配置文件 -->
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
     <style>
-        /* ============ 基础变量与重置 ============ */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f9f9f7;
@@ -29,23 +27,14 @@
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
-            --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "华文宋体", "SimSun", Georgia, "Times New Roman", serif;
+            --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "华文宋体", "SimSun", Georgia, serif;
             --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --nav-height: 64px;
             --max-width: 1200px;
         }
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html {
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
         body {
             font-family: var(--font-sans);
             background-color: var(--bg-primary);
@@ -55,7 +44,6 @@
             display: flex;
             flex-direction: column;
         }
-        /* 公告横幅 */
         .announcement-bar {
             display: none;
             background: var(--accent-gold-pale);
@@ -70,25 +58,15 @@
         .announcement-bar.show { display: block; }
         .announcement-bar .close-announce {
             position: absolute;
-            right: 16px;
-            top: 50%;
+            right: 16px; top: 50%;
             transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #5c4700;
-            opacity: 0.7;
+            background: none; border: none;
+            font-size: 1.2rem; cursor: pointer;
+            color: #5c4700; opacity: 0.7;
         }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* 导航栏 */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            position: sticky; top: 0; z-index: 1000;
             background: rgba(255,255,255,0.94);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-light);
@@ -97,530 +75,123 @@
         }
         .navbar.scrolled { box-shadow: var(--shadow-sm); }
         .navbar-inner {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            max-width: var(--max-width); margin: 0 auto; padding: 0 24px;
+            height: 100%; display: flex; align-items: center; justify-content: space-between;
         }
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text-primary);
-            flex-shrink: 0;
-        }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); flex-shrink: 0; }
         .nav-brand .brand-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: var(--radius-sm);
+            width: 38px; height: 38px; border-radius: var(--radius-sm);
             background: linear-gradient(135deg, var(--accent-red), #a93226);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-weight: 700;
-            font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 16px;
             box-shadow: 0 2px 8px rgba(192,57,43,0.25);
         }
-        .nav-brand .brand-text {
-            font-family: var(--font-serif);
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .nav-brand .brand-text { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
         .nav-brand .brand-text span { color: var(--accent-red); }
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            list-style: none;
-        }
+        .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
         .nav-links a {
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            font-weight: 500;
+            padding: 8px 16px; border-radius: 20px; text-decoration: none;
+            color: var(--text-secondary); font-size: 0.95rem; font-weight: 500;
             transition: all var(--transition);
         }
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--accent-red);
-            background: #fef5f4;
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-red); background: #fef5f4; }
+        .btn-nav-auth, .btn-nav-admin, .btn-nav-user {
+            margin-left: 8px; padding: 8px 20px; border-radius: 22px;
+            border: 1.5px solid var(--accent-red); color: var(--accent-red);
+            background: transparent; cursor: pointer; font-weight: 600;
+            font-size: 0.9rem; transition: all var(--transition);
+            display: flex; align-items: center; gap: 6px;
         }
-        .btn-nav-auth,
-        .btn-nav-admin,
-        .btn-nav-user {
-            margin-left: 8px;
-            padding: 8px 20px;
-            border-radius: 22px;
-            border: 1.5px solid var(--accent-red);
-            color: var(--accent-red);
-            background: transparent;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-nav-admin {
-            border-color: transparent;
-            padding: 8px 12px;
-            font-size: 1.2rem;
-            margin-left: 0;
-        }
-        .btn-nav-user {
-            border-color: var(--border-light);
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-        }
-        .btn-nav-auth:hover,
-        .btn-nav-user:hover {
-            background: var(--accent-red);
-            color: #fff;
-        }
+        .btn-nav-admin { border-color: transparent; padding: 8px 12px; font-size: 1.2rem; margin-left: 0; }
+        .btn-nav-user { border-color: var(--border-light); color: var(--text-primary); background: var(--bg-secondary); }
+        .btn-nav-auth:hover, .btn-nav-user:hover { background: var(--accent-red); color: #fff; }
         .btn-nav-admin:hover { background: var(--bg-tertiary); }
-        .user-avatar-mini {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #e0e0e0;
-        }
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 8px;
-            z-index: 1001;
-        }
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--text-primary);
-            border-radius: 2px;
-            transition: all var(--transition);
-        }
+        .user-avatar-mini { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #e0e0e0; }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 8px; z-index: 1001; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all var(--transition); }
         .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
-        /* 主内容 */
-        main {
-            flex: 1;
-            max-width: var(--max-width);
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        main { flex: 1; max-width: var(--max-width); width: 100%; margin: 0 auto; padding: 0 24px; }
         .hero { text-align: center; padding: 60px 20px 40px; }
-        .hero-badge {
-            display: inline-block;
-            background: var(--accent-gold-pale);
-            color: var(--accent-gold);
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 6px 16px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(212,160,23,0.2);
-        }
-        .hero h1 {
-            font-family: var(--font-serif);
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 800;
-        }
-        .hero h1 .highlight {
-            color: var(--accent-red);
-            position: relative;
-        }
-        .hero h1 .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 2px;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: rgba(212,160,23,0.35);
-            border-radius: 3px;
-            z-index: -1;
-        }
+        .hero-badge { display: inline-block; background: var(--accent-gold-pale); color: var(--accent-gold); font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(212,160,23,0.2); }
+        .hero h1 { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; }
+        .hero h1 .highlight { color: var(--accent-red); position: relative; }
+        .hero h1 .highlight::after { content: ''; position: absolute; bottom: 2px; left: 0; right: 0; height: 6px; background: rgba(212,160,23,0.35); border-radius: 3px; z-index: -1; }
         .section { padding: 48px 0; }
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .section-header h2 {
-            font-family: var(--font-serif);
-            font-size: 1.6rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-header h2 .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-red);
-            display: inline-block;
-        }
-        .articles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+        .section-header h2 { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .section-header h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); display: inline-block; }
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .article-card {
-            background: #fff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            transition: all var(--transition);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            cursor: pointer;
+            background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+            padding: 24px; transition: all var(--transition); display: flex; flex-direction: column; gap: 12px; cursor: pointer;
         }
-        .article-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-            border-color: transparent;
-        }
-        .card-tag {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--accent-red);
-            background: #fef5f4;
-            padding: 4px 10px;
-            border-radius: 12px;
-            align-self: flex-start;
-        }
-        .article-card h3 {
-            font-family: var(--font-serif);
-            font-size: 1.15rem;
-            font-weight: 700;
-        }
+        .article-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: transparent; }
+        .card-tag { font-size: 0.78rem; font-weight: 600; color: var(--accent-red); background: #fef5f4; padding: 4px 10px; border-radius: 12px; align-self: flex-start; }
+        .article-card h3 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; }
         .card-excerpt { font-size: 0.9rem; color: var(--text-tertiary); flex: 1; }
         .card-meta { font-size: 0.8rem; color: var(--text-tertiary); display: flex; gap: 16px; }
         .card-images { display: flex; gap: 8px; flex-wrap: wrap; }
-        .card-images img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--border-light);
-        }
-        .empty-state {
-            background: var(--bg-secondary);
-            border: 1px dashed var(--border);
-            border-radius: var(--radius-lg);
-            padding: 48px 24px;
-            text-align: center;
-            color: var(--text-tertiary);
-        }
-        .btn-outline-red {
-            padding: 10px 24px;
-            border-radius: 24px;
-            border: 1.5px solid var(--accent-red);
-            color: var(--accent-red);
-            background: transparent;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all var(--transition);
-        }
+        .card-images img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light); }
+        .empty-state { background: var(--bg-secondary); border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 48px 24px; text-align: center; color: var(--text-tertiary); }
+        .btn-outline-red { padding: 10px 24px; border-radius: 24px; border: 1.5px solid var(--accent-red); color: var(--accent-red); background: transparent; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; transition: all var(--transition); }
         .btn-outline-red:hover { background: var(--accent-red); color: #fff; }
-        .feature-section {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: 40px 32px;
-            margin: 16px 0 48px;
-            border: 1px solid var(--border-light);
-            position: relative;
-            overflow: hidden;
-        }
-        .feature-inner {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 36px;
-            align-items: start;
-            z-index: 1;
-            position: relative;
-        }
-        .feature-info h2 {
-            font-family: var(--font-serif);
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .feature-section { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 40px 32px; margin: 16px 0 48px; border: 1px solid var(--border-light); position: relative; overflow: hidden; }
+        .feature-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; z-index: 1; position: relative; }
+        .feature-info h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .feature-info p { color: var(--text-tertiary); font-size: 0.95rem; }
         .feature-form { display: flex; flex-direction: column; gap: 14px; }
-        .feature-form input,
-        .feature-form textarea,
-        .feature-form select {
-            padding: 12px 16px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-sans);
-            font-size: 0.9rem;
-            background: #fff;
-            transition: all var(--transition);
-            resize: vertical;
+        .feature-form input, .feature-form textarea, .feature-form select {
+            padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-md);
+            font-family: var(--font-sans); font-size: 0.9rem; background: #fff; transition: all var(--transition); resize: vertical;
         }
-        .feature-form input:focus,
-        .feature-form textarea:focus,
-        .feature-form select:focus {
-            outline: none;
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(212,160,23,0.08);
-        }
+        .feature-form input:focus, .feature-form textarea:focus, .feature-form select:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(212,160,23,0.08); }
         .image-upload-area { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .image-preview-item {
-            position: relative;
-            width: 70px;
-            height: 70px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
+        .image-preview-item { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
         .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
-        .image-preview-item .remove-img {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .btn-upload {
-            padding: 10px 20px;
-            border-radius: 20px;
-            border: 1.5px dashed var(--accent-gold);
-            color: var(--accent-gold);
-            background: transparent;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-submit {
-            padding: 10px 28px;
-            border-radius: 24px;
-            border: none;
-            background: var(--accent-red);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(192,57,43,0.2);
-            transition: all var(--transition);
-        }
+        .image-preview-item .remove-img { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-upload { padding: 10px 20px; border-radius: 20px; border: 1.5px dashed var(--accent-gold); color: var(--accent-gold); background: transparent; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+        .btn-submit { padding: 10px 28px; border-radius: 24px; border: none; background: var(--accent-red); color: #fff; font-weight: 600; cursor: pointer; box-shadow: 0 2px 10px rgba(192,57,43,0.2); transition: all var(--transition); }
         .btn-submit:hover { background: #a93226; transform: translateY(-1px); }
-        /* 模态框通用 */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.45);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition);
-            backdrop-filter: blur(4px);
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity var(--transition); backdrop-filter: blur(4px); }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal {
-            background: #fff;
-            border-radius: var(--radius-lg);
-            padding: 36px 30px 30px;
-            width: 90%;
-            max-width: 440px;
-            position: relative;
-            box-shadow: var(--shadow-lg);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        .modal-close {
-            position: absolute;
-            top: 14px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-tertiary);
-        }
-        .modal-tabs {
-            display: flex;
-            margin-bottom: 24px;
-            border-bottom: 2px solid var(--border-light);
-        }
-        .modal-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            background: none;
-            border: none;
-        }
-        .modal-tab.active {
-            color: var(--accent-red);
-            border-bottom-color: var(--accent-red);
-        }
+        .modal { background: #fff; border-radius: var(--radius-lg); padding: 36px 30px 30px; width: 90%; max-width: 440px; position: relative; box-shadow: var(--shadow-lg); max-height: 85vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-tertiary); }
+        .modal-tabs { display: flex; margin-bottom: 24px; border-bottom: 2px solid var(--border-light); }
+        .modal-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: var(--text-tertiary); border-bottom: 2px solid transparent; margin-bottom: -2px; background: none; border: none; }
+        .modal-tab.active { color: var(--accent-red); border-bottom-color: var(--accent-red); }
         .modal-form { display: none; flex-direction: column; gap: 14px; }
         .modal-form.active { display: flex; }
-        .modal-form input {
-            padding: 12px 16px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            font-size: 0.9rem;
-        }
+        .modal-form input { padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-md); font-size: 0.9rem; }
         .modal-form .btn-submit { align-self: stretch; text-align: center; }
         .form-hint { font-size: 0.78rem; color: var(--text-tertiary); text-align: center; }
-        /* 管理面板 */
         .admin-modal .modal { max-width: 700px; }
-        .admin-tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-light);
-        }
-        .admin-tab {
-            padding: 10px 16px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            border-bottom: 2px solid transparent;
-            background: none;
-            border: none;
-        }
-        .admin-tab.active {
-            color: var(--accent-red);
-            border-bottom-color: var(--accent-red);
-        }
+        .admin-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--border-light); }
+        .admin-tab { padding: 10px 16px; cursor: pointer; font-weight: 600; color: var(--text-tertiary); border-bottom: 2px solid transparent; background: none; border: none; }
+        .admin-tab.active { color: var(--accent-red); border-bottom-color: var(--accent-red); }
         .admin-panel { display: none; }
         .admin-panel.active { display: block; }
-        .review-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            max-height: 55vh;
-            overflow-y: auto;
-        }
-        .review-item {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            padding: 16px;
-        }
-        .btn-sm {
-            padding: 6px 16px;
-            border-radius: 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-        }
+        .review-list { list-style: none; display: flex; flex-direction: column; gap: 14px; max-height: 55vh; overflow-y: auto; }
+        .review-item { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 16px; }
+        .btn-sm { padding: 6px 16px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; }
         .btn-approve { background: #2e7d32; color: white; }
         .btn-reject { background: #c0392b; color: white; }
-        .admin-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            min-height: 100px;
-        }
-        footer {
-            border-top: 1px solid var(--border-light);
-            padding: 24px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-tertiary);
-            background: var(--bg-secondary);
-            margin-top: auto;
-        }
-        .toast {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: #1a1a1a;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-size: 0.9rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.35s;
-            z-index: 3000;
-        }
+        .admin-textarea { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: var(--radius-md); min-height: 100px; }
+        footer { border-top: 1px solid var(--border-light); padding: 24px; text-align: center; font-size: 0.85rem; color: var(--text-tertiary); background: var(--bg-secondary); margin-top: auto; }
+        .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 0.9rem; opacity: 0; pointer-events: none; transition: all 0.35s; z-index: 3000; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        /* 响应式设计 */
         @media (max-width: 768px) {
             .hamburger { display: flex; }
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 75%;
-                height: 100vh;
-                background: #fff;
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 80px 28px 28px;
-                box-shadow: var(--shadow-lg);
-                transition: right var(--transition);
-                z-index: 1000;
-            }
+            .nav-links { position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; background: #fff; flex-direction: column; align-items: flex-start; padding: 80px 28px 28px; box-shadow: var(--shadow-lg); transition: right var(--transition); z-index: 1000; }
             .nav-links.open { right: 0; }
             .nav-links a { width: 100%; padding: 12px 16px; }
-            .btn-nav-auth, .btn-nav-admin, .btn-nav-user {
-                margin-left: 0;
-                margin-top: 8px;
-                width: 100%;
-                justify-content: center;
-            }
+            .btn-nav-auth, .btn-nav-admin, .btn-nav-user { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
             .feature-inner { grid-template-columns: 1fr; }
             .hero { padding: 40px 12px 24px; }
             .articles-grid { grid-template-columns: 1fr; }
         }
-        @media (max-width: 480px) {
-            .navbar-inner { padding: 0 12px; }
-            main { padding: 0 12px; }
-            .modal { padding: 24px 16px; }
-        }
+        @media (max-width: 480px) { .navbar-inner { padding: 0 12px; } main { padding: 0 12px; } .modal { padding: 24px 16px; } }
     </style>
 </head>
 <body>
@@ -641,9 +212,7 @@
                 <li><a href="#submit-article" data-nav="submit-article">文章投稿</a></li>
                 <li><a href="#mailbox" data-nav="mailbox">青年信箱</a></li>
                 <li><button class="btn-nav-admin" id="btnOpenAdmin" title="管理后台">⚙️</button></li>
-                <li id="navAuthArea">
-                    <button class="btn-nav-auth" id="btnOpenAuth">登录 / 注册</button>
-                </li>
+                <li id="navAuthArea"><button class="btn-nav-auth" id="btnOpenAuth">登录 / 注册</button></li>
             </ul>
         </div>
     </nav>
@@ -749,7 +318,7 @@
                 <button class="modal-tab" data-tab="register">注册</button>
             </div>
             <form class="modal-form active" id="loginForm">
-                <input type="text" placeholder="用户名 / 邮箱" required>
+                <input type="email" placeholder="邮箱" required>
                 <input type="password" placeholder="密码" required>
                 <button type="submit" class="btn-submit">登 录</button>
                 <p class="form-hint">登录即表示同意《用户协议》</p>
@@ -785,81 +354,68 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ========== 请替换为你自己的 Supabase 项目信息 ==========
+        const SUPABASE_URL = 'https://你的项目ID.supabase.co';   // 你的 Supabase URL
+        const SUPABASE_ANON_KEY = '你的anon public key';        // 你的 anon key
+
+        // ========== 初始化 Supabase 客户端 ==========
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ========== 核心 Supabase 操作 ==========
+        async function NTLC_CreatePost(content) {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .insert([{ content, status: 'pending' }])
+                .select();
+            return { data, error };
+        }
+
+        async function NTLC_Login(email, password) {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            return { data, error };
+        }
+
+        async function NTLC_Register(email, password) {
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            return { data, error };
+        }
+
+        async function NTLC_ReviewPost(postId, status) {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .update({ status })
+                .eq('id', postId);
+            return { data, error };
+        }
+
+        async function fetchApprovedArticles() {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('status', 'approved')
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data || [];
+        }
+
+        async function fetchPendingArticles() {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('status', 'pending')
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data || [];
+        }
+
+        // ========== 应用逻辑 ==========
         (() => {
-            // ========== Supabase 交互函数 ==========
-            // 确保 supabase 对象已由 supabase-config.js 初始化
-
-            // 创建文章（投稿）
-            async function NTLC_CreatePost(content) {
-                const { data, error } = await supabase
-                    .from('posts')
-                    .insert([{ content, status: 'pending' }])
-                    .select();
-                return { data, error };
-            }
-
-            // 登录
-            async function NTLC_Login(email, password) {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                return { data, error };
-            }
-
-            // 注册
-            async function NTLC_Register(email, password) {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password
-                });
-                return { data, error };
-            }
-
-            // 审核文章（修改状态）
-            async function NTLC_ReviewPost(postId, status) {
-                const { data, error } = await supabase
-                    .from('posts')
-                    .update({ status })
-                    .eq('id', postId);
-                return { data, error };
-            }
-
-            // 获取已发布文章
-            async function fetchApprovedArticles() {
-                const { data, error } = await supabase
-                    .from('posts')
-                    .select('*')
-                    .eq('status', 'approved')
-                    .order('created_at', { ascending: false });
-                if (error) {
-                    console.error('获取文章失败:', error);
-                    return [];
-                }
-                return data;
-            }
-
-            // 获取待审核文章
-            async function fetchPendingArticles() {
-                const { data, error } = await supabase
-                    .from('posts')
-                    .select('*')
-                    .eq('status', 'pending')
-                    .order('created_at', { ascending: false });
-                if (error) {
-                    console.error('获取待审核失败:', error);
-                    return [];
-                }
-                return data;
-            }
-
-            // ========== 全局变量 ==========
             const ADMIN_PASSWORD = '159357258000ABC@';
             let currentAnnouncement = '';
             let currentUser = null;
-            let articleImages = []; // 仅用于前端预览，实际提交时可结合 Supabase Storage
+            let articleImages = [];
 
-            // ========== DOM 快捷选取 ==========
             const $ = (s) => document.querySelector(s);
             const $$ = (s) => document.querySelectorAll(s);
             const toast = $('#toast');
@@ -889,11 +445,10 @@
                 window._t = setTimeout(() => toast.classList.remove('show'), 2200);
             }
 
-            // ========== 图片上传（可替换为 Supabase Storage） ==========
+            // 图片上传（模拟，可替换为 Supabase Storage）
             async function uploadImage(file) {
-                // 当前为演示模拟，返回临时 blob URL
                 showToast('📤 图片上传中...');
-                return new Promise((resolve) => {
+                return new Promise(resolve => {
                     setTimeout(() => {
                         showToast('✅ 图片上传成功');
                         resolve(URL.createObjectURL(file));
@@ -901,51 +456,70 @@
                 });
             }
 
-            // ========== 渲染文章列表 ==========
             async function renderArticles() {
-                const approvedArticles = await fetchApprovedArticles();
-                if (!approvedArticles.length) {
-                    articlesContainer.innerHTML = `<div class="empty-state"><p>📄 暂无文章，成为第一位投稿者吧！</p><a href="#submit-article" class="btn-outline-red">立即投稿</a></div>`;
-                    return;
+                try {
+                    const approved = await fetchApprovedArticles();
+                    if (!approved.length) {
+                        articlesContainer.innerHTML = `<div class="empty-state"><p>📄 暂无文章，成为第一位投稿者吧！</p><a href="#submit-article" class="btn-outline-red">立即投稿</a></div>`;
+                        return;
+                    }
+                    let html = '<div class="articles-grid">';
+                    approved.forEach(a => {
+                        let title = '无标题', author = '匿名', category = '其他', body = '';
+                        try {
+                            const parsed = JSON.parse(a.content);
+                            title = parsed.title || title;
+                            author = parsed.author || author;
+                            category = parsed.category || category;
+                            body = parsed.content || '';
+                        } catch (e) { body = a.content; }
+                        const excerpt = body.substring(0, 80) + (body.length > 80 ? '…' : '');
+                        html += `<div class="article-card">
+                            <span class="card-tag">${category}</span>
+                            <h3>${title}</h3>
+                            <p class="card-excerpt">${excerpt}</p>
+                            <div class="card-meta"><span>✍️ ${author}</span><span>📅 ${a.created_at?.slice(0,10) || ''}</span></div>
+                        </div>`;
+                    });
+                    html += '</div>';
+                    articlesContainer.innerHTML = html;
+                } catch (err) {
+                    console.error('加载文章失败:', err);
+                    showToast('加载文章失败，请检查网络或数据库');
                 }
-                let html = '<div class="articles-grid">';
-                approvedArticles.forEach((a) => {
-                    // 内容格式：假设 content 保存为完整文本，这里简单提取前 80 字符
-                    const excerpt = (a.content || '').substring(0, 80) + '…';
-                    // 分类等信息暂未存入数据库，可后续扩展
-                    html += `<div class="article-card" data-id="${a.id}">
-                        <span class="card-tag">理论研习</span>
-                        <h3>${a.title || '无标题'}</h3>
-                        <p class="card-excerpt">${excerpt}</p>
-                        <div class="card-meta"><span>✍️ 作者</span><span>📅 ${a.created_at ? a.created_at.slice(0,10) : ''}</span></div>
-                    </div>`;
-                });
-                html += '</div>';
-                articlesContainer.innerHTML = html;
             }
 
-            // ========== 渲染待审核列表 ==========
             async function renderReviewList() {
                 const container = $('#reviewListContainer');
-                const pendingArticles = await fetchPendingArticles();
-                if (!pendingArticles.length) {
-                    container.innerHTML = '<p>暂无待审核稿件</p>';
-                    return;
+                try {
+                    const pending = await fetchPendingArticles();
+                    if (!pending.length) {
+                        container.innerHTML = '<p>暂无待审核稿件</p>';
+                        return;
+                    }
+                    let html = '<ul class="review-list">';
+                    pending.forEach(a => {
+                        let title = '无标题', body = '';
+                        try {
+                            const parsed = JSON.parse(a.content);
+                            title = parsed.title || title;
+                            body = parsed.content || '';
+                        } catch (e) { body = a.content; }
+                        const excerpt = body.substring(0, 80) + (body.length > 80 ? '…' : '');
+                        html += `<li class="review-item">
+                            <h4>${title}</h4>
+                            <div>${excerpt}</div>
+                            <div class="review-actions">
+                                <button class="btn-sm btn-approve" data-id="${a.id}">批准</button>
+                                <button class="btn-sm btn-reject" data-id="${a.id}">拒绝</button>
+                            </div>
+                        </li>`;
+                    });
+                    html += '</ul>';
+                    container.innerHTML = html;
+                } catch (err) {
+                    container.innerHTML = '<p>加载待审核列表失败</p>';
                 }
-                let html = '<ul class="review-list">';
-                pendingArticles.forEach((a) => {
-                    const excerpt = (a.content || '').substring(0, 80) + '…';
-                    html += `<li class="review-item">
-                        <h4>${a.title || '无标题'}</h4>
-                        <div>${excerpt}</div>
-                        <div class="review-actions">
-                            <button class="btn-sm btn-approve" data-id="${a.id}">批准</button>
-                            <button class="btn-sm btn-reject" data-id="${a.id}">拒绝</button>
-                        </div>
-                    </li>`;
-                });
-                html += '</ul>';
-                container.innerHTML = html;
             }
 
             function updateAnnouncement() {
@@ -981,13 +555,13 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            // 图片预览管理
             function addImage(file) {
                 uploadImage(file).then(url => {
                     articleImages.push(url);
                     renderImagePreviews();
                 });
             }
+
             function renderImagePreviews() {
                 let html = '';
                 articleImages.forEach((url, i) => {
@@ -1006,6 +580,7 @@
                     renderImagePreviews();
                 }));
             }
+
             function triggerFileInput() {
                 const input = document.createElement('input');
                 input.type = 'file';
@@ -1015,9 +590,8 @@
                 input.click();
             }
 
-            // ========== 事件绑定 ==========
+            // 事件绑定
             $('#btnAddImage').addEventListener('click', triggerFileInput);
-
             articleForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const title = $('#articleTitle').value.trim();
@@ -1025,7 +599,6 @@
                 const category = $('#articleCategory').value;
                 const content = $('#articleContent').value.trim();
                 if (!title || !category || !content) return showToast('请填写完整');
-                // 组装提交内容（可根据需要存储为 JSON 字符串）
                 const fullContent = JSON.stringify({ title, author, category, content, images: [...articleImages] });
                 const { error } = await NTLC_CreatePost(fullContent);
                 if (error) return showToast('投稿失败：' + error.message);
@@ -1046,7 +619,6 @@
                 mailboxForm.reset();
             });
 
-            // 登录/注册
             function switchAuthTab(tab) {
                 $$('.modal-tab').forEach(t => t.classList.remove('active'));
                 if (tab === 'login') {
@@ -1063,14 +635,17 @@
 
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const inputs = loginForm.querySelectorAll('input');
-                const email = inputs[0].value.trim();
-                const password = inputs[1].value;
-                if (!email) return showToast('请输入邮箱');
+                const email = loginForm.querySelector('input[type="email"]').value.trim();
+                const password = loginForm.querySelector('input[type="password"]').value;
+                if (!email || !password) return showToast('请输入邮箱和密码');
                 const { data, error } = await NTLC_Login(email, password);
-                if (error) return showToast('登录失败：' + error.message);
-                currentUser = { nickname: email, email, avatar: '', bio: '' };
-                showToast('✅ 登录成功，欢迎 ' + email);
+                if (error) {
+                    if (error.message.includes('Invalid login credentials')) return showToast('邮箱或密码错误');
+                    if (error.message.includes('Email not confirmed')) return showToast('邮箱尚未验证，请检查收件箱');
+                    return showToast('登录失败：' + error.message);
+                }
+                currentUser = { nickname: email.split('@')[0], email, avatar: '', bio: '' };
+                showToast('✅ 登录成功，欢迎 ' + currentUser.nickname);
                 loginForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
@@ -1085,9 +660,13 @@
                 const password = inputs[2].value;
                 if (!username || !email || !password) return showToast('请填写完整');
                 if (password.length < 6) return showToast('密码至少6位');
-                const { data, error } = await NTLC_Register(email, password);
-                if (error) return showToast('注册失败：' + error.message);
-                showToast('🎉 注册成功，请检查邮箱确认！');
+                if (!email.includes('@')) return showToast('请输入有效的邮箱地址');
+                const { error } = await NTLC_Register(email, password);
+                if (error) {
+                    if (error.message.includes('already registered')) return showToast('该邮箱已被注册');
+                    return showToast('注册失败：' + error.message);
+                }
+                showToast('🎉 注册成功！请登录（若需验证邮箱请查看收件箱）');
                 registerForm.reset();
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
@@ -1097,7 +676,6 @@
             $('#modalClose').addEventListener('click', () => { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
             modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
 
-            // 账号设置
             $('#changeAvatarBtn').addEventListener('click', () => $('#avatarFileInput').click());
             $('#avatarFileInput').addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -1111,7 +689,7 @@
                     reader.readAsDataURL(file);
                 }
             });
-            accountForm.addEventListener('submit', async (e) => {
+            accountForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 currentUser.nickname = $('#accountNickname').value.trim();
                 currentUser.bio = $('#accountBio').value.trim();
@@ -1123,7 +701,6 @@
             $('#accountModalClose').addEventListener('click', () => { accountModalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
             accountModalOverlay.addEventListener('click', (e) => { if (e.target === accountModalOverlay) { accountModalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
 
-            // 管理入口
             btnOpenAdmin.addEventListener('click', () => {
                 passwordModalOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -1176,7 +753,6 @@
             });
             $('#closeAnnounce').addEventListener('click', () => { currentAnnouncement = ''; updateAnnouncement(); });
 
-            // 审核按钮事件（事件委托）
             $('#reviewListContainer').addEventListener('click', async (e) => {
                 if (e.target.classList.contains('btn-approve')) {
                     const postId = e.target.dataset.id;
@@ -1194,7 +770,6 @@
                 }
             });
 
-            // 封禁演示
             $('#banSubmitBtn').addEventListener('click', () => {
                 const target = $('#banTarget').value.trim();
                 if (!target) return showToast('请输入目标');
@@ -1202,7 +777,6 @@
                 $('#banTarget').value = '';
             });
 
-            // 移动菜单
             hamburger.addEventListener('click', () => {
                 const open = navLinks.classList.toggle('open');
                 hamburger.classList.toggle('active', open);
@@ -1214,7 +788,6 @@
                 }
             });
 
-            // 滚动导航高亮
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 10) $('#navbar').classList.add('scrolled');
                 else $('#navbar').classList.remove('scrolled');
@@ -1231,7 +804,7 @@
             updateAnnouncement();
             updateAuthUI();
             renderImagePreviews();
-            console.log('✨ NT Journal 已启动 · Supabase 全面对接');
+            console.log('✨ NT Journal 已启动 · Supabase 全功能对接');
         })();
     </script>
 </body>
