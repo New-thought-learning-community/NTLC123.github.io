@@ -1056,24 +1056,23 @@
                     date: new Date().toISOString().slice(0,10),
                     images: [...articleImages]
                 };
-                // 对接后端：发送 article 到 POST /articles
-                // try {
-                //   const res = await fetch(API_BASE + '/articles', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(article)
-                //   });
-                //   if (res.ok) showToast('稿件已提交');
-                // } catch (err) { showToast('提交失败'); }
-                pendingArticles.push(article);
-                articleImages.forEach(url => URL.revokeObjectURL(url));
-                articleImages = [];
-                renderImagePreviews();
-                articleForm.reset();
-                showToast('📝 稿件已提交，等待审核');
-                if (adminModalOverlay.classList.contains('active')) renderReviewList();
-            });
-
+              // ==========================================
+             // 🎛️ 缝合后的 Supabase 真实发布逻辑
+             // ==========================================
+             // 1. 拼装成我们存进数据库的完整内容
+             const fullContent = `【${category}】${title}\n作者: ${author}\n\n${content}`;
+             // 2. 扔给云端，默认就是 pending 待审核状态
+             const result = await NTLC_CreatePost(fullContent);
+             if (result && result.error) {
+              return showToast('<span class="emoji emoji2716"></span> 投稿失败：' + result.error);<br/>    }
+             // 3. 原汁原味保留你原本的图片及表单清空特效
+             articleImages.forEach(url => URL.revokeObjectURL(url));
+             articleImages = [];
+             renderImagePreviews();
+             articleForm.reset();
+             showToast('<span class="emoji emoji1f4d1"></span> 稿件已提交，等待审核');
+             // 4. 如果此时管理员窗口开着，立马自动刷新你的审核面板
+             if (adminModalOverlay.classList.contains('active')) {   renderReviewList();}
             mailboxForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const name = $('#mailName').value.trim() || '匿名青年';
@@ -1215,24 +1214,28 @@
             $('#reviewListContainer').addEventListener('click', (e) => {
                 if (e.target.classList.contains('btn-approve')) {
                     const idx = parseInt(e.target.dataset.approve);
-                    const art = pendingArticles.splice(idx, 1)[0];
-                    approvedArticles.push(art);
-                    renderReviewList();
-                    renderArticles();
-                    showToast('✅ 稿件已批准');
+                         // ==========================================
+                 // 🟢 当管理员点击【批准/通过】按钮
+                 // ==========================================
+                 // 1. 获取当前点击的稿件在 Supabase 中的真 ID
+                 const postId = e.target.dataset.id; 
+                 // 2. 调用我们在 supabase-config.js 里写好的审核法宝，状态改成 approved
+                 const { error } = await NTLC_ReviewPost(postId, 'approved');
+                 if (error) return showToast('<span class="emoji emoji2716"></span> 审批失败：' + error);
+                 showToast('🟢 稿件已批准并公开发布！');
+                 // 3. 实时刷新列表
+                 await renderReviewList();
+                 if (typeof renderArticles === 'function') await renderArticles();
                 } else if (e.target.classList.contains('btn-reject')) {
-                    const idx = parseInt(e.target.dataset.reject);
-                    pendingArticles.splice(idx, 1);
-                    renderReviewList();
-                    showToast('❌ 稿件已拒绝');
-                }
-            });
-            $('#banSubmitBtn').addEventListener('click', () => {
-                const target = $('#banTarget').value.trim();
-                if (!target) return showToast('请输入目标');
-                showToast(`⛔ 已封禁：${target} (演示)`);
-                $('#banTarget').value = '';
-            });
+                 // ==========================================
+                 // <span class="emoji emoji1f534"></span> 当管理员点击【拒绝/退回】按钮
+                 // ==========================================
+                 const postId = e.target.dataset.reject; // 或者是 dataset.id，取决于你按钮上的绑定
+                 // 状态改成 banned (封禁/拒绝)
+                 const { error } = await NTLC_ReviewPost(postId, 'banned');
+                 if (error) return showToast('<span class="emoji emoji2716"></span> 操作失败：' + error);
+                 showToast('<span class="emoji emoji2716"></span> 稿件已拒绝');await renderReviewList();
+                  }
 
             // 移动菜单
             hamburger.addEventListener('click', () => {
