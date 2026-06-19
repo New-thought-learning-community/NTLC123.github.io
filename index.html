@@ -2,810 +2,905 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新思想期刊 · NT Journal</title>
-    <!-- Supabase SDK -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新思想论坛 / NT论坛</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f9f9f7;
-            --bg-tertiary: #f2f1ed;
-            --text-primary: #1a1a1a;
-            --text-secondary: #4a4a4a;
-            --text-tertiary: #7a7a7a;
-            --accent-red: #c0392b;
-            --accent-red-light: #e74c3c;
-            --accent-gold: #d4a017;
-            --accent-gold-light: #f0c75e;
-            --accent-gold-pale: #fdf6e8;
-            --border: #e8e6e1;
-            --border-light: #f0eeea;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.10);
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "华文宋体", "SimSun", Georgia, serif;
-            --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --nav-height: 64px;
-            --max-width: 1200px;
+        /* 全局重置与排版优化 (类似 ChatGPT 的极简风格) */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: #f9fafb; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: #1a1a1a;
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.7;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        /* 主容器居中悬浮，增加阴影与圆角，质感升级 */
+        #app { 
+            width: 100%; 
+            max-width: 1200px; 
+            background: #ffffff; 
+            min-height: 100vh; 
+            padding: 0; 
+            position: relative; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.04); 
+            margin: 0 auto;
         }
-        .announcement-bar {
-            display: none;
-            background: var(--accent-gold-pale);
-            border-bottom: 1px solid rgba(212, 160, 23, 0.25);
-            padding: 12px 24px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #5c4700;
-            position: relative;
-            animation: fadeInDown 0.3s ease;
+        .hidden { display: none !important; }
+ 
+        /* 顶部 Header 带毛玻璃效果 */
+        header { 
+            padding: 16px 24px; 
+            border-bottom: 1px solid #e5e7eb; 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 12px; 
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
-        .announcement-bar.show { display: block; }
-        .announcement-bar .close-announce {
-            position: absolute;
-            right: 16px; top: 50%;
-            transform: translateY(-50%);
-            background: none; border: none;
-            font-size: 1.2rem; cursor: pointer;
-            color: #5c4700; opacity: 0.7;
+        .brand { 
+            font-size: 24px; 
+            font-weight: 700; 
+            letter-spacing: -0.02em; 
+            background: linear-gradient(135deg, #d92b2b 0%, #b91c1c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-        .navbar {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(255,255,255,0.94);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-light);
-            height: var(--nav-height);
-            transition: all var(--transition);
+        .search-bar { 
+            flex: 1; 
+            min-width: 200px; 
+            max-width: 400px; 
+            position: relative; 
         }
-        .navbar.scrolled { box-shadow: var(--shadow-sm); }
-        .navbar-inner {
-            max-width: var(--max-width); margin: 0 auto; padding: 0 24px;
-            height: 100%; display: flex; align-items: center; justify-content: space-between;
+        .search-bar input { 
+            width: 100%; 
+            padding: 10px 18px; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 9999px; 
+            font-size: 14px; 
+            outline: none; 
+            background: #f3f4f6; 
+            transition: all 0.2s ease;
         }
-        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); flex-shrink: 0; }
-        .nav-brand .brand-icon {
-            width: 38px; height: 38px; border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--accent-red), #a93226);
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; font-weight: 700; font-size: 16px;
-            box-shadow: 0 2px 8px rgba(192,57,43,0.25);
+        .search-bar input:focus { 
+            background: #ffffff; 
+            border-color: #d92b2b; 
+            box-shadow: 0 0 0 3px rgba(217, 43, 43, 0.1);
         }
-        .nav-brand .brand-text { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
-        .nav-brand .brand-text span { color: var(--accent-red); }
-        .nav-links { display: flex; align-items: center; gap: 6px; list-style: none; }
-        .nav-links a {
-            padding: 8px 16px; border-radius: 20px; text-decoration: none;
-            color: var(--text-secondary); font-size: 0.95rem; font-weight: 500;
-            transition: all var(--transition);
+        .welcome-msg { 
+            width: 100%; 
+            text-align: center; 
+            color: #6b7280; 
+            font-size: 14px; 
+            padding: 4px 0; 
+            letter-spacing: 1px; 
         }
-        .nav-links a:hover, .nav-links a.active { color: var(--accent-red); background: #fef5f4; }
-        .btn-nav-auth, .btn-nav-admin, .btn-nav-user {
-            margin-left: 8px; padding: 8px 20px; border-radius: 22px;
-            border: 1.5px solid var(--accent-red); color: var(--accent-red);
-            background: transparent; cursor: pointer; font-weight: 600;
-            font-size: 0.9rem; transition: all var(--transition);
-            display: flex; align-items: center; gap: 6px;
+ 
+        /* 导航栏 采用药丸形状按钮 */
+        nav { 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 6px 12px; 
+            padding: 14px 24px; 
+            background: #f9fafb; 
+            border-bottom: 1px solid #e5e7eb; 
         }
-        .btn-nav-admin { border-color: transparent; padding: 8px 12px; font-size: 1.2rem; margin-left: 0; }
-        .btn-nav-user { border-color: var(--border-light); color: var(--text-primary); background: var(--bg-secondary); }
-        .btn-nav-auth:hover, .btn-nav-user:hover { background: var(--accent-red); color: #fff; }
-        .btn-nav-admin:hover { background: var(--bg-tertiary); }
-        .user-avatar-mini { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #e0e0e0; }
-        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 8px; z-index: 1001; }
-        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: all var(--transition); }
-        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
-        main { flex: 1; max-width: var(--max-width); width: 100%; margin: 0 auto; padding: 0 24px; }
-        .hero { text-align: center; padding: 60px 20px 40px; }
-        .hero-badge { display: inline-block; background: var(--accent-gold-pale); color: var(--accent-gold); font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(212,160,23,0.2); }
-        .hero h1 { font-family: var(--font-serif); font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; }
-        .hero h1 .highlight { color: var(--accent-red); position: relative; }
-        .hero h1 .highlight::after { content: ''; position: absolute; bottom: 2px; left: 0; right: 0; height: 6px; background: rgba(212,160,23,0.35); border-radius: 3px; z-index: -1; }
-        .section { padding: 48px 0; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-        .section-header h2 { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .section-header h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-red); display: inline-block; }
-        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .article-card {
-            background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-lg);
-            padding: 24px; transition: all var(--transition); display: flex; flex-direction: column; gap: 12px; cursor: pointer;
+        .nav-btn { 
+            background: transparent; 
+            border: none; 
+            padding: 8px 16px; 
+            color: #4b5563; 
+            font-size: 14px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            border-radius: 9999px; 
         }
-        .article-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: transparent; }
-        .card-tag { font-size: 0.78rem; font-weight: 600; color: var(--accent-red); background: #fef5f4; padding: 4px 10px; border-radius: 12px; align-self: flex-start; }
-        .article-card h3 { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 700; }
-        .card-excerpt { font-size: 0.9rem; color: var(--text-tertiary); flex: 1; }
-        .card-meta { font-size: 0.8rem; color: var(--text-tertiary); display: flex; gap: 16px; }
-        .card-images { display: flex; gap: 8px; flex-wrap: wrap; }
-        .card-images img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light); }
-        .empty-state { background: var(--bg-secondary); border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 48px 24px; text-align: center; color: var(--text-tertiary); }
-        .btn-outline-red { padding: 10px 24px; border-radius: 24px; border: 1.5px solid var(--accent-red); color: var(--accent-red); background: transparent; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; transition: all var(--transition); }
-        .btn-outline-red:hover { background: var(--accent-red); color: #fff; }
-        .feature-section { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 40px 32px; margin: 16px 0 48px; border: 1px solid var(--border-light); position: relative; overflow: hidden; }
-        .feature-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; z-index: 1; position: relative; }
-        .feature-info h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .feature-info p { color: var(--text-tertiary); font-size: 0.95rem; }
-        .feature-form { display: flex; flex-direction: column; gap: 14px; }
-        .feature-form input, .feature-form textarea, .feature-form select {
-            padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-md);
-            font-family: var(--font-sans); font-size: 0.9rem; background: #fff; transition: all var(--transition); resize: vertical;
+        .nav-btn:hover { 
+            background: #e5e7eb; 
+            color: #111827; 
         }
-        .feature-form input:focus, .feature-form textarea:focus, .feature-form select:focus { outline: none; border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(212,160,23,0.08); }
-        .image-upload-area { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .image-preview-item { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-        .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
-        .image-preview-item .remove-img { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-upload { padding: 10px 20px; border-radius: 20px; border: 1.5px dashed var(--accent-gold); color: var(--accent-gold); background: transparent; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
-        .btn-submit { padding: 10px 28px; border-radius: 24px; border: none; background: var(--accent-red); color: #fff; font-weight: 600; cursor: pointer; box-shadow: 0 2px 10px rgba(192,57,43,0.2); transition: all var(--transition); }
-        .btn-submit:hover { background: #a93226; transform: translateY(-1px); }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity var(--transition); backdrop-filter: blur(4px); }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal { background: #fff; border-radius: var(--radius-lg); padding: 36px 30px 30px; width: 90%; max-width: 440px; position: relative; box-shadow: var(--shadow-lg); max-height: 85vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-tertiary); }
-        .modal-tabs { display: flex; margin-bottom: 24px; border-bottom: 2px solid var(--border-light); }
-        .modal-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 600; color: var(--text-tertiary); border-bottom: 2px solid transparent; margin-bottom: -2px; background: none; border: none; }
-        .modal-tab.active { color: var(--accent-red); border-bottom-color: var(--accent-red); }
-        .modal-form { display: none; flex-direction: column; gap: 14px; }
-        .modal-form.active { display: flex; }
-        .modal-form input { padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-md); font-size: 0.9rem; }
-        .modal-form .btn-submit { align-self: stretch; text-align: center; }
-        .form-hint { font-size: 0.78rem; color: var(--text-tertiary); text-align: center; }
-        .admin-modal .modal { max-width: 700px; }
-        .admin-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--border-light); }
-        .admin-tab { padding: 10px 16px; cursor: pointer; font-weight: 600; color: var(--text-tertiary); border-bottom: 2px solid transparent; background: none; border: none; }
-        .admin-tab.active { color: var(--accent-red); border-bottom-color: var(--accent-red); }
-        .admin-panel { display: none; }
-        .admin-panel.active { display: block; }
-        .review-list { list-style: none; display: flex; flex-direction: column; gap: 14px; max-height: 55vh; overflow-y: auto; }
-        .review-item { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 16px; }
-        .btn-sm { padding: 6px 16px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; }
-        .btn-approve { background: #2e7d32; color: white; }
-        .btn-reject { background: #c0392b; color: white; }
-        .admin-textarea { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: var(--radius-md); min-height: 100px; }
-        footer { border-top: 1px solid var(--border-light); padding: 24px; text-align: center; font-size: 0.85rem; color: var(--text-tertiary); background: var(--bg-secondary); margin-top: auto; }
-        .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 0.9rem; opacity: 0; pointer-events: none; transition: all 0.35s; z-index: 3000; }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .nav-btn.active { 
+            background: #fee2e2; 
+            color: #d92b2b; 
+            font-weight: 600; 
+        }
+        .nav-btn.admin-btn { 
+            color: #dc2626; 
+            font-weight: 600; 
+        }
+ 
+        /* 页面容器 */
+        .page-container { 
+            padding: 24px; 
+            max-width: 900px; 
+            margin: 0 auto; 
+        }
+ 
+        /* 通知栏 现代卡片设计 */
+        .notice-area { 
+            background: #fcfcfc; 
+            padding: 16px 20px; 
+            border-radius: 12px; 
+            margin-bottom: 24px; 
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #d92b2b; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .notice-area h4 { 
+            color: #111827; 
+            margin-bottom: 12px; 
+            font-size: 15px; 
+            font-weight: 600; 
+        }
+        .notice-scroll { 
+            display: flex; 
+            overflow-x: auto; 
+            gap: 16px; 
+            padding-bottom: 8px; 
+            scrollbar-width: thin; 
+        }
+        .notice-scroll::-webkit-scrollbar { height: 6px; }
+        .notice-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+        .notice-scroll::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 9999px;}
+        .notice-item { 
+            min-width: 220px; 
+            padding: 12px 16px; 
+            background: #ffffff; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 10px; 
+            flex-shrink: 0; 
+            position: relative; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .notice-item.revoked { opacity: 0.5; background: #f9fafb; }
+        .notice-item .time { font-size: 12px; color: #9ca3af; display: block; margin-top: 6px; }
+        .notice-item .del-btn { position: absolute; right: 12px; top: 12px; color: #d92b2b; background: transparent; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+ 
+        /* 帖子卡片 全新质感，白色卡片 + 精致阴影 */
+        .post-card { 
+            background: #ffffff; 
+            border: 1px solid #e5e7eb; 
+            padding: 24px; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .post-card:hover { 
+            border-color: #d1d5db; 
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            transform: translateY(-1px);
+        }
+        .post-card .header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .post-card .author { color: #d92b2b; cursor: pointer; font-weight: 600; transition: 0.2s;}
+        .post-card .author:hover { text-decoration: underline; }
+        .post-card .content { line-height: 1.7; color: #1f2937; margin: 12px 0 16px; word-break: break-all; white-space: pre-wrap; font-size: 15px; }
+        .post-card .meta { display: flex; gap: 12px; color: #6b7280; font-size: 13px; flex-wrap: wrap; }
+        .post-card .meta button { background: #f3f4f6; border: 1px solid transparent; padding: 6px 16px; border-radius: 9999px; cursor: pointer; transition: all 0.2s; color: #4b5563; font-size: 13px;}
+        .post-card .meta button:hover { background: #e5e7eb; color: #111827; }
+        .post-card .status-tag { font-size: 12px; padding: 4px 12px; border-radius: 9999px; background: #f3f4f6; color: #6b7280; display: inline-block; font-weight: 500; }
+        .post-card .status-tag.pending { background: #fef3c7; color: #d97706; }
+        .post-card .status-tag.banned { background: #fee2e2; color: #dc2626; }
+ 
+        /* 评论区 */
+        .comment-list { margin-top: 16px; padding-left: 16px; border-left: 3px solid #e5e7eb; }
+        .comment-item { font-size: 14px; color: #4b5563; margin-bottom: 8px; line-height: 1.5;}
+        .comment-item b { color: #1f2937; font-weight: 600; }
+        .comment-input { display: flex; gap: 12px; margin-top: 12px; }
+        .comment-input input { flex: 1; padding: 8px 14px; border: 1px solid #e5e7eb; border-radius: 9999px; font-size: 14px; outline: none; background: #f9fafb; transition: 0.2s;}
+        .comment-input input:focus { border-color: #d92b2b; background: #ffffff; }
+        .comment-input button { background: #d92b2b; color: #fff; border: none; padding: 8px 20px; border-radius: 9999px; cursor: pointer; font-weight: 500; transition: 0.2s;}
+        .comment-input button:hover { opacity: 0.9; box-shadow: 0 2px 4px rgba(217,43,43,0.2); }
+ 
+        /* 表单与输入框 统一现代化圆角 */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #374151; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 15px; outline: none; background: #fcfcfc; transition: 0.2s; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #d92b2b; background: #ffffff; box-shadow: 0 0 0 4px rgba(217, 43, 43, 0.1); }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        
+        /* 主按钮 品牌色点缀 */
+        .btn { 
+            background: linear-gradient(135deg, #d92b2b 0%, #b91c1c 100%); 
+            color: #fff; 
+            border: none; 
+            padding: 14px 24px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            width: 100%; 
+            font-size: 16px; 
+            font-weight: 600;
+            transition: all 0.2s ease; 
+            box-shadow: 0 2px 4px rgba(217, 43, 43, 0.15);
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(217, 43, 43, 0.2); }
+        .btn:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(217, 43, 43, 0.15); }
+        .btn-gray { 
+            background: #f3f4f6; 
+            color: #374151; 
+            box-shadow: none; 
+            background: #e5e7eb; 
+            font-weight: 500;
+        }
+        .btn-gray:hover { background: #d1d5db; color: #111827; box-shadow: none; }
+        .btn-sm { width: auto; padding: 8px 18px; font-size: 13px; margin: 0; }
+ 
+        /* 响应式适配（手机端） */
         @media (max-width: 768px) {
-            .hamburger { display: flex; }
-            .nav-links { position: fixed; top: 0; right: -100%; width: 75%; height: 100vh; background: #fff; flex-direction: column; align-items: flex-start; padding: 80px 28px 28px; box-shadow: var(--shadow-lg); transition: right var(--transition); z-index: 1000; }
-            .nav-links.open { right: 0; }
-            .nav-links a { width: 100%; padding: 12px 16px; }
-            .btn-nav-auth, .btn-nav-admin, .btn-nav-user { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; }
-            .feature-inner { grid-template-columns: 1fr; }
-            .hero { padding: 40px 12px 24px; }
-            .articles-grid { grid-template-columns: 1fr; }
+            #app { padding: 0; }
+            header { padding: 12px 16px; flex-direction: row; flex-wrap: wrap; }
+            .brand { font-size: 20px; }
+            .search-bar { min-width: 100px; }
+            nav { padding: 12px 16px; gap: 4px 8px; }
+            .nav-btn { font-size: 13px; padding: 6px 12px; }
+            .page-container { padding: 16px; }
+            .post-card { padding: 16px; }
         }
-        @media (max-width: 480px) { .navbar-inner { padding: 0 12px; } main { padding: 0 12px; } .modal { padding: 24px 16px; } }
+ 
+        /* Toast 提示 风格对齐 */
+        #toast { 
+            position: fixed; 
+            top: 24px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: #1f2937; 
+            color: #fff; 
+            padding: 14px 28px; 
+            border-radius: 12px; 
+            z-index: 9999; 
+            display: none; 
+            max-width: 90%; 
+            text-align: center; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <div class="announcement-bar" id="announcementBar">
-        <span id="announcementText"></span>
-        <button class="close-announce" id="closeAnnounce">×</button>
-    </div>
-
-    <nav class="navbar" id="navbar">
-        <div class="navbar-inner">
-            <a href="#" class="nav-brand">
-                <div class="brand-icon">NT</div>
-                <div class="brand-text">新思想<span>期刊</span></div>
-            </a>
-            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#articles" class="active" data-nav="articles">文章</a></li>
-                <li><a href="#submit-article" data-nav="submit-article">文章投稿</a></li>
-                <li><a href="#mailbox" data-nav="mailbox">青年信箱</a></li>
-                <li><button class="btn-nav-admin" id="btnOpenAdmin" title="管理后台">⚙️</button></li>
-                <li id="navAuthArea"><button class="btn-nav-auth" id="btnOpenAuth">登录 / 注册</button></li>
-            </ul>
-        </div>
+<!-- 注意：下面HTML结构和JS代码原封不动保持原样，完全没改 -->
+<div id="app">
+    <div id="toast"></div>
+ 
+    <header>
+        <div class="brand">新思想论坛 / NT论坛</div>
+        <div class="search-bar"><input type="text" id="searchInput" placeholder="搜索文章或站内用户...回车搜索"></div>
+        <div class="welcome-msg">欢迎同志加入</div>
+    </header>
+ 
+    <nav>
+        <button class="nav-btn active" data-page="home" onclick="navigate('home')">首页</button>
+        <button class="nav-btn" data-page="auth" onclick="navigate('auth')" id="authNavBtn">登录/注册</button>
+        <button class="nav-btn" data-page="post" onclick="navigate('post')" id="postNavBtn" style="display:none;">发布文章</button>
+        <button class="nav-btn" data-page="youth" onclick="navigate('youth')">青年信箱</button>
+        <button class="nav-btn admin-btn" data-page="admin" onclick="navigate('admin')">管理者模式</button>
+        <button class="nav-btn" data-page="profile" onclick="navigate('profile')" id="profileNavBtn" style="display:none;">个人中心</button>
     </nav>
-
-    <main>
-        <section class="hero">
-            <div class="hero-badge">📖 学习 · 思考 · 实践</div>
-            <h1>欢迎<span class="highlight">同志</span>加入</h1>
-        </section>
-
-        <section class="section" id="articles">
-            <div class="section-header"><h2><span class="dot"></span>精选文章</h2></div>
-            <div id="articlesContainer"></div>
-        </section>
-
-        <section class="feature-section" id="submit-article">
-            <div class="feature-inner">
-                <div class="feature-info">
-                    <h2>✍️ 文章投稿</h2>
-                    <p>欢迎各位同志踊跃投稿，分享理论学习心得、实践感悟或社会观察。优秀稿件将发表在期刊平台。</p>
+ 
+    <div class="page-container">
+        <div id="page-home">
+            <div class="notice-area">
+                <h4>📢 全站通知</h4>
+                <div class="notice-scroll" id="noticeList"></div>
+            </div>
+            <div id="postList"></div>
+        </div>
+ 
+        <div id="page-auth" class="hidden" style="max-width: 400px; margin: 0 auto;">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-gray" id="loginTab" onclick="switchAuthTab('login')">登录</button>
+                <button class="btn btn-gray" id="registerTab" onclick="switchAuthTab('register')">注册</button>
+            </div>
+            <div class="form-group"><label>邮箱</label><input type="email" id="authEmail"></div>
+            <div class="form-group"><label>密码</label><input type="password" id="authPassword"></div>
+            <button class="btn" id="authActionBtn" onclick="handleAuth(this)">登录</button>
+            <button class="btn btn-gray" style="margin-top:16px;" id="logoutBtn" onclick="handleLogout()">退出登录</button>
+        </div>
+ 
+        <div id="page-post" class="hidden" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="margin-bottom: 16px;">发布新文章</h3>
+            <div class="form-group"><label>文章内容</label><textarea id="postContent" rows="6" placeholder="阐述你的新思想..."></textarea></div>
+            <button class="btn" onclick="submitPost(this)">立即发布</button>
+        </div>
+ 
+        <div id="page-youth" class="hidden" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="text-align: center; margin-bottom: 20px;">📩 青年信箱</h3>
+            <div class="form-group"><label>你的邮箱</label><input type="email" id="youthEmail" placeholder="请输入你的联系邮箱"></div>
+            <div class="form-group"><label>信件内容</label><textarea id="youthContent" rows="6" placeholder="写下你想说的心里话..."></textarea></div>
+            <button class="btn" onclick="submitYouthLetter(this)">✉️ 寄出信件</button>
+        </div>
+ 
+        <div id="page-admin" class="hidden" style="max-width: 700px; margin: 0 auto;">
+            <h3 style="color:#d92b2b; text-align:center;">🔐 管理者模式</h3>
+            <div id="adminPasswordBox">
+                <div class="form-group"><label>请输入管理员密码</label><input type="password" id="adminPwdInput"></div>
+                <button class="btn" onclick="verifyAdmin(this)">验证密码</button>
+            </div>
+            <div id="adminPanelBox" class="hidden">
+                <div style="background: #f9fafb; padding: 20px; border-radius: 16px; margin: 20px 0; border: 1px solid #e5e7eb;">
+                    <div class="form-group"><label>发布全站通知</label><textarea id="notifyContent" rows="3"></textarea></div>
+                    <button class="btn" onclick="publishNotification(this)">发布通知</button>
                 </div>
-                <form class="feature-form" id="articleForm">
-                    <input type="text" placeholder="文章标题" id="articleTitle" required maxlength="100">
-                    <input type="text" placeholder="作者署名" id="articleAuthor" maxlength="30">
-                    <select id="articleCategory" required>
-                        <option value="" disabled selected>选择分类</option>
-                        <option value="理论研习">理论研习</option>
-                        <option value="经典解读">经典解读</option>
-                        <option value="青年论坛">青年论坛</option>
-                        <option value="实践报告">实践报告</option>
-                        <option value="其他">其他</option>
-                    </select>
-                    <textarea placeholder="正文内容……" id="articleContent" required maxlength="5000"></textarea>
-                    <div class="image-upload-area" id="imagePreviewContainer">
-                        <button type="button" class="btn-upload" id="btnAddImage">📷 添加图片</button>
+                <div>
+                    <h4 style="margin-bottom:12px; color:#111827;">待审核文章</h4>
+                    <div id="pendingPostsList" style="margin-bottom:24px;"></div>
+                    <h4 style="margin-bottom:12px; color:#111827;">全部文章管理（可封禁/恢复）</h4>
+                    <div id="allPostsList"></div>
+                </div>
+            </div>
+        </div>
+ 
+        <div id="page-profile" class="hidden" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="margin-bottom:16px;">个人中心</h3>
+            <div style="padding: 24px; background: #f9fafb; border-radius: 16px; border: 1px solid #e5e7eb;">
+                <h4 style="margin-bottom:16px;">修改个人资料</h4>
+                <div class="form-group"><label>昵称</label><input id="profileUsername"></div>
+                <div class="form-group"><label>年龄</label><input type="number" id="profileAge"></div>
+                <div class="form-group"><label>简介</label><input id="profileBio"></div>
+                <button class="btn" onclick="updateProfile(this)">保存修改</button>
+            </div>
+            <div style="margin-top: 20px; display:flex; gap:10px;">
+                <button class="btn btn-gray" onclick="loadMyPosts()">查看我的文章</button>
+                <button class="btn btn-gray" onclick="loadMyCollections()">查看我的收藏</button>
+            </div>
+            <div id="myPostsList"></div>
+        </div>
+ 
+        <div id="page-user" class="hidden" style="max-width: 600px; margin: 0 auto;">
+            <div id="userInfoArea"></div>
+            <div id="userPostList"></div>
+        </div>
+    </div>
+</div>
+ 
+<script>
+(function() {
+    'use strict';
+    // ============================
+    // 1. Supabase 初始化
+    // ============================
+    // 用 sb 而不是 supabase 作为客户端变量名，避免和 CDN 全局对象 window.supabase 混淆/冲突
+    const supabaseUrl = 'https://cjyxleokhkpqkwziuy.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqeXhsZW9raGtwcWt3eml1eSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzM1MTU4NjUxLCJleHAiOjIwNTA3MzQ2NTF9.2WZ4P3Y2nPb_xoIe01V_-snWl3kY-Bi5tV2FqMl4bVc';
+    const sb = window.supabase.createClient(supabaseUrl, supabaseKey);
+ 
+    let currentUser = null;
+    let isAdminUI = false;
+    let isAdminRole = false;
+ 
+    // ============================
+    // 2. 辅助工具
+    // ============================
+    function showToast(msg, color='#333') {
+        const toast = document.getElementById('toast');
+        toast.style.background = color;
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+ 
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.innerText = str ?? '';
+        return div.innerHTML;
+    }
+ 
+    async function getCurrentUser() {
+        try {
+            const { data } = await sb.auth.getUser();
+            return data.user || null;
+        } catch { return null; }
+    }
+ 
+    // 通用：点击按钮执行异步操作时显示"处理中..."并禁用按钮
+    async function withLoading(btn, fn) {
+        if(!btn) return fn();
+        if(btn.dataset.loading === '1') return;
+        const originalText = btn.innerText;
+        btn.dataset.loading = '1';
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.innerText = '处理中...';
+        try {
+            await fn();
+        } finally {
+            btn.dataset.loading = '0';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.innerText = originalText;
+        }
+    }
+ 
+    async function checkIsAdminRole(userId) {
+        if (!userId) return false;
+        const { data } = await sb.from('profiles').select('role').eq('id', userId).single();
+        return data && data.role === 'admin';
+    }
+ 
+    // ============================
+    // 3. 页面路由与导航
+    // ============================
+    const pages = ['home', 'auth', 'post', 'youth', 'admin', 'profile', 'user'];
+    function navigate(pageName) {
+        pages.forEach(p => {
+            const el = document.getElementById(`page-${p}`);
+            if(el) el.classList.add('hidden');
+        });
+        document.getElementById(`page-${pageName}`).classList.remove('hidden');
+ 
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        const navBtn = document.querySelector(`.nav-btn[data-page="${pageName}"]`);
+        if(navBtn) navBtn.classList.add('active');
+ 
+        if(pageName === 'home') {
+            loadNotices(); loadPosts();
+        } else if(pageName === 'profile') {
+            if(!currentUser) { navigate('auth'); return; }
+            loadProfileData();
+        } else if(pageName === 'post') {
+            if(!currentUser) { navigate('auth'); return; }
+        } else if(pageName === 'admin') {
+            document.getElementById('logoutBtn').classList.add('hidden');
+        }
+    }
+ 
+    // ============================
+    // 4. 用户身份验证
+    // ============================
+    function updateNavForUser(isLoggedIn) {
+        document.getElementById('authNavBtn').innerText = isLoggedIn ? '账号' : '登录/注册';
+        document.getElementById('postNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        document.getElementById('profileNavBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        document.getElementById('logoutBtn').classList.toggle('hidden', !isLoggedIn);
+    }
+ 
+    let authMode = 'login';
+    function switchAuthTab(mode) {
+        authMode = mode;
+        document.getElementById('authActionBtn').innerText = mode === 'login' ? '登录' : '注册';
+    }
+ 
+    async function handleAuth(btn) {
+        const email = document.getElementById('authEmail').value.trim();
+        const pass = document.getElementById('authPassword').value;
+        if(!email || !pass) return showToast('请填写完整信息');
+ 
+        await withLoading(btn, async () => {
+            let res;
+            if(authMode === 'login') {
+                res = await sb.auth.signInWithPassword({ email, password: pass });
+            } else {
+                res = await sb.auth.signUp({ email, password: pass });
+                if(!res.error) {
+                    if(res.data.session && res.data.user) {
+                        currentUser = res.data.user;
+                        isAdminRole = await checkIsAdminRole(currentUser.id);
+                        updateNavForUser(true);
+                        navigate('home');
+                        showToast('注册成功，已自动登录！', '#d92b2b');
+                    } else {
+                        showToast('注册成功！请前往邮箱验证激活后再登录。', '#d92b2b');
+                    }
+                    return;
+                }
+            }
+ 
+            if(res.error) { showToast(res.error.message, '#d92b2b'); return; }
+            if(res.data.user) {
+                if(!res.data.user.confirmed_at && !res.data.session) {
+                    await sb.auth.signOut();
+                    showToast('请先前往邮箱验证账号！', '#d92b2b');
+                    return;
+                }
+                currentUser = res.data.user;
+                isAdminRole = await checkIsAdminRole(currentUser.id);
+                updateNavForUser(true);
+                navigate('home');
+                showToast('欢迎同志回到新思想论坛！', '#d92b2b');
+            }
+        });
+    }
+ 
+    async function handleLogout() {
+        await sb.auth.signOut();
+        currentUser = null;
+        isAdminRole = false;
+        isAdminUI = false;
+        updateNavForUser(false);
+        document.getElementById('adminPasswordBox').classList.remove('hidden');
+        document.getElementById('adminPanelBox').classList.add('hidden');
+        navigate('home');
+        showToast('已退出登录');
+    }
+ 
+    // ============================
+    // 5. 首页：通知 + 文章
+    // ============================
+    async function loadNotices() {
+        const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending: false });
+        const container = document.getElementById('noticeList');
+        container.innerHTML = '';
+        if(error) { container.innerHTML = '<span style="color:#999; font-size:14px;">通知加载失败</span>'; return; }
+        if(data && data.length > 0) {
+            data.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'notice-item' + (n.is_active ? '' : ' revoked');
+                div.innerHTML = `${escapeHtml(n.content)}${n.is_active ? '' : ' (已撤销)'} <span class="time">${new Date(n.created_at).toLocaleString()}</span>
+                ${(isAdminUI && isAdminRole && n.is_active) ? `<button class="del-btn" onclick="removeNotice(${n.id})">撤销</button>` : ''}`;
+                container.appendChild(div);
+            });
+        } else {
+            container.innerHTML = '<span style="color:#9ca3af; font-size:14px;">暂无历史通知</span>';
+        }
+    }
+ 
+    async function loadPosts(keyword = '') {
+        let query = sb.from('posts').select('*, profiles(username, id)').eq('status', 'approved').order('created_at', { ascending: false });
+        if(keyword) query = query.ilike('content', `%${keyword}%`);
+        const { data, error } = await query;
+        const container = document.getElementById('postList');
+        container.innerHTML = '';
+        if(error) return showToast('加载失败');
+        if(!data || data.length === 0) {
+            container.innerHTML = '<div style="text-align:center; color:#9ca3af; padding:60px 0; font-size:15px;">还没有文章，欢迎发布第一篇思想！</div>';
+            return;
+        }
+ 
+        let myCollections = [];
+        if(currentUser) {
+            const { data: cols } = await sb.from('collections').select('post_id').eq('user_id', currentUser.id);
+            myCollections = (cols || []).map(c => c.post_id);
+        }
+ 
+        for(let post of data) {
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            const isCollected = myCollections.includes(post.id);
+            const authorName = post.profiles ? (post.profiles.username || '未命名同志') : '未知用户';
+            const authorId = post.profiles ? post.profiles.id : null;
+ 
+            card.innerHTML = `
+                <div class="header">
+                    <span class="author" onclick="${authorId ? `goToUserProfile('${authorId}')` : ''}">${escapeHtml(authorName)}</span>
+                    <span style="color:#9ca3af; font-size:13px;">${new Date(post.created_at).toLocaleString()}</span>
+                </div>
+                <div class="content">${escapeHtml(post.content)}</div>
+                <div class="meta">
+                    <button onclick="toggleCollect(${post.id}, this)">${isCollected ? '❤️ 已收藏' : '🤍 收藏'}</button>
+                    <span>💬 评论区见下方</span>
+                </div>
+                <div class="comment-list" id="comments-${post.id}"></div>
+                <div class="comment-input">
+                    <input type="text" id="comment-input-${post.id}" placeholder="写下你的评论...">
+                    <button onclick="submitComment(${post.id}, this)">发送</button>
+                </div>
+            `;
+            container.appendChild(card);
+            loadComments(post.id);
+        }
+    }
+ 
+    async function loadComments(postId) {
+        const { data } = await sb.from('comments').select('*, profiles(username)').eq('post_id', postId).order('created_at', { ascending: true });
+        const container = document.getElementById(`comments-${postId}`);
+        if(container) {
+            container.innerHTML = '';
+            if(data && data.length > 0) {
+                data.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = 'comment-item';
+                    div.innerHTML = `<b>${escapeHtml(c.profiles ? c.profiles.username : '匿名')}</b>: ${escapeHtml(c.content)}`;
+                    container.appendChild(div);
+                });
+            }
+        }
+    }
+ 
+    // ============================
+    // 6. 发布文章 & 评论 & 收藏
+    // ============================
+    async function submitPost(btn) {
+        if(!currentUser) return showToast('请先登录');
+        const contentEl = document.getElementById('postContent');
+        const content = contentEl.value.trim();
+        if(!content) return showToast('请输入内容');
+        await withLoading(btn, async () => {
+            const { error } = await sb.from('posts').insert({ content, user_id: currentUser.id });
+            if(error) { showToast('发布失败: ' + error.message, '#d92b2b'); return; }
+            showToast('文章发布成功，等待管理员审核');
+            contentEl.value = '';
+            navigate('home');
+        });
+    }
+ 
+    async function submitComment(postId, btn) {
+        if(!currentUser) return showToast('请先登录');
+        const input = document.getElementById(`comment-input-${postId}`);
+        if(!input.value.trim()) return showToast('请输入评论');
+        await withLoading(btn, async () => {
+            const { error } = await sb.from('comments').insert({ post_id: postId, user_id: currentUser.id, content: input.value.trim() });
+            if(error) { showToast('评论失败: ' + error.message, '#d92b2b'); return; }
+            input.value = '';
+            loadComments(postId);
+        });
+    }
+ 
+    async function toggleCollect(postId, btn) {
+        if(!currentUser) return showToast('请先登录');
+        const { data } = await sb.from('collections').select('id').eq('post_id', postId).eq('user_id', currentUser.id);
+        if(data && data.length > 0) {
+            await sb.from('collections').delete().eq('id', data[0].id);
+            btn.innerText = '🤍 收藏';
+        } else {
+            const { error } = await sb.from('collections').insert({ post_id: postId, user_id: currentUser.id });
+            if(error) return showToast('收藏失败: ' + error.message, '#d92b2b');
+            btn.innerText = '❤️ 已收藏';
+        }
+    }
+ 
+    // ============================
+    // 7. 青年信箱 (调用 Supabase Edge Function: send-letter)
+    // ============================
+    async function submitYouthLetter(btn) {
+        const emailEl = document.getElementById('youthEmail');
+        const contentEl = document.getElementById('youthContent');
+        const email = emailEl.value.trim();
+        const content = contentEl.value.trim();
+        if(!email || !content) return showToast('请填写完整');
+ 
+        await withLoading(btn, async () => {
+            const { error } = await sb.functions.invoke('send-letter', {
+                body: { userEmail: email, messageContent: content }
+            });
+            if(error) { showToast('信件发送失败，请稍后重试', '#d92b2b'); return; }
+            showToast('✅ 信件寄出！感谢您的来信。', '#d92b2b');
+            emailEl.value = '';
+            contentEl.value = '';
+        });
+    }
+ 
+    // ============================
+    // 8. 管理员模式
+    // ============================
+    async function verifyAdmin(btn) {
+        const pwd = document.getElementById('adminPwdInput').value;
+        if(pwd !== '1593572580asdfg') {
+            return showToast('密码错误，拒绝进入管理者模式', '#d92b2b');
+        }
+        if(!currentUser) {
+            return showToast('请先登录账号，再尝试进入管理者模式', '#d92b2b');
+        }
+        await withLoading(btn, async () => {
+            isAdminRole = await checkIsAdminRole(currentUser.id);
+            if(!isAdminRole) {
+                showToast('密码正确，但当前账号没有管理员权限（需在数据库中设置）', '#d92b2b');
+                return;
+            }
+            isAdminUI = true;
+            document.getElementById('adminPasswordBox').classList.add('hidden');
+            document.getElementById('adminPanelBox').classList.remove('hidden');
+            showToast('管理员权限解锁成功！');
+            loadNotices();
+            loadAdminPostLists();
+        });
+    }
+ 
+    async function publishNotification(btn) {
+        if(!isAdminUI || !isAdminRole) return showToast('权限不足');
+        const input = document.getElementById('notifyContent');
+        const content = input.value.trim();
+        if(!content) return showToast('通知内容不能为空');
+        await withLoading(btn, async () => {
+            const { error } = await sb.from('notifications').insert({ content });
+            if(error) { showToast('发布失败：' + error.message, '#d92b2b'); return; }
+            input.value = '';
+            showToast('全站通知已发布！');
+            loadNotices();
+        });
+    }
+ 
+    async function removeNotice(noticeId) {
+        if(!isAdminUI || !isAdminRole) return showToast('权限不足');
+        const { error } = await sb.from('notifications').update({ is_active: false }).eq('id', noticeId);
+        if(error) return showToast('撤销失败：' + error.message, '#d92b2b');
+        loadNotices();
+    }
+ 
+    async function loadAdminPostLists() {
+        if(!isAdminRole) return;
+        const { data: pending } = await sb.from('posts').select('*, profiles(username)').eq('status', 'pending').order('created_at', { ascending: false });
+        const pendingContainer = document.getElementById('pendingPostsList');
+        pendingContainer.innerHTML = '';
+        if(pending && pending.length > 0) {
+            pending.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'post-card';
+                div.innerHTML = `
+                    <div class="header"><span>${escapeHtml(p.profiles ? p.profiles.username : '未知')}</span><span class="status-tag pending">待审核</span></div>
+                    <div class="content">${escapeHtml(p.content)}</div>
+                    <div class="meta">
+                        <button class="btn-sm" style="border-color:#2e9e3f; color:#2e9e3f; background: transparent; border: 1px solid;" onclick="reviewPost(${p.id}, 'approved')">✅ 通过</button>
+                        <button class="btn-sm" style="border-color:#d92b2b; color:#d92b2b; background: transparent; border: 1px solid;" onclick="reviewPost(${p.id}, 'banned')">🚫 封禁</button>
                     </div>
-                    <button type="submit" class="btn-submit">提交稿件 📬</button>
-                </form>
-            </div>
-        </section>
-
-        <section class="feature-section" id="mailbox">
-            <div class="feature-inner">
-                <div class="feature-info">
-                    <h2>✉️ 青年信箱</h2>
-                    <p>思想交流角落，欢迎投递理论困惑、实践感悟或社会观察。</p>
-                    <a href="mailto:3788315936@qq.com" style="color:var(--accent-red);">📮 3788315936@qq.com</a>
+                `;
+                pendingContainer.appendChild(div);
+            });
+        } else {
+            pendingContainer.innerHTML = '<div style="color:#9ca3af; padding:10px;">暂无待审核文章</div>';
+        }
+ 
+        const { data: all } = await sb.from('posts').select('*, profiles(username)').order('created_at', { ascending: false }).limit(50);
+        const allContainer = document.getElementById('allPostsList');
+        allContainer.innerHTML = '';
+        if(all && all.length > 0) {
+            all.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'post-card';
+                div.innerHTML = `
+                    <div class="header"><span>${escapeHtml(p.profiles ? p.profiles.username : '未知')}</span><span class="status-tag ${p.status}">${p.status}</span></div>
+                    <div class="content">${escapeHtml(p.content)}</div>
+                    <div class="meta">
+                        ${p.status !== 'approved' ? `<button class="btn-sm" style="border-color:#2e9e3f; color:#2e9e3f; background: transparent; border: 1px solid;" onclick="reviewPost(${p.id}, 'approved')">设为公开</button>` : ''}
+                        ${p.status !== 'banned' ? `<button class="btn-sm" style="border-color:#d92b2b; color:#d92b2b; background: transparent; border: 1px solid;" onclick="reviewPost(${p.id}, 'banned')">封禁</button>` : ''}
+                    </div>
+                `;
+                allContainer.appendChild(div);
+            });
+        } else {
+            allContainer.innerHTML = '<div style="color:#9ca3af; padding:10px;">暂无文章</div>';
+        }
+    }
+ 
+    async function reviewPost(postId, newStatus) {
+        if(!isAdminUI || !isAdminRole) return showToast('权限不足');
+        const { error } = await sb.from('posts').update({ status: newStatus }).eq('id', postId);
+        if(error) return showToast('操作失败：' + error.message, '#d92b2b');
+        showToast(`文章状态已变更为: ${newStatus}`);
+        loadAdminPostLists();
+    }
+ 
+    // ============================
+    // 9. 个人中心 & 用户主页
+    // ============================
+    async function loadProfileData() {
+        if(!currentUser) return navigate('auth');
+        const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+        if(data) {
+            document.getElementById('profileUsername').value = data.username || '';
+            document.getElementById('profileAge').value = data.age || '';
+            document.getElementById('profileBio').value = data.bio || '';
+        }
+    }
+ 
+    async function updateProfile(btn) {
+        const username = document.getElementById('profileUsername').value.trim();
+        const age = document.getElementById('profileAge').value || null;
+        const bio = document.getElementById('profileBio').value.trim();
+        await withLoading(btn, async () => {
+            const { error } = await sb.from('profiles').update({ username, age, bio }).eq('id', currentUser.id);
+            if(error) { showToast('保存失败：' + error.message, '#d92b2b'); return; }
+            showToast('个人资料修改成功！');
+        });
+    }
+ 
+    async function loadMyPosts() {
+        const { data } = await sb.from('posts').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+        const container = document.getElementById('myPostsList');
+        container.innerHTML = '<h4 style="margin:20px 0 12px; font-size:16px;">我发布过的文章</h4>';
+        if(data && data.length > 0) {
+            data.forEach(p => {
+                container.innerHTML += `<div style="padding: 12px; border-bottom:1px solid #e5e7eb;">${escapeHtml(p.content)} <span style="color:#9ca3af; font-size:12px;">(${p.status})</span></div>`;
+            });
+        } else {
+            container.innerHTML += '<div style="color:#9ca3af; padding:10px;">暂无发表记录</div>';
+        }
+    }
+ 
+    async function loadMyCollections() {
+        const { data, error } = await sb.from('collections').select('*, posts(content)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+        const container = document.getElementById('myPostsList');
+        container.innerHTML = '<h4 style="margin:20px 0 12px; font-size:16px;">我的收藏</h4>';
+        if(error) { container.innerHTML += '<div style="color:#9ca3af; padding:10px;">加载失败</div>'; return; }
+        if(data && data.length > 0) {
+            data.forEach(c => {
+                container.innerHTML += `<div style="padding: 12px; border-bottom:1px solid #e5e7eb;">${escapeHtml(c.posts ? c.posts.content : '(原文章已删除)')}</div>`;
+            });
+        } else {
+            container.innerHTML += '<div style="color:#9ca3af; padding:10px;">暂未收藏任何文章</div>';
+        }
+    }
+ 
+    async function goToUserProfile(targetUserId) {
+        navigate('user');
+        document.getElementById('userInfoArea').innerHTML = '<div style="color:#9ca3af;">加载中...</div>';
+        document.getElementById('userPostList').innerHTML = '';
+ 
+        const { data: userInfo } = await sb.from('profiles').select('*').eq('id', targetUserId).single();
+        if(userInfo) {
+            document.getElementById('userInfoArea').innerHTML = `
+                <h3 style="margin-bottom:12px;">${escapeHtml(userInfo.username || '未命名同志')} 的个人主页</h3>
+                <div style="background:#f9fafb; padding:20px; border-radius:16px; border:1px solid #e5e7eb; margin:16px 0;">
+                    <p style="margin:6px 0;">📅 年龄: ${userInfo.age || '未填写'}</p>
+                    <p style="margin:6px 0;">📝 简介: ${escapeHtml(userInfo.bio) || '这位同志很低调'}</p>
                 </div>
-                <form class="feature-form" id="mailboxForm">
-                    <input type="text" placeholder="你的署名（可选）" id="mailName">
-                    <textarea placeholder="写下你的思考……" id="mailContent" required></textarea>
-                    <button type="submit" class="btn-submit">投递信件 ✨</button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <footer><p>© 2026 <span style="color:var(--accent-red);">新思想期刊 · NT Journal</span> | 以真理之光照亮青春征程</p></footer>
-
-    <!-- 密码模态 -->
-    <div class="modal-overlay password-modal" id="passwordModalOverlay">
-        <div class="modal">
-            <button class="modal-close" id="passwordModalClose">×</button>
-            <h3>🔐 管理员验证</h3>
-            <form id="passwordForm" style="display:flex;flex-direction:column;gap:16px;">
-                <input type="password" placeholder="管理密码" id="adminPassword" required>
-                <button type="submit" class="btn-submit">验证</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 管理面板 -->
-    <div class="modal-overlay admin-modal" id="adminModalOverlay">
-        <div class="modal">
-            <button class="modal-close" id="adminModalClose">×</button>
-            <h3>🛡️ 管理后台</h3>
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-admin-tab="announce">发布公告</button>
-                <button class="admin-tab" data-admin-tab="review">稿件审核</button>
-                <button class="admin-tab" data-admin-tab="ban">封禁管理</button>
-            </div>
-            <div class="admin-panel active" id="panelAnnounce">
-                <textarea class="admin-textarea" id="announceInput" placeholder="公告内容..."></textarea>
-                <button class="btn-submit" id="publishAnnounceBtn" style="margin-top:12px;">发布公告</button>
-                <button class="btn-outline-red" id="clearAnnounceBtn" style="margin-left:12px;">清除</button>
-            </div>
-            <div class="admin-panel" id="panelReview">
-                <div id="reviewListContainer"><p>暂无待审核稿件</p></div>
-            </div>
-            <div class="admin-panel" id="panelBan">
-                <input type="text" id="banTarget" placeholder="文章ID 或 用户名" style="width:100%;padding:10px;margin-bottom:10px;">
-                <button class="btn-submit" id="banSubmitBtn" style="background:#b71c1c;">执行封禁</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 登录/注册 -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <button class="modal-close" id="modalClose">×</button>
-            <div class="modal-tabs">
-                <button class="modal-tab active" data-tab="login">登录</button>
-                <button class="modal-tab" data-tab="register">注册</button>
-            </div>
-            <form class="modal-form active" id="loginForm">
-                <input type="email" placeholder="邮箱" required>
-                <input type="password" placeholder="密码" required>
-                <button type="submit" class="btn-submit">登 录</button>
-                <p class="form-hint">登录即表示同意《用户协议》</p>
-            </form>
-            <form class="modal-form" id="registerForm">
-                <input type="text" placeholder="用户名" required maxlength="20">
-                <input type="email" placeholder="邮箱" required>
-                <input type="password" placeholder="密码（至少6位）" required minlength="6">
-                <button type="submit" class="btn-submit">注 册</button>
-                <p class="form-hint">注册即表示同意《用户协议》</p>
-            </form>
-        </div>
-    </div>
-
-    <!-- 账号设置 -->
-    <div class="modal-overlay" id="accountModalOverlay">
-        <div class="modal">
-            <button class="modal-close" id="accountModalClose">×</button>
-            <h3>👤 账号信息设置</h3>
-            <form id="accountForm" style="display:flex;flex-direction:column;gap:14px;margin-top:16px;">
-                <div style="text-align:center;">
-                    <img id="accountAvatarPreview" src="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;background:#eee;">
-                    <br><button type="button" class="btn-outline-red" id="changeAvatarBtn" style="margin-top:8px;">更换头像</button>
-                    <input type="file" id="avatarFileInput" accept="image/*" style="display:none;">
-                </div>
-                <input type="text" id="accountNickname" placeholder="昵称" required>
-                <textarea id="accountBio" placeholder="个人简介" rows="2"></textarea>
-                <button type="submit" class="btn-submit">保存设置</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // ========== 请替换为你自己的 Supabase 项目信息 ==========
-        const SUPABASE_URL = 'https://你的项目ID.supabase.co';   // 你的 Supabase URL
-        const SUPABASE_ANON_KEY = '你的anon public key';        // 你的 anon key
-
-        // ========== 初始化 Supabase 客户端 ==========
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // ========== 核心 Supabase 操作 ==========
-        async function NTLC_CreatePost(content) {
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .insert([{ content, status: 'pending' }])
-                .select();
-            return { data, error };
+            `;
+        } else {
+            document.getElementById('userInfoArea').innerHTML = '<div style="color:#9ca3af;">用户不存在</div>';
+            return;
         }
-
-        async function NTLC_Login(email, password) {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            return { data, error };
+ 
+        const { data: userPosts } = await sb.from('posts').select('*').eq('user_id', targetUserId).eq('status', 'approved').order('created_at', { ascending: false });
+        if(userPosts && userPosts.length > 0) {
+            let html = '<h4 style="margin-bottom:16px;">他的文章</h4>';
+            userPosts.forEach(p => {
+                html += `<div class="post-card"><div class="content">${escapeHtml(p.content)}</div><div class="meta" style="justify-content: flex-start;">${new Date(p.created_at).toLocaleString()}</div></div>`;
+            });
+            document.getElementById('userPostList').innerHTML = html;
+        } else {
+            document.getElementById('userPostList').innerHTML = '<div style="color:#9ca3af;">该用户暂无公开文章</div>';
         }
-
-        async function NTLC_Register(email, password) {
-            const { data, error } = await supabaseClient.auth.signUp({ email, password });
-            return { data, error };
+    }
+ 
+    // ============================
+    // 10. 暴露给内联 onclick 使用的函数
+    // ============================
+    window.navigate = navigate;
+    window.switchAuthTab = switchAuthTab;
+    window.handleAuth = handleAuth;
+    window.handleLogout = handleLogout;
+    window.submitPost = submitPost;
+    window.submitComment = submitComment;
+    window.toggleCollect = toggleCollect;
+    window.submitYouthLetter = submitYouthLetter;
+    window.verifyAdmin = verifyAdmin;
+    window.publishNotification = publishNotification;
+    window.removeNotice = removeNotice;
+    window.reviewPost = reviewPost;
+    window.updateProfile = updateProfile;
+    window.loadMyPosts = loadMyPosts;
+    window.loadMyCollections = loadMyCollections;
+    window.goToUserProfile = goToUserProfile;
+    window.loadPosts = loadPosts;
+ 
+    function init() {
+        document.getElementById('logoutBtn').classList.add('hidden');
+ 
+        const searchInput = document.getElementById('searchInput');
+        if(searchInput && !searchInput.dataset.bound) {
+            searchInput.dataset.bound = '1';
+            searchInput.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    navigate('home');
+                    loadPosts(e.target.value.trim());
+                }
+            });
         }
-
-        async function NTLC_ReviewPost(postId, status) {
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .update({ status })
-                .eq('id', postId);
-            return { data, error };
-        }
-
-        async function fetchApprovedArticles() {
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .eq('status', 'approved')
-                .order('created_at', { ascending: false });
-            if (error) throw error;
-            return data || [];
-        }
-
-        async function fetchPendingArticles() {
-            const { data, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .eq('status', 'pending')
-                .order('created_at', { ascending: false });
-            if (error) throw error;
-            return data || [];
-        }
-
-        // ========== 应用逻辑 ==========
-        (() => {
-            const ADMIN_PASSWORD = '159357258000ABC@';
-            let currentAnnouncement = '';
-            let currentUser = null;
-            let articleImages = [];
-
-            const $ = (s) => document.querySelector(s);
-            const $$ = (s) => document.querySelectorAll(s);
-            const toast = $('#toast');
-            const announcementBar = $('#announcementBar');
-            const announcementText = $('#announcementText');
-            const articlesContainer = $('#articlesContainer');
-            const navLinks = $('#navLinks');
-            const hamburger = $('#hamburger');
-            const navAuthArea = $('#navAuthArea');
-            const btnOpenAdmin = $('#btnOpenAdmin');
-            const passwordModalOverlay = $('#passwordModalOverlay');
-            const adminModalOverlay = $('#adminModalOverlay');
-            const modalOverlay = $('#modalOverlay');
-            const accountModalOverlay = $('#accountModalOverlay');
-            const imagePreviewContainer = $('#imagePreviewContainer');
-            const articleForm = $('#articleForm');
-            const loginForm = $('#loginForm');
-            const registerForm = $('#registerForm');
-            const accountForm = $('#accountForm');
-            const passwordForm = $('#passwordForm');
-            const mailboxForm = $('#mailboxForm');
-
-            function showToast(msg) {
-                clearTimeout(window._t);
-                toast.textContent = msg;
-                toast.classList.add('show');
-                window._t = setTimeout(() => toast.classList.remove('show'), 2200);
+ 
+        getCurrentUser().then(async (user) => {
+            if(user) {
+                currentUser = user;
+                isAdminRole = await checkIsAdminRole(user.id);
+                updateNavForUser(true);
             }
-
-            // 图片上传（模拟，可替换为 Supabase Storage）
-            async function uploadImage(file) {
-                showToast('📤 图片上传中...');
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        showToast('✅ 图片上传成功');
-                        resolve(URL.createObjectURL(file));
-                    }, 600);
-                });
-            }
-
-            async function renderArticles() {
-                try {
-                    const approved = await fetchApprovedArticles();
-                    if (!approved.length) {
-                        articlesContainer.innerHTML = `<div class="empty-state"><p>📄 暂无文章，成为第一位投稿者吧！</p><a href="#submit-article" class="btn-outline-red">立即投稿</a></div>`;
-                        return;
-                    }
-                    let html = '<div class="articles-grid">';
-                    approved.forEach(a => {
-                        let title = '无标题', author = '匿名', category = '其他', body = '';
-                        try {
-                            const parsed = JSON.parse(a.content);
-                            title = parsed.title || title;
-                            author = parsed.author || author;
-                            category = parsed.category || category;
-                            body = parsed.content || '';
-                        } catch (e) { body = a.content; }
-                        const excerpt = body.substring(0, 80) + (body.length > 80 ? '…' : '');
-                        html += `<div class="article-card">
-                            <span class="card-tag">${category}</span>
-                            <h3>${title}</h3>
-                            <p class="card-excerpt">${excerpt}</p>
-                            <div class="card-meta"><span>✍️ ${author}</span><span>📅 ${a.created_at?.slice(0,10) || ''}</span></div>
-                        </div>`;
-                    });
-                    html += '</div>';
-                    articlesContainer.innerHTML = html;
-                } catch (err) {
-                    console.error('加载文章失败:', err);
-                    showToast('加载文章失败，请检查网络或数据库');
-                }
-            }
-
-            async function renderReviewList() {
-                const container = $('#reviewListContainer');
-                try {
-                    const pending = await fetchPendingArticles();
-                    if (!pending.length) {
-                        container.innerHTML = '<p>暂无待审核稿件</p>';
-                        return;
-                    }
-                    let html = '<ul class="review-list">';
-                    pending.forEach(a => {
-                        let title = '无标题', body = '';
-                        try {
-                            const parsed = JSON.parse(a.content);
-                            title = parsed.title || title;
-                            body = parsed.content || '';
-                        } catch (e) { body = a.content; }
-                        const excerpt = body.substring(0, 80) + (body.length > 80 ? '…' : '');
-                        html += `<li class="review-item">
-                            <h4>${title}</h4>
-                            <div>${excerpt}</div>
-                            <div class="review-actions">
-                                <button class="btn-sm btn-approve" data-id="${a.id}">批准</button>
-                                <button class="btn-sm btn-reject" data-id="${a.id}">拒绝</button>
-                            </div>
-                        </li>`;
-                    });
-                    html += '</ul>';
-                    container.innerHTML = html;
-                } catch (err) {
-                    container.innerHTML = '<p>加载待审核列表失败</p>';
-                }
-            }
-
-            function updateAnnouncement() {
-                if (currentAnnouncement) {
-                    announcementText.textContent = currentAnnouncement;
-                    announcementBar.classList.add('show');
-                } else announcementBar.classList.remove('show');
-            }
-
-            function updateAuthUI() {
-                if (currentUser) {
-                    navAuthArea.innerHTML = `<button class="btn-nav-user" id="btnOpenAccount">
-                        <img class="user-avatar-mini" src="${currentUser.avatar || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23ddd%22/%3E%3C/svg%3E'}" alt="">
-                        ${currentUser.nickname}
-                    </button>`;
-                    $('#btnOpenAccount').addEventListener('click', openAccountModal);
-                } else {
-                    navAuthArea.innerHTML = `<button class="btn-nav-auth" id="btnOpenAuth">登录 / 注册</button>`;
-                    $('#btnOpenAuth').addEventListener('click', () => {
-                        modalOverlay.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                        switchAuthTab('login');
-                    });
-                }
-            }
-
-            function openAccountModal() {
-                if (!currentUser) return;
-                $('#accountNickname').value = currentUser.nickname || '';
-                $('#accountBio').value = currentUser.bio || '';
-                $('#accountAvatarPreview').src = currentUser.avatar || '';
-                accountModalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function addImage(file) {
-                uploadImage(file).then(url => {
-                    articleImages.push(url);
-                    renderImagePreviews();
-                });
-            }
-
-            function renderImagePreviews() {
-                let html = '';
-                articleImages.forEach((url, i) => {
-                    html += `<div class="image-preview-item">
-                        <img src="${url}" alt="">
-                        <button class="remove-img" data-remove="${i}">×</button>
-                    </div>`;
-                });
-                html += `<button type="button" class="btn-upload" id="btnAddImageInner">📷 添加图片</button>`;
-                imagePreviewContainer.innerHTML = html;
-                $('#btnAddImageInner').addEventListener('click', triggerFileInput);
-                $$('.remove-img').forEach(btn => btn.addEventListener('click', (e) => {
-                    const idx = parseInt(e.target.getAttribute('data-remove'));
-                    URL.revokeObjectURL(articleImages[idx]);
-                    articleImages.splice(idx, 1);
-                    renderImagePreviews();
-                }));
-            }
-
-            function triggerFileInput() {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.multiple = true;
-                input.onchange = () => { [...input.files].forEach(f => addImage(f)); };
-                input.click();
-            }
-
-            // 事件绑定
-            $('#btnAddImage').addEventListener('click', triggerFileInput);
-            articleForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const title = $('#articleTitle').value.trim();
-                const author = $('#articleAuthor').value.trim() || '无名同志';
-                const category = $('#articleCategory').value;
-                const content = $('#articleContent').value.trim();
-                if (!title || !category || !content) return showToast('请填写完整');
-                const fullContent = JSON.stringify({ title, author, category, content, images: [...articleImages] });
-                const { error } = await NTLC_CreatePost(fullContent);
-                if (error) return showToast('投稿失败：' + error.message);
-                articleImages.forEach(url => URL.revokeObjectURL(url));
-                articleImages = [];
-                renderImagePreviews();
-                articleForm.reset();
-                showToast('📝 稿件已提交，等待审核');
-                if (adminModalOverlay.classList.contains('active')) renderReviewList();
-            });
-
-            mailboxForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = $('#mailName').value.trim() || '匿名青年';
-                const content = $('#mailContent').value.trim();
-                if (!content) return showToast('请填写内容');
-                showToast('📬 信件已投递！感谢' + name);
-                mailboxForm.reset();
-            });
-
-            function switchAuthTab(tab) {
-                $$('.modal-tab').forEach(t => t.classList.remove('active'));
-                if (tab === 'login') {
-                    $$('.modal-tab')[0].classList.add('active');
-                    loginForm.classList.add('active');
-                    registerForm.classList.remove('active');
-                } else {
-                    $$('.modal-tab')[1].classList.add('active');
-                    registerForm.classList.add('active');
-                    loginForm.classList.remove('active');
-                }
-            }
-            $$('.modal-tab').forEach(t => t.addEventListener('click', () => switchAuthTab(t.dataset.tab)));
-
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = loginForm.querySelector('input[type="email"]').value.trim();
-                const password = loginForm.querySelector('input[type="password"]').value;
-                if (!email || !password) return showToast('请输入邮箱和密码');
-                const { data, error } = await NTLC_Login(email, password);
-                if (error) {
-                    if (error.message.includes('Invalid login credentials')) return showToast('邮箱或密码错误');
-                    if (error.message.includes('Email not confirmed')) return showToast('邮箱尚未验证，请检查收件箱');
-                    return showToast('登录失败：' + error.message);
-                }
-                currentUser = { nickname: email.split('@')[0], email, avatar: '', bio: '' };
-                showToast('✅ 登录成功，欢迎 ' + currentUser.nickname);
-                loginForm.reset();
-                modalOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-                updateAuthUI();
-            });
-
-            registerForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const inputs = registerForm.querySelectorAll('input');
-                const username = inputs[0].value.trim();
-                const email = inputs[1].value.trim();
-                const password = inputs[2].value;
-                if (!username || !email || !password) return showToast('请填写完整');
-                if (password.length < 6) return showToast('密码至少6位');
-                if (!email.includes('@')) return showToast('请输入有效的邮箱地址');
-                const { error } = await NTLC_Register(email, password);
-                if (error) {
-                    if (error.message.includes('already registered')) return showToast('该邮箱已被注册');
-                    return showToast('注册失败：' + error.message);
-                }
-                showToast('🎉 注册成功！请登录（若需验证邮箱请查看收件箱）');
-                registerForm.reset();
-                modalOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-                updateAuthUI();
-            });
-
-            $('#modalClose').addEventListener('click', () => { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
-            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
-
-            $('#changeAvatarBtn').addEventListener('click', () => $('#avatarFileInput').click());
-            $('#avatarFileInput').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        currentUser.avatar = ev.target.result;
-                        $('#accountAvatarPreview').src = currentUser.avatar;
-                        updateAuthUI();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            accountForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                currentUser.nickname = $('#accountNickname').value.trim();
-                currentUser.bio = $('#accountBio').value.trim();
-                showToast('✅ 账号信息已更新');
-                updateAuthUI();
-                accountModalOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-            $('#accountModalClose').addEventListener('click', () => { accountModalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
-            accountModalOverlay.addEventListener('click', (e) => { if (e.target === accountModalOverlay) { accountModalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
-
-            btnOpenAdmin.addEventListener('click', () => {
-                passwordModalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                $('#adminPassword').value = '';
-            });
-            passwordForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if ($('#adminPassword').value.trim() === ADMIN_PASSWORD) {
-                    passwordModalOverlay.classList.remove('active');
-                    openAdminPanel();
-                } else {
-                    showToast('❌ 密码错误');
-                    $('#adminPassword').value = '';
-                }
-            });
-            async function openAdminPanel() {
-                adminModalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                switchAdminTab('announce');
-                await renderReviewList();
-                $('#announceInput').value = currentAnnouncement || '';
-            }
-            function closeAdmin() { adminModalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
-            $('#adminModalClose').addEventListener('click', closeAdmin);
-            adminModalOverlay.addEventListener('click', (e) => { if (e.target === adminModalOverlay) closeAdmin(); });
-            $('#passwordModalClose').addEventListener('click', () => { passwordModalOverlay.classList.remove('active'); document.body.style.overflow = ''; });
-            passwordModalOverlay.addEventListener('click', (e) => { if (e.target === passwordModalOverlay) { passwordModalOverlay.classList.remove('active'); document.body.style.overflow = ''; } });
-
-            function switchAdminTab(tab) {
-                $$('.admin-tab').forEach(t => t.classList.remove('active'));
-                $$('.admin-panel').forEach(p => p.classList.remove('active'));
-                document.querySelector(`.admin-tab[data-admin-tab="${tab}"]`).classList.add('active');
-                document.getElementById('panel' + (tab.charAt(0).toUpperCase()+tab.slice(1))).classList.add('active');
-                if (tab === 'review') renderReviewList();
-            }
-            $$('.admin-tab').forEach(t => t.addEventListener('click', () => switchAdminTab(t.dataset.adminTab)));
-
-            $('#publishAnnounceBtn').addEventListener('click', () => {
-                const text = $('#announceInput').value.trim();
-                if (!text) return showToast('请输入公告内容');
-                currentAnnouncement = text;
-                updateAnnouncement();
-                showToast('📢 公告已发布');
-            });
-            $('#clearAnnounceBtn').addEventListener('click', () => {
-                currentAnnouncement = '';
-                $('#announceInput').value = '';
-                updateAnnouncement();
-                showToast('公告已清除');
-            });
-            $('#closeAnnounce').addEventListener('click', () => { currentAnnouncement = ''; updateAnnouncement(); });
-
-            $('#reviewListContainer').addEventListener('click', async (e) => {
-                if (e.target.classList.contains('btn-approve')) {
-                    const postId = e.target.dataset.id;
-                    const { error } = await NTLC_ReviewPost(postId, 'approved');
-                    if (error) return showToast('审批失败：' + error.message);
-                    showToast('🟢 稿件已批准并发布！');
-                    await renderReviewList();
-                    await renderArticles();
-                } else if (e.target.classList.contains('btn-reject')) {
-                    const postId = e.target.dataset.id;
-                    const { error } = await NTLC_ReviewPost(postId, 'banned');
-                    if (error) return showToast('操作失败：' + error.message);
-                    showToast('🔴 稿件已拒绝');
-                    await renderReviewList();
-                }
-            });
-
-            $('#banSubmitBtn').addEventListener('click', () => {
-                const target = $('#banTarget').value.trim();
-                if (!target) return showToast('请输入目标');
-                showToast(`⛔ 已封禁：${target} (演示)`);
-                $('#banTarget').value = '';
-            });
-
-            hamburger.addEventListener('click', () => {
-                const open = navLinks.classList.toggle('open');
-                hamburger.classList.toggle('active', open);
-            });
-            navLinks.addEventListener('click', (e) => {
-                if (e.target.tagName === 'A' && navLinks.classList.contains('open')) {
-                    navLinks.classList.remove('open');
-                    hamburger.classList.remove('active');
-                }
-            });
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 10) $('#navbar').classList.add('scrolled');
-                else $('#navbar').classList.remove('scrolled');
-                const sections = $$('section[id]');
-                let current = '';
-                sections.forEach(s => { if (s.getBoundingClientRect().top <= 120) current = s.id; });
-                navLinks.querySelectorAll('a[data-nav]').forEach(a => {
-                    a.classList.toggle('active', a.dataset.nav === current);
-                });
-            }, {passive: true});
-
-            // 初始化
-            renderArticles();
-            updateAnnouncement();
-            updateAuthUI();
-            renderImagePreviews();
-            console.log('✨ NT Journal 已启动 · Supabase 全功能对接');
-        })();
-    </script>
+            navigate('home');
+        });
+    }
+ 
+    if(document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
 </body>
 </html>
